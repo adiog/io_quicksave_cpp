@@ -1,0 +1,15 @@
+[submodule "deps/rapidjson"]
+	path = deps/rapidjson
+	url = https://github.com/miloyip/rapidjson
+[submodule "deps/googletest"]
+	path = deps/googletest
+	url = https://github.com/google/googletest
+[submodule "deps/antlr4"]
+	path = deps/antlr4
+	url = https://github.com/antlr/antlr4
+[submodule "deps/SQLiteCpp"]
+	path = deps/SQLiteCpp
+	url = https://github.com/SRombauts/SQLiteCpp
+[submodule "deps/proxygen"]
+	path = deps/proxygen
+	url = https://github.com/facebook/proxygen
