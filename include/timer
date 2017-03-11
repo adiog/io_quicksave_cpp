@@ -1,0 +1,119 @@
+// This file is a part of cpp-training project.
+// Copyright (c) 2016 Aleksander Gajewski <adiog@brainfuck.pl>.
+
+#ifndef __TIMER__
+#define __TIMER__
+
+#include <iostream>
+#include <sstream>
+#include <chrono>
+#include <stack>
+#include <thread>
+
+#define DEBUG(msg) std::cout << "===================== " << msg << std::endl;
+
+class timer
+{
+public:
+    timer() = default;
+
+    static timer &get()
+    {
+        static timer t;
+        return t;
+    }
+
+    void _start()
+    {
+        time_points.push(std::chrono::steady_clock::now());
+    }
+
+    int _stop()
+    {
+        std::chrono::steady_clock::time_point last = time_points.top();
+        time_points.pop();
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        return std::chrono::duration_cast<std::chrono::microseconds>(end - last).count();
+    }
+
+    int push_uid()
+    {
+        uids.push(++max_uid);
+        return max_uid;
+    }
+
+    int pop_uid()
+    {
+        int uid = uids.top();
+        uids.pop();
+        return uid;
+    }
+
+    static void start()
+    {
+        std::cout << std::endl;
+        timer::get()._start();
+    }
+
+    static void start(const char *FILE, int LINE, const char *PRETTY_FUNCTION)
+    {
+        std::ostringstream oss;
+        std::cout << std::endl;
+        oss << FILE << ":" << LINE << " ### " << timer::get().push_uid() << " >>> " << PRETTY_FUNCTION;
+        DEBUG(oss.str());
+        timer::get()._start();
+    }
+
+    static void stop()
+    {
+        char time_format[14];
+        int time = timer::get()._stop();
+        int mus = time % 1'000'000;
+        int s = (time / 1'000'000) % 60;
+        int m = (time / 1'000'000 / 60) % 60;
+        int h = time / 1'000'000 / 60 / 60;
+        sprintf(time_format, "%d:%02d:%02d.%06d", h, m, s, mus);
+        std::cout << "                      Result: " << time_format << "μs" << std::endl;
+    }
+
+    static void stop(const char *FILE, int LINE, const char *PRETTY_FUNCTION)
+    {
+        int time = timer::get()._stop();
+        std::ostringstream oss;
+        oss << FILE << ":" << LINE << " ### " << timer::get().pop_uid() << " <<< " << PRETTY_FUNCTION << "\n                      Result: " << time << "μs";
+        DEBUG(oss.str());
+    }
+
+private:
+    std::stack<std::chrono::steady_clock::time_point> time_points;
+    std::stack<int> uids;
+    int max_uid;
+};
+
+class measure
+{
+public:
+    measure(const char *FILE, int LINE, const char *PRETTY_FUNCTION)
+            : file(FILE), line(LINE), pretty_function(PRETTY_FUNCTION)
+    {
+        timer::start(file, line, pretty_function);
+    }
+
+    ~measure()
+    {
+        timer::stop(file, line, pretty_function);
+    }
+
+private:
+    const char *file;
+    int line;
+    const char *pretty_function;
+};
+
+#define TIC_HERE timer::get().start(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+#define TIC timer::get().start()
+#define TAC_HERE timer::get().stop(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+#define TAC timer::get().stop()
+#define MEASURE measure measure_time_##__LINE__(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+
+#endif  // __TIMER__

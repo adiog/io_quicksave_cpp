@@ -1,0 +1,15 @@
+// This file is a part of quicksave project.
+// Copyright (c) 2016 Aleksander Gajewski <adiog@brainfuck.pl>.
+
+#ifndef __GOOGLETEST__
+#define __GOOGLETEST__
+
+#include <gtest/gtest.h>
+
+#define GTEST_MAIN()                          \
+    int main(int argc, char *argv[]) {        \
+        testing::InitGoogleTest(&argc, argv); \
+        return RUN_ALL_TESTS();               \
+    }
+
+#endif // __GOOGLETEST__
