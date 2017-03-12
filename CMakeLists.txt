@@ -6,22 +6,28 @@ set(CMAKE_CXX_FLAGS -O0)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/main)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/antlr4/runtime/Cpp/runtime/src)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/rapidjson/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/beans/cppbeans/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/plugin-engine/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/googletest/googletest/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/googletest/googlemock/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/SQLiteCpp/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/libbeans)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/plugin-engine)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/qsql)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp/runtime/src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rapidjson/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/beans/cppbeans/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googletest/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googlemock/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp/include)
+
 include_directories(/usr/include/python3.5m)
 
 SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags)
 
-ADD_SUBDIRECTORY(extern/googletest)
-ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/extern/antlr4/runtime/Cpp)
-ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/extern/SQLiteCpp)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp)
 
 MACRO(COLLECT_CC current_path)
     MESSAGE("-- CollectCC -- Searching for cc-files in ${current_path}")

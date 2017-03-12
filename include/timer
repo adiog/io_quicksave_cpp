@@ -73,14 +73,14 @@ public:
         int m = (time / 1'000'000 / 60) % 60;
         int h = time / 1'000'000 / 60 / 60;
         sprintf(time_format, "%d:%02d:%02d.%06d", h, m, s, mus);
-        std::cout << "                      Result: " << time_format << "μs" << std::endl;
+        std::cout << "                      Time: " << time_format << "μs" << std::endl;
     }
 
     static void stop(const char *FILE, int LINE, const char *PRETTY_FUNCTION)
     {
         int time = timer::get()._stop();
         std::ostringstream oss;
-        oss << FILE << ":" << LINE << " ### " << timer::get().pop_uid() << " <<< " << PRETTY_FUNCTION << "\n                      Result: " << time << "μs";
+        oss << FILE << ":" << LINE << " ### " << timer::get().pop_uid() << " <<< " << PRETTY_FUNCTION << "\n                      Time: " << time << "μs";
         DEBUG(oss.str());
     }
 

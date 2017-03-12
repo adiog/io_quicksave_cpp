@@ -229,18 +229,6 @@ void QuicksaveHandler::handle()
             return reply("logged in");
         }
     }
-    else if (path == "/login_post/")
-    {
-        std::cout << "XXXXXX";
-        if (!authenticateWithPassword(Authentication::dispatchPost(headers_.get())))
-        {
-            return reply(401);
-        } else
-        {
-            return reply("logged in");
-        }
-
-    }
     else {
         if (!authenticateWithCookie())
         {
