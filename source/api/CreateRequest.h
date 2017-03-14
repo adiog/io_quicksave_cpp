@@ -11,6 +11,7 @@
 #include <databaseBean/DatabaseBeanTag.h>
 #include <folly/io/IOBuf.h>
 
+
 class CreateRequest : public CreateRequestBean
 {
 public:
@@ -21,18 +22,18 @@ public:
     {
         CreateResponseBean createResponseBean;
 
+        item.item_id = DatabaseBean<ItemBean>::insert(ctx->db.get(), item);
+
         auto richItemBean = PluginEngine::process(item);
 
-        std::cout << "############### " << *richItemBean.item.url << std::endl;
+        DatabaseBean<ItemBean>::update(ctx->db.get(), richItemBean.item);
 
-        int id = DatabaseBean<ItemBean>::insert(ctx->db.get(), richItemBean.item);
         for(auto& tag : richItemBean.tags)
         {
-            tag.item_id = id;
+            tag.item_id = item.item_id;
             DatabaseBean<TagBean>::insert(ctx->db.get(), tag);
         }
-        std::cout << *(richItemBean.tags[0].name) << std::endl;
-        item.item_id = id;
+
         createResponseBean.item = item;
         return createResponseBean;
     }

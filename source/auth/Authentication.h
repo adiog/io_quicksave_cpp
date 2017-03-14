@@ -6,7 +6,6 @@
 
 #include <CppBeans.h>
 #include <iostream>
-#include <auth/User.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <proxygen/lib/utils/Base64.h>
 

@@ -31,11 +31,10 @@
 #include <api/TagCreateRequest.h>
 #include <api/TagDeleteRequest.h>
 #include <api/ItemDeleteRequest.h>
+#include <api/ItemUpdateRequest.h>
 #include <api/TagUpdateRequest.h>
 #include <auth/Authentication.h>
-#include <auth/User.h>
 #include <http/Exception.h>
-#include <http/JsonResponse.h>
 
 
 class QuicksaveHandler : public ProxygenHandler
@@ -276,6 +275,10 @@ void QuicksaveHandler::handle()
         else if (path == "/item/delete/")
         {
             response = GenericRequest<ItemDeleteRequest>::handle(&requestContext, document);
+        }
+        else if (path == "/item/update/")
+        {
+            response = GenericRequest<ItemUpdateRequest>::handle(&requestContext, document);
         }
         else
         {
