@@ -216,7 +216,8 @@ void QuicksaveHandler::handle()
     if (path == "/logout/")
     {
         logout();
-        return reply("Logged out");
+        response = MessageBean(std::string("Logged out..."));
+        return reply(200);
     }
 
     if (path == "/login/")
@@ -226,7 +227,8 @@ void QuicksaveHandler::handle()
             return reply(401);
         } else
         {
-            return reply("logged in");
+            response = MessageBean(std::string(requestContext.userBean.name));
+            return reply(200);
         }
     }
     else {
@@ -249,7 +251,7 @@ void QuicksaveHandler::handle()
     {
         if (path == "/status/")
         {
-            response = MessageBean(std::string(Format::format("Logged as %s (%s)...", requestContext.userBean.name, requestContext.session_hash)));
+            response = MessageBean(std::string(requestContext.userBean.name));
         }
         else if (path == "/create/")
         {
