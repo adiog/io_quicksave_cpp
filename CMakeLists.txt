@@ -69,6 +69,6 @@ ADD_EXECUTABLE(mainTest ${PROJECT_TESTS})
 TARGET_LINK_LIBRARIES(mainTest ${PROJECT_LIBRARIES} python3.5m antlr4_static qsql gtest gmock pthread)
 
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/main/**.cc)
-ADD_EXECUTABLE(main ${PROJECT_MAIN} main/Config.h)
+ADD_EXECUTABLE(main ${PROJECT_MAIN} main/Config.h source/util/base64.h source/util/buffer.h)
 TARGET_LINK_LIBRARIES(main ${PROJECT_LIBRARIES} dl python3.5m ssl SQLiteCpp sqlite3 antlr4_static qsql pthread)
 

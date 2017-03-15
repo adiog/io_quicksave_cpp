@@ -5,6 +5,7 @@
 
 #include <folly/Memory.h>
 #include <proxygen/httpserver/RequestHandler.h>
+#include <util/buffer.h>
 
 class ProxygenHandler : public proxygen::RequestHandler
 {
@@ -26,11 +27,18 @@ public:
     virtual void reply(const char *message) = 0;
     virtual void reply_options() = 0;
 
+    bool isAuthenticationRequest()
+    {
+        std::string path = headers_->getPath();
+        return ((path == "/login/") || (path == "/logout") || (path == "/status/"));
+    }
+
 protected:
     std::unique_ptr<proxygen::HTTPMessage> headers_;
     std::unique_ptr<folly::IOBuf> body_;
     std::unique_ptr<folly::IOBuf> response;
     int statusCode;
+    std::string contiguousBody;
 };
 
 #include <proxygen/httpserver/RequestHandler.h>
@@ -63,9 +71,24 @@ void ProxygenHandler::onEOM() noexcept
 {
     if (body_)
     {
-        std::string buf{reinterpret_cast<const char *>(body_->data()), body_->length()};
-        Logger::log(Logger::format("< %s [%luB]", buf.c_str(), body_->length()));
+        contiguousBody = Buffer::to_string(body_);
+        /*
+        if (body_->computeChainDataLength() != body_->length())
+        {
+            std::cout << "CHUJOWY BUFOR " << body_->computeChainDataLength() << " " << body_->length() << std::endl;
+            std::string dobry_bufor = Buffer::to_string(body_);
+            std::cout << "DOBRY BUFOR " << dobry_bufor << " " << dobry_bufor.length() << std::endl;
+            return reply(400);
+        }
+        else {
+          */
+            Logger::log(Logger::format("< %s [%luB]", contiguousBody.c_str(), contiguousBody.length()));
 
+            handle();
+            TAC;
+    }
+    else if (isAuthenticationRequest())
+    {
         handle();
         TAC;
     }
@@ -80,7 +103,7 @@ void ProxygenHandler::onEOM() noexcept
 
 void ProxygenHandler::onUpgrade(proxygen::UpgradeProtocol protocol) noexcept
 {
-    // handler doesn't support upgrades
+    // handler doesn"t support upgrades
 }
 
 void ProxygenHandler::requestComplete() noexcept

@@ -33,6 +33,7 @@
 #include <api/ItemDeleteRequest.h>
 #include <api/ItemUpdateRequest.h>
 #include <api/TagUpdateRequest.h>
+#include <api/UploadRequest.h>
 #include <auth/Authentication.h>
 #include <http/Exception.h>
 
@@ -117,13 +118,11 @@ public:
         reply();
     }
 
-    rapidjson::Document parse(const folly::IOBuf *body_)
+    rapidjson::Document parse(const std::string& contiguousBody)
     {
         rapidjson::Document document;
 
-        std::string buffer{reinterpret_cast<const char *>(body_->data()), body_->length()};
-
-        document.Parse(buffer.c_str());
+        document.Parse(contiguousBody.c_str());
         if (document.HasParseError())
         {
             throw ParseError("");
@@ -235,11 +234,16 @@ void QuicksaveHandler::handle()
         {
             return reply(401);
         }
+        else if (path == "/status/")
+        {
+            response = MessageBean(std::string(requestContext.userBean.name));
+            return reply(200);
+        }
     }
 
     try
     {
-        document = parse(body_.get());
+        document = parse(contiguousBody);
     }
     catch (ParseError& parseError)
     {
@@ -248,11 +252,7 @@ void QuicksaveHandler::handle()
 
     try
     {
-        if (path == "/status/")
-        {
-            response = MessageBean(std::string(requestContext.userBean.name));
-        }
-        else if (path == "/create/")
+        if (path == "/create/")
         {
             response = GenericRequest<CreateRequest>::handle(&requestContext, document);
         }
@@ -279,6 +279,10 @@ void QuicksaveHandler::handle()
         else if (path == "/item/update/")
         {
             response = GenericRequest<ItemUpdateRequest>::handle(&requestContext, document);
+        }
+        else if (path == "/upload/")
+        {
+            response = GenericRequest<UploadRequest>::handle(&requestContext, document);
         }
         else
         {
