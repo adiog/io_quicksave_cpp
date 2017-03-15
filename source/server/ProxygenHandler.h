@@ -43,10 +43,10 @@ protected:
 
 #include <proxygen/httpserver/RequestHandler.h>
 
+#include <timer>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <util/format.h>
 #include <util/logger.h>
-#include <timer>
 
 void ProxygenHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept
 {
@@ -82,10 +82,14 @@ void ProxygenHandler::onEOM() noexcept
         }
         else {
           */
-            Logger::log(Logger::format("< %s [%luB]", contiguousBody.c_str(), contiguousBody.length()));
+        Logger::log(Logger::format("< %s [%luB]", contiguousBody.c_str(), contiguousBody.length()));
 
-            handle();
-            TAC;
+        handle();
+        TAC;
+    }
+    else if (headers_->getMethodString() == "OPTIONS")
+    {
+        return reply_options();
     }
     else if (isAuthenticationRequest())
     {
@@ -95,8 +99,6 @@ void ProxygenHandler::onEOM() noexcept
     else
     {
         TAC;
-        if (headers_->getMethodString() == "OPTIONS")
-            return reply_options();
         return reply(400);
     }
 }
@@ -115,4 +117,3 @@ void ProxygenHandler::onError(proxygen::ProxygenError err) noexcept
 {
     delete this;
 }
-

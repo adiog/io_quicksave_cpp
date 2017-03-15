@@ -59,7 +59,7 @@ public:
     {
         this->response = folly::IOBuf::copyBuffer("");
 
-        std::string buffer{reinterpret_cast<const char *>(response->data()), response->length()};
+        std::string buffer = Buffer::to_string(response);
         Logger::log(Logger::format("> %lu %s [%luB]", this->statusCode, buffer.c_str(), response->length()));
 
 
