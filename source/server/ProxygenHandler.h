@@ -87,6 +87,14 @@ void ProxygenHandler::onEOM() noexcept
         handle();
         TAC;
     }
+    else if (headers_->getMethodString() == "GET")
+    {
+        contiguousBody = headers_->getDecodedQueryParam("body");
+        Logger::log(Logger::format("< %s [%luB]", contiguousBody.c_str(), contiguousBody.length()));
+
+        handle();
+        TAC;
+    }
     else if (headers_->getMethodString() == "OPTIONS")
     {
         return reply_options();

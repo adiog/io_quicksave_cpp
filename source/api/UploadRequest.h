@@ -7,7 +7,7 @@
 #include <bean/UploadRequestBean.h>
 #include <bean/MessageBean.h>
 #include <folly/io/IOBuf.h>
-#include <util/base64.h>
+#include <provider/FileSystem.h>
 
 class UploadRequest : public UploadRequestBean
 {
@@ -17,15 +17,16 @@ public:
     template<typename CTX>
     std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
     {
+        std::unique_ptr<Provider> provider = std::make_unique<FileSystem>("/io.quicksave.cdn/"); // TODO
+
+                provider->accept_base(filename, filebase);
+
         /*
         std::cout << filename << std::endl;
         std::cout << filebase << std::endl;
         std::cout << qs::Base64::decode(filebase) << std::endl;
         */
 
-        std::ofstream filestream{filename};
-        filestream << qs::Base64::decode(filebase);
-        filestream.close();
 
         MessageBean messageBean;
 

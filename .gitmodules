@@ -13,3 +13,6 @@
 [submodule "deps/proxygen"]
 	path = deps/proxygen
 	url = https://github.com/facebook/proxygen
+[submodule "deps/rabbitmq-c"]
+	path = deps/rabbitmq-c
+	url = https://github.com/alanxz/rabbitmq-c

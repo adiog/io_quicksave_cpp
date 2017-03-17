@@ -20,6 +20,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/beans/cppbeans/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googletest/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googlemock/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c/librabbitmq)
 
 include_directories(/usr/include/python3.5m)
 
@@ -28,6 +29,7 @@ SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c)
 
 MACRO(COLLECT_CC current_path)
     MESSAGE("-- CollectCC -- Searching for cc-files in ${current_path}")
@@ -60,6 +62,8 @@ ENDMACRO()
 
 COLLECT_CC(${CMAKE_CURRENT_SOURCE_DIR}/source)
 
+ADD_LIBRARY(rabbitmq-util source/mq/utils.cc)
+
 FILE(GLOB_RECURSE PROJECT_QSQL ${CMAKE_CURRENT_SOURCE_DIR}/generated/qsql/**.cpp)
 ADD_LIBRARY(qsql ${PROJECT_QSQL})
 TARGET_LINK_LIBRARIES(qsql antlr4_static)
@@ -69,6 +73,8 @@ ADD_EXECUTABLE(mainTest ${PROJECT_TESTS})
 TARGET_LINK_LIBRARIES(mainTest ${PROJECT_LIBRARIES} python3.5m antlr4_static qsql gtest gmock pthread)
 
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/main/**.cc)
-ADD_EXECUTABLE(main ${PROJECT_MAIN} main/Config.h source/util/base64.h source/util/buffer.h)
-TARGET_LINK_LIBRARIES(main ${PROJECT_LIBRARIES} dl python3.5m ssl SQLiteCpp sqlite3 antlr4_static qsql pthread)
+ADD_EXECUTABLE(main ${PROJECT_MAIN} main/Config.h source/util/base64.h source/util/buffer.h source/provider/FileSystem.h source/provider/Provider.h source/mq/queue.h)
+TARGET_LINK_LIBRARIES(main ${PROJECT_LIBRARIES} dl python3.5m rabbitmq-util rabbitmq-static ssl SQLiteCpp sqlite3 antlr4_static qsql pthread)
 
+#ADD_EXECUTABLE(mq mq.cpp)
+#TARGET_LINK_LIBRARIES(mq rabbitmq-util rabbitmq-static pthread)
