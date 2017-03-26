@@ -27,7 +27,7 @@ public:
         retrieveResponseBean.items = List<RichItemBean>(ll);
         std::string sqlQuery = QsqlQuery::parseQsql2Sql(query);
 
-        Logger::log(sqlQuery);
+        Logger::log("%s", sqlQuery.c_str());
 
         auto items = DatabaseBean<ItemBean>::sql(ctx->db.get(), sqlQuery);
         for(auto &item : items)

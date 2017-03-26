@@ -9,13 +9,15 @@
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <proxygen/lib/utils/Base64.h>
 
-struct Authentication
+struct OAuthHelper
 {
+    /*
     static std::pair<std::string, std::string> dispatchPost(const proxygen::HTTPMessage* headers)
     {
         std::cout << headers->getQueryParam("name") << " " << headers->getQueryParam("pass") << std::endl;
         return {headers->getQueryParam("name"), headers->getQueryParam("pass")};
     }
+    */
 
     static std::pair<std::string, std::string> dispatchBasicAuth(const proxygen::HTTPMessage* headers)
     {

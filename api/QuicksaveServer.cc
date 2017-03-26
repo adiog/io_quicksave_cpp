@@ -1,13 +1,13 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
+#include <env.h>
+
 #include "server/QuicksaveHandler.h"
-#include <Config.h>
 #include <unistd.h>
 #include <bean/DoneTaskBean.h>
 #include <folly/Memory.h>
 #include <folly/io/async/EventBaseManager.h>
-#include <gflags/gflags.h>
 #include <mq/queue.h>
 #include <proxygen/httpserver/HTTPServer.h>
 #include <proxygen/httpserver/RequestHandlerFactory.h>
@@ -35,15 +35,7 @@ public:
     }
 };
 
-void consumeBean(DoneTaskBean bean)
-{
-    std::cout << "Got callback from " << bean.name << std::endl;
-}
 
-void engine_thread()
-{
-    Queue::consume<DoneTaskBean>(consumeBean);
-}
 
 int main(int argc, char* argv[])
 {
@@ -52,19 +44,20 @@ int main(int argc, char* argv[])
     google::InstallFailureSignalHandler();
 
     std::vector<proxygen::HTTPServer::IPConfig> IPs = {
-        {SocketAddress(FLAGS_ip, FLAGS_http_port, true), Protocol::HTTP},
-        {SocketAddress(FLAGS_ip, FLAGS_spdy_port, true), Protocol::SPDY},
-        {SocketAddress(FLAGS_ip, FLAGS_h2_port, true), Protocol::HTTP2},
+        {SocketAddress(FLAGS_IO_QUICKSAVE_API_HOST, FLAGS_IO_QUICKSAVE_API_PORT, true), Protocol::HTTP}
+ /*       {SocketAddress(FLAGS_ip, FLAGS_spdy_port, true), Protocol::SPDY},
+        {SocketAddress(FLAGS_ip, FLAGS_h2_port, true), Protocol::HTTP2},*/
     };
 
-    if (FLAGS_threads <= 0)
+    long int threads = FLAGS_api_threads;
+    if (threads <= 0)
     {
-        FLAGS_threads = sysconf(_SC_NPROCESSORS_ONLN);
-        CHECK(FLAGS_threads > 0);
+        threads = sysconf(_SC_NPROCESSORS_ONLN);
+        CHECK(threads > 0);
     }
 
     proxygen::HTTPServerOptions options;
-    options.threads = static_cast<size_t>(FLAGS_threads);
+    options.threads = static_cast<size_t>(threads);
     options.idleTimeout = std::chrono::milliseconds(60000);
     options.shutdownOn = {SIGINT, SIGTERM};
     options.enableContentCompression = false;
@@ -80,9 +73,6 @@ int main(int argc, char* argv[])
     std::thread t([&]() {
         server.start();
     });
-
-    std::thread engine(engine_thread);
-    engine.join();
 
     t.join();
     return 0;

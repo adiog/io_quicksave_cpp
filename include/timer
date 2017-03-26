@@ -90,16 +90,16 @@ private:
     int max_uid;
 };
 
-class measure
+class measure_here
 {
 public:
-    measure(const char *FILE, int LINE, const char *PRETTY_FUNCTION)
+    measure_here(const char *FILE, int LINE, const char *PRETTY_FUNCTION)
             : file(FILE), line(LINE), pretty_function(PRETTY_FUNCTION)
     {
         timer::start(file, line, pretty_function);
     }
 
-    ~measure()
+    ~measure_here()
     {
         timer::stop(file, line, pretty_function);
     }
@@ -110,10 +110,25 @@ private:
     const char *pretty_function;
 };
 
+class measure
+{
+public:
+    measure()
+    {
+        timer::start();
+    }
+
+    ~measure()
+    {
+        timer::stop();
+    }
+};
+
 #define TIC_HERE timer::get().start(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #define TIC timer::get().start()
 #define TAC_HERE timer::get().stop(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #define TAC timer::get().stop()
-#define MEASURE measure measure_time_##__LINE__(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+#define MEASURE measure measure_time_##__LINE__;
+#define MEASURE_HERE measure_here measure_time_##__LINE__(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 #endif  // __TIMER__
