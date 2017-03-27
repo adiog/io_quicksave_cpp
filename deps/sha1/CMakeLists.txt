@@ -1,0 +1,1 @@
+add_library(sha1 ${CMAKE_CURRENT_SOURCE_DIR}/sha1.cc)

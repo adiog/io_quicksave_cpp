@@ -1,13 +1,12 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_CREATEREQUEST_H
-#define QUICKSAVE_CREATEREQUEST_H
+#pragma once
 
 #include <PluginEngine.h>
 #include <bean/CreateRequestBean.h>
 #include <bean/CreateResponseBean.h>
-#include <databaseBean/DatabaseBeanItem.h>
+#include <databaseBean/DatabaseBeanMeta.h>
 #include <databaseBean/DatabaseBeanTag.h>
 #include <folly/io/IOBuf.h>
 
@@ -22,21 +21,21 @@ public:
     {
         CreateResponseBean createResponseBean;
 
-        item.item_id = DatabaseBean<ItemBean>::insert(ctx->db.get(), item);
+        meta.user_hash = *ctx->userBean.user_hash;
+        meta.meta_hash = DatabaseBean<MetaBean>::insert(ctx->db.get(), meta);
 
-        auto richItemBean = PluginEngine::process(item);
+        auto itemBean = PluginEngine::process(meta);
 
-        DatabaseBean<ItemBean>::update(ctx->db.get(), richItemBean.item);
+        DatabaseBean<MetaBean>::update(ctx->db.get(), itemBean.meta);
 
-        for(auto& tag : richItemBean.tags)
+        for(auto& tag : itemBean.tags)
         {
-            tag.item_id = item.item_id;
+            tag.meta_hash = meta.meta_hash;
+            tag.user_hash = meta.user_hash;
             DatabaseBean<TagBean>::insert(ctx->db.get(), tag);
         }
 
-        createResponseBean.item = item;
+        createResponseBean.item = itemBean;
         return createResponseBean;
     }
 };
-
-#endif

@@ -44,7 +44,7 @@
 #include <amqp.h>
 #include <amqp_framing.h>
 
-#include "utils.h"
+#include "rabbitmq-c-utils.h"
 
 void die(const char *fmt, ...)
 {

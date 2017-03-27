@@ -3,18 +3,20 @@
 
 #include <env.h>
 
-#include <bean/DoneTaskBean.h>
+#include <bean/DatabaseTaskBean.h>
 #include <mq/queue.h>
 #include <thread>
+#include <hash>
+#include <zconf.h>
 
-void consumeBean(DoneTaskBean bean)
+void consumeBean(DatabaseTaskBean bean)
 {
-    std::cout << "Got callback from " << bean.name << std::endl;
+    std::cout << "Got callback from " << bean.beanname << std::endl;
 }
 
 void engine_thread()
 {
-    Queue::consume<DoneTaskBean>(consumeBean);
+    Queue::consume<DatabaseTaskBean>(consumeBean);
 }
 
 int main()

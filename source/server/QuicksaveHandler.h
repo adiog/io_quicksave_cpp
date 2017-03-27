@@ -14,7 +14,6 @@
 #include <bean/MessageBean.h>
 #include <bean/SessionBean.h>
 #include <bean/TokenBean.h>
-#include <databaseBean/DatabaseBeanSession.h>
 #include <databaseBean/DatabaseBeanUser.h>
 #include <folly/io/IOBuf.h>
 #include <http/Exception.h>
@@ -28,8 +27,8 @@
 #include "../../oauth/OAuthHelper.h"
 #include <api/CreateRequest.h>
 #include <api/GenericRequest.h>
-#include <api/ItemDeleteRequest.h>
-#include <api/ItemUpdateRequest.h>
+#include <api/MetaDeleteRequest.h>
+#include <api/MetaUpdateRequest.h>
 #include <api/RetrieveRequest.h>
 #include <api/TagCreateRequest.h>
 #include <api/TagDeleteRequest.h>
@@ -175,13 +174,13 @@ void QuicksaveHandler::handle_post()
         {
             response = GenericRequest<TagDeleteRequest>::handle(&requestContext, document);
         }
-        else if (path == "/item/delete")
+        else if (path == "/meta/delete")
         {
-            response = GenericRequest<ItemDeleteRequest>::handle(&requestContext, document);
+            response = GenericRequest<MetaDeleteRequest>::handle(&requestContext, document);
         }
-        else if (path == "/item/update")
+        else if (path == "/meta/update")
         {
-            response = GenericRequest<ItemUpdateRequest>::handle(&requestContext, document);
+            response = GenericRequest<MetaUpdateRequest>::handle(&requestContext, document);
         }
         else if (path == "/upload")
         {

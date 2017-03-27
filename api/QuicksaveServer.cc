@@ -5,7 +5,6 @@
 
 #include "server/QuicksaveHandler.h"
 #include <unistd.h>
-#include <bean/DoneTaskBean.h>
 #include <folly/Memory.h>
 #include <folly/io/async/EventBaseManager.h>
 #include <mq/queue.h>

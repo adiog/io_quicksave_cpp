@@ -1,0 +1,1 @@
+add_library(rabbitmq-c-utils ${CMAKE_CURRENT_SOURCE_DIR}/rabbitmq-c-utils.cc)

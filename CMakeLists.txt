@@ -22,7 +22,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googletest/inclu
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googlemock/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c/librabbitmq)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils/rabbitmq)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
 
 include_directories(/usr/include/python3.5m)
 
@@ -33,6 +34,7 @@ ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
 
 MACRO(COLLECT_CC current_path)
     MESSAGE("-- CollectCC -- Searching for cc-files in ${current_path}")
@@ -71,14 +73,14 @@ TARGET_LINK_LIBRARIES(qsql antlr4_static)
 
 FILE(GLOB_RECURSE PROJECT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/api_test/**.cc)
 ADD_EXECUTABLE(api_test ${PROJECT_TESTS})
-TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.5m antlr4_static qsql gtest gmock pthread)
+TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4_static qsql gtest gmock pthread SQLiteCpp sqlite3 dl)
 
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
 ADD_EXECUTABLE(api ${PROJECT_MAIN})
-TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} dl python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4_static qsql pthread)
+TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} dl python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4_static qsql pthread sha1)
 
 ADD_EXECUTABLE(post post/post.cc)
-TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils)
+TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1)
 
 ADD_EXECUTABLE(oauth oauth/oauth.cc)
 TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} dl memcached pthread SQLiteCpp sqlite3)

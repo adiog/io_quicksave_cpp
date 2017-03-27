@@ -1,11 +1,10 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_TAGCREATEREQUEST_H
-#define QUICKSAVE_TAGCREATEREQUEST_H
+#pragma once
 
 #include <bean/TagCreateRequestBean.h>
-#include <bean/MessageWithIdBean.h>
+#include <bean/MessageWithHashBean.h>
 #include <databaseBean/DatabaseBeanTag.h>
 #include <folly/io/IOBuf.h>
 
@@ -17,15 +16,13 @@ public:
     template<typename CTX>
     std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
     {
-        tag.user_id = std::make_optional<int>(*(ctx->userBean.user_id));
+        tag.user_hash = *(ctx->userBean.user_hash);
 
-        int tag_id = DatabaseBean<TagBean>::insert(ctx->db.get(), tag);
+        std::string tag_hash = DatabaseBean<TagBean>::insert(ctx->db.get(), tag);
 
-        MessageWithIdBean messageBean;
-        messageBean.id = tag_id;
+        MessageWithHashBean messageBean;
+        messageBean.hash = tag_hash;
         messageBean.message = "OK";
         return messageBean;
     }
 };
-
-#endif

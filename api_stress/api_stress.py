@@ -32,7 +32,7 @@ tags = ['white', 'blue', 'black', 'red', 'green']
 
 authors = ['adiog', 'locust', 'unknown', 'rogers', 'williams']
 
-item_type = ['image', 'selection', 'page', 'text', 'screenshot']
+meta_type = ['image', 'selection', 'page', 'text', 'screenshot']
 
 source_title = ['random', 'blabla', 'locusttitle']
 
@@ -51,8 +51,8 @@ class UserBehavior(TaskSet):
     def on_start(self):
         self.client.verify = False
         self.tags = Queue()
-        self.items = Queue()
-        self.item_ids = set()
+        self.metas = Queue()
+        self.meta_hashes = set()
         self.do_login()
 
     @task(5)
@@ -69,30 +69,29 @@ class UserBehavior(TaskSet):
 
     @task(1)
     def create(self):
-        item = {
+        meta = {
             "author": authors[random.randint(0,4)],
-            "freetext": 'any text is ok',
-            "item_type": item_type[random.randint(0,4)],
+            "text": 'any text is ok',
+            "meta_type": meta_type[random.randint(0,4)],
             "source_title": source_title[random.randint(0,2)],
-            "title": source_title[random.randint(0,2)],
+            "name": source_title[random.randint(0,2)],
             "source_url": source_url[random.randint(0,4)],
-            "url": source_url[random.randint(0,4)]
         }
-        item = json.loads(self.client.post('/create', data=json.dumps({'item': item})).content.decode())['item']
-        self.items.put(item)
-        self.item_ids.add(item['item_id'])
+        meta = json.loads(self.client.post('/create', data=json.dumps({'meta': meta})).content.decode())['item']['meta$']
+        self.metas.put(meta)
+        self.meta_hashes.add(meta['meta_hash'])
 
     @task(3)
     def create_tag(self):
         try:
-            item = self.items.get(block=False)
+            meta = self.metas.get(block=False)
             tag = {
-                "item_id": item['item_id'],
+                "meta_hash": meta['meta_hash'],
                 "name": tags[random.randint(0,4)]
             }
-            message_with_id = json.loads(self.client.post('/tag/create', data=json.dumps({'tag': tag})).content.decode())
-            self.tags.put((message_with_id['id'], item['item_id']))
-            self.items.put(item)
+            message_with_hash = json.loads(self.client.post('/tag/create', data=json.dumps({'tag': tag})).content.decode())
+            self.tags.put((message_with_hash['hash'], meta['meta_hash']))
+            self.metas.put(meta)
         except queue.Empty:
             pass
 
@@ -100,48 +99,47 @@ class UserBehavior(TaskSet):
     @task(3)
     def update_tag(self):
         try:
-            tag_item = self.tags.get(block=False)
-            if tag_item[1] in self.item_ids:
+            tag_meta = self.tags.get(block=False)
+            if tag_meta[1] in self.meta_hashes:
                 tag = {
-                    "item_id": tag_item[1],
-                    "tag_id": tag_item[0],
+                    "meta_hash": tag_meta[1],
+                    "tag_hash": tag_meta[0],
                     "name": tags[random.randint(0,4)]
                 }
                 self.client.post('/tag/update', data=json.dumps({'tag': tag}))
-                self.tags.put(tag_item)
+                self.tags.put(tag_meta)
         except queue.Empty:
             pass
 
     @task(1)
     def delete_tag(self):
         try:
-            tag_item = self.tags.get(block=False)
-            if tag_item[1] in self.item_ids:
-                self.client.post('/tag/delete', data=json.dumps({'tag_id': tag_item[0]}))
+            tag_meta = self.tags.get(block=False)
+            if tag_meta[1] in self.meta_hashes:
+                self.client.post('/tag/delete', data=json.dumps({'tag_hash': tag_meta[0]}))
         except queue.Empty:
             pass
 
     @task(3)
-    def update_item(self):
+    def update_meta(self):
         try:
-            item = self.items.get(block=False)
-            item['author'] = authors[random.randint(0,4)]
-            item['freetext'] = 'any text is ok'
-            item['item_type'] = item_type[random.randint(0,4)]
-            item['source_title'] = source_title[random.randint(0,2)]
-            item['title'] = source_title[random.randint(0,2)]
-            item['source_url'] = source_url[random.randint(0,4)]
-            item['url'] = source_url[random.randint(0,4)]
-            self.client.post('/item/update', data=json.dumps({'item': item}))
-            self.items.put(item)
+            meta = self.metas.get(block=False)
+            meta['author'] = authors[random.randint(0,4)]
+            meta['text'] = 'any text is ok'
+            meta['meta_type'] = meta_type[random.randint(0,4)]
+            meta['source_title'] = source_title[random.randint(0,2)]
+            meta['name'] = source_title[random.randint(0,2)]
+            meta['source_url'] = source_url[random.randint(0,4)]
+            self.client.post('/meta/update', data=json.dumps({'meta': meta}))
+            self.metas.put(meta)
         except queue.Empty:
             pass
 
     @task(1)
-    def delete_item(self):
+    def delete_meta(self):
         try:
-            item = self.items.get(block=False)
-            self.client.post('/item/delete', data=json.dumps({'item_id': item['item_id']}))
+            meta = self.metas.get(block=False)
+            self.client.post('/meta/delete', data=json.dumps({'meta_hash': meta['meta_hash']}))
         except queue.Empty:
             pass
 

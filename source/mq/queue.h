@@ -18,7 +18,7 @@
 #include <functional>
 #include <iostream>
 
-#include "utils.h"
+#include "../../deps/rabbitmq-c-utils/rabbitmq-c-utils.h"
 
 class Queue
 {

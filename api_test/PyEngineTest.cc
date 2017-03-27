@@ -1,7 +1,8 @@
 #include <Python.h>
 #include <gtest/gtest.h>
 #include "PythonBeanAPI.h"
-#include <bean/RichItemBean.h>
+#include <bean/MetaBean.h>
+#include <bean/ItemBean.h>
 #include <timer>
 /*
 TEST(PyEngineTestSuite, SimpleTestCase)
@@ -27,8 +28,8 @@ TEST(PyEngineTestSuite, SimpleTestCase)
 TEST(PyEngineTestSuite, PureEmbedding)
 {
     MEASURE;
-    ItemBean itemBean;
-    itemBean.item_id = 1353;
-    RichItemBean richItemBean = PythonBeanAPI::call<ItemBean, RichItemBean>("process", itemBean);
-    std::cout << richItemBean.to_string() << std::endl;
+    MetaBean metaBean;
+    metaBean.meta_hash = "sha";
+    ItemBean itemBean = PythonBeanAPI::call<MetaBean, ItemBean>("process", metaBean);
+    std::cout << itemBean.to_string() << std::endl;
 }

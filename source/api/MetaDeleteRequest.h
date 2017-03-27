@@ -3,22 +3,24 @@
 
 #pragma once
 
-#include <bean/TagDeleteRequestBean.h>
+#include <bean/MetaDeleteRequestBean.h>
 #include <bean/MessageBean.h>
+#include <databaseBean/DatabaseBeanMeta.h>
 #include <databaseBean/DatabaseBeanTag.h>
 #include <folly/io/IOBuf.h>
 
-class TagDeleteRequest : public TagDeleteRequestBean
+class MetaDeleteRequest : public MetaDeleteRequestBean
 {
 public:
-    using TagDeleteRequestBean::TagDeleteRequestBean;
+    using MetaDeleteRequestBean::MetaDeleteRequestBean;
 
     template<typename CTX>
     std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
     {
         MessageBean messageBean;
 
-        DatabaseBean<TagBean>::remove(ctx->db.get(), tag_hash);
+        DatabaseBean<TagBean>::remove_by(ctx->db.get(), "meta_hash", meta_hash);
+        DatabaseBean<MetaBean>::remove(ctx->db.get(), meta_hash);
         messageBean.message = "OK";
 
         return messageBean;
