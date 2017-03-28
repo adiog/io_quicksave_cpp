@@ -1,0 +1,10 @@
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
+
+#pragma once
+
+#include <experimental/filesystem>
+
+namespace std {
+    namespace filesystem = std::experimental::filesystem;
+}

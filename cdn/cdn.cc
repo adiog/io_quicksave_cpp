@@ -1,16 +1,16 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#include <env.h>
 
-#include "server/QuicksaveHandler.h"
+#include <env.h>
 #include <unistd.h>
 #include <folly/Memory.h>
 #include <folly/io/async/EventBaseManager.h>
+#include <gflags/gflags.h>
 #include <mq/queue.h>
 #include <proxygen/httpserver/HTTPServer.h>
 #include <proxygen/httpserver/RequestHandlerFactory.h>
-
+#include <ContentHandler.h>
 #include <ProxygenHandlerFactory.h>
 
 using folly::EventBase;
@@ -26,13 +26,13 @@ int main(int argc, char* argv[])
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
 
+    std::cout << FLAGS_IO_QUICKSAVE_CDN_PORT << std::endl;
+
     std::vector<proxygen::HTTPServer::IPConfig> IPs = {
-        {SocketAddress(FLAGS_IO_QUICKSAVE_API_HOST, FLAGS_IO_QUICKSAVE_API_PORT, true), Protocol::HTTP}
-        /*       {SocketAddress(FLAGS_ip, FLAGS_spdy_port, true), Protocol::SPDY},
-        {SocketAddress(FLAGS_ip, FLAGS_h2_port, true), Protocol::HTTP2},*/
+        {SocketAddress(FLAGS_IO_QUICKSAVE_CDN_HOST, static_cast<uint16_t >(FLAGS_IO_QUICKSAVE_CDN_PORT), true), Protocol::HTTP}
     };
 
-    long int threads = FLAGS_api_threads;
+    long int threads = FLAGS_cdn_threads;
     if (threads <= 0)
     {
         threads = sysconf(_SC_NPROCESSORS_ONLN);
@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
     options.shutdownOn = {SIGINT, SIGTERM};
     options.enableContentCompression = false;
     options.handlerFactories = proxygen::RequestHandlerChain()
-                                   .addThen<ProxygenHandlerFactory<QuicksaveHandler> >()
-                                   .build();
+            .addThen<ProxygenHandlerFactory<ContentHandler>>()
+            .build();
     options.h2cEnabled = true;
 
     proxygen::HTTPServer server(std::move(options));

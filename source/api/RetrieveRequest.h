@@ -9,7 +9,7 @@
 #include <qsql/qsqlQuery.h>
 #include <databaseBean/DatabaseBeanMeta.h>
 #include <databaseBean/DatabaseBeanTag.h>
-
+#include <databaseBean/DatabaseBeanFile.h>
 
 class RetrieveRequest : public RetrieveRequestBean
 {
@@ -33,7 +33,7 @@ public:
             ItemBean itemBean;
             itemBean.meta = meta;
             itemBean.tags = DatabaseBean<TagBean>::get_by(ctx->db.get(), "meta_hash", *meta.meta_hash);
-
+            itemBean.files = DatabaseBean<FileBean>::get_by(ctx->db.get(), "meta_hash", *meta.meta_hash);
             retrieveResponseBean.items.push_back(itemBean);
         }
         retrieveResponseBean.total = metas.size();

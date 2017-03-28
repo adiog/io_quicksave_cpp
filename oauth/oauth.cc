@@ -11,30 +11,13 @@
 #include <proxygen/httpserver/HTTPServer.h>
 #include <proxygen/httpserver/RequestHandlerFactory.h>
 #include <OAuthHandler.h>
+#include <ProxygenHandlerFactory.h>
 
 using folly::EventBase;
 using folly::EventBaseManager;
 using folly::SocketAddress;
 
 using Protocol = proxygen::HTTPServer::Protocol;
-
-class OAuthHandlerFactory : public proxygen::RequestHandlerFactory
-{
-public:
-    void onServerStart(folly::EventBase* evb) noexcept override
-    {
-    }
-
-    void onServerStop() noexcept override
-    {
-    }
-
-    proxygen::RequestHandler* onRequest(proxygen::RequestHandler*, proxygen::HTTPMessage*) noexcept override
-    {
-        return new OAuthHandler();
-    }
-};
-
 
 
 int main(int argc, char* argv[])
@@ -61,7 +44,7 @@ int main(int argc, char* argv[])
     options.shutdownOn = {SIGINT, SIGTERM};
     options.enableContentCompression = false;
     options.handlerFactories = proxygen::RequestHandlerChain()
-            .addThen<OAuthHandlerFactory>()
+            .addThen<ProxygenHandlerFactory<OAuthHandler>>()
             .build();
     options.h2cEnabled = true;
 

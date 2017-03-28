@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS -O0)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/api)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cdn)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/oauth)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
@@ -77,12 +78,14 @@ TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4_stati
 
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
 ADD_EXECUTABLE(api ${PROJECT_MAIN})
-TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} dl python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4_static qsql pthread sha1)
+TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} dl python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4_static qsql pthread sha1 stdc++fs)
 
 ADD_EXECUTABLE(post post/post.cc)
 TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1)
 
 ADD_EXECUTABLE(oauth oauth/oauth.cc)
 TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} dl memcached pthread SQLiteCpp sqlite3)
-#ADD_EXECUTABLE(mq mq.cpp)
-#TARGET_LINK_LIBRARIES(mq rabbitmq-util rabbitmq-static pthread)
+
+
+ADD_EXECUTABLE(cdn cdn/cdn.cc)
+TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} dl memcached pthread SQLiteCpp sqlite3)

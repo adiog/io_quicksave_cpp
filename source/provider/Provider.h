@@ -1,9 +1,7 @@
-//
-// Created by adiog on 16.03.17.
-//
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_PROVIDER_H
-#define QUICKSAVE_PROVIDER_H
+#pragma once
 
 #include <string>
 #include <util/base64.h>
@@ -11,12 +9,11 @@
 class Provider
 {
 public:
-    void accept_base(std::string& filename, std::string& filebase)
+    int accept_base(std::string& meta_hash, std::string & file_hash, std::string& filename, std::string& filebase)
     {
-        this->accept(filename, qs::Base64::decode(filebase));
+        return this->accept(meta_hash, file_hash, filename, qs::Base64::decode(filebase));
     }
 
-    virtual void accept(std::string& filename, std::string file) const = 0;
+    virtual int accept(std::string& meta_hash, std::string & file_hash, std::string& filename, std::string file) const = 0;
 };
 
-#endif  //QUICKSAVE_PROVIDER_H

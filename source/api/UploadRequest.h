@@ -8,6 +8,7 @@
 #include <bean/MessageBean.h>
 #include <folly/io/IOBuf.h>
 #include <provider/FileSystem.h>
+#include <databaseBean/DatabaseBeanFile.h>
 
 class UploadRequest : public UploadRequestBean
 {
@@ -17,9 +18,19 @@ public:
     template<typename CTX>
     std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
     {
-        std::unique_ptr<Provider> provider = std::make_unique<FileSystem>("/io.quicksave.cdn/"); // TODO
+        std::unique_ptr<Provider> provider = std::make_unique<FileSystem>(ctx->userBean.filesystemConnectionString);
 
-                provider->accept_base(filename, filebase);
+        FileBean file;
+        file.meta_hash = meta_hash;
+        file.filename = filename;
+        file.mimetype = mimetype;
+        file.file_hash = DatabaseBean<FileBean>::insert(ctx->db.get(), file);
+
+        int filesize = provider->accept_base(meta_hash, *file.file_hash, filename, filebase);
+
+        file.filesize = filesize;
+        DatabaseBean<FileBean>::update(ctx->db.get(), file);
+
 
         /*
         std::cout << filename << std::endl;
@@ -28,9 +39,10 @@ public:
         */
 
 
-        MessageBean messageBean;
+        MessageWithHashBean messageBean;
 
         messageBean.message = "OK";
+        messageBean.hash = *file.file_hash;
         return messageBean;
     }
 };
