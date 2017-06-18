@@ -23,6 +23,14 @@ using Protocol = proxygen::HTTPServer::Protocol;
 int main(int argc, char* argv[])
 {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+    std::cout << "cdn:\t" << FLAGS_IO_QUICKSAVE_CDN_HOST << ":" << FLAGS_IO_QUICKSAVE_CDN_PORT << std::endl;
+    std::cout << "master:\t" << FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING << std::endl;
+    std::cout << "mem:\t" << FLAGS_IO_QUICKSAVE_MEMCACHED_HOST << ":" << FLAGS_IO_QUICKSAVE_MEMCACHED_PORT << std::endl;
+    std::cout << "mq:\t" << FLAGS_IO_QUICKSAVE_MQ_HOST << ":" << FLAGS_IO_QUICKSAVE_MQ_PORT << std::endl;
+
+    FLAGS_IO_QUICKSAVE_MEMCACHED_CONNECTION_STRING = std::string("--SERVER=") + FLAGS_IO_QUICKSAVE_MEMCACHED_HOST + std::string(":") + FLAGS_IO_QUICKSAVE_MEMCACHED_PORT;
+
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
 

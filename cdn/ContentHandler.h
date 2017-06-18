@@ -29,6 +29,8 @@
 #include <bean/FileBean.h>
 #include <databaseBean/DatabaseBeanFile.h>
 #include <fstream>
+#include <database/ProviderFactory.h>
+#include <storage/StorageFactory.h>
 
 class ContentHandler : public ProxygenHandler
 {
@@ -53,9 +55,11 @@ public:
         {
             SessionBean sessionBean = OAuthAPI::get_session(token);
 
-            RequestContext<SQLite::Database> requestContext;
+            RequestContext requestContext;
 
-            requestContext.db = std::make_unique<SQLite::Database>(sessionBean.user.databaseConnectionString, SQLite::OPEN_READWRITE);
+            auto databaseConnection = database::ProviderFactory::create(sessionBean.user.databaseConnectionString);
+            auto transaction = databaseConnection->getTransaction();
+            requestContext.databaseTransaction = transaction.get();
             requestContext.userBean = sessionBean.user;
 
             auto path_split = split(path, '/');
@@ -73,7 +77,7 @@ public:
                 return reply(403);
             }
 
-            auto meta = DatabaseBean<MetaBean>::get(requestContext.db.get(), meta_hash);
+            auto meta = DatabaseBean<MetaBean>::get(requestContext.databaseTransaction, meta_hash);
 
             if (!meta)
             {
@@ -84,7 +88,7 @@ public:
                 return reply(401);
             }
 
-            auto file = DatabaseBean<FileBean>::get(requestContext.db.get(), file_hash);
+            auto file = DatabaseBean<FileBean>::get(requestContext.databaseTransaction, file_hash);
 
             if (!file)
             {
@@ -95,24 +99,14 @@ public:
                 return reply(400);
             }
 
-            std::string filePath = Format::format("%s/%s/%s/%s", requestContext.userBean.filesystemConnectionString.c_str(), meta_hash.c_str(), file->file_hash->c_str(), file->filename.c_str());
+            std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(requestContext, requestContext.userBean.storageConnectionString);
 
-            std::ifstream fileStream(filePath, std::ios::binary);
-            std::ostringstream ss;
-            ss << fileStream.rdbuf();
-            const std::string& s = ss.str();
-            //std::vector<char> vec(s.begin(), s.end());
-
-            //std::ifstream fileStream(file->filename.c_str()); //, std::ios::binary);
-
-            //std::string diskfile;
-            ///std::copy(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>(), std::back_inserter(diskfile));
-
+            std::string filebody = storage->read(*file);
 
             proxygen::ResponseBuilder(downstream_)
                     .status(200, "OK")
                     .header("Content-Type", file->mimetype)
-                    .body(s)
+                    .body(filebody)
                     .sendWithEOM();
         }
         else
