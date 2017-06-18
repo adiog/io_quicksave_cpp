@@ -1,9 +1,7 @@
-//
-// Created by adiog on 16.03.17.
-//
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_QUEUE_H
-#define QUICKSAVE_QUEUE_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +16,8 @@
 #include <functional>
 #include <iostream>
 
-#include "../../deps/rabbitmq-c-utils/rabbitmq-c-utils.h"
+#include "rabbitmq-c-utils.h"
+
 
 class Queue
 {
@@ -33,8 +32,8 @@ public:
         amqp_socket_t *socket = NULL;
         amqp_connection_state_t conn;
 
-        hostname = "localhost";
-        port = 5672;
+        hostname = FLAGS_IO_QUICKSAVE_MQ_HOST.c_str();
+        port = FLAGS_IO_QUICKSAVE_MQ_PORT;
         queuename = "response";
 
         conn = amqp_new_connection();
@@ -115,5 +114,3 @@ public:
         die_on_error(amqp_destroy_connection(conn), "Ending connection");
     }
 };
-
-#endif  //QUICKSAVE_QUEUE_H

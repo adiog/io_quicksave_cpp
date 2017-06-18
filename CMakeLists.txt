@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(quicksave)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS -O0)
+set(CMAKE_CXX_FLAGS "-O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/api)
@@ -16,7 +16,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/libbeans)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/plugin-engine)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/qsql)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp/runtime/src)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp/runtime/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rapidjson/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/beans/cppbeans/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googletest/include)
@@ -25,17 +25,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c/librabbitmq)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/PrivacyGuard)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres/include)
 
 include_directories(/usr/include/python3.5m)
 
 SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags)
 
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
-ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/PrivacyGuard)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres)
 
 MACRO(COLLECT_CC current_path)
     MESSAGE("-- CollectCC -- Searching for cc-files in ${current_path}")
@@ -70,22 +73,30 @@ COLLECT_CC(${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 FILE(GLOB_RECURSE PROJECT_QSQL ${CMAKE_CURRENT_SOURCE_DIR}/generated/qsql/**.cpp)
 ADD_LIBRARY(qsql ${PROJECT_QSQL})
-TARGET_LINK_LIBRARIES(qsql antlr4_static)
+TARGET_LINK_LIBRARIES(qsql dl antlr4-runtime)
 
 FILE(GLOB_RECURSE PROJECT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/api_test/**.cc)
 ADD_EXECUTABLE(api_test ${PROJECT_TESTS})
-TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4_static qsql gtest gmock pthread SQLiteCpp sqlite3 dl)
+TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl)
 
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
 ADD_EXECUTABLE(api ${PROJECT_MAIN})
-TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} dl python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4_static qsql pthread sha1 stdc++fs)
+TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl)
 
 ADD_EXECUTABLE(post post/post.cc)
-TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1)
+TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl)
 
 ADD_EXECUTABLE(oauth oauth/oauth.cc)
-TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} dl memcached pthread SQLiteCpp sqlite3)
+TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} postgres pq memcached pthread SQLiteCpp sqlite3 dl)
 
 
 ADD_EXECUTABLE(cdn cdn/cdn.cc)
-TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} dl memcached pthread SQLiteCpp sqlite3)
+TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} postgres pq memcached pthread SQLiteCpp sqlite3 stdc++fs dl)
+
+FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
+ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
+TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme PrivacyGuard dl)
+
+
+ADD_EXECUTABLE(psql deps/postgres/src/test/postgres/test.cpp)
+TARGET_LINK_LIBRARIES(psql postgres pq SQLiteCpp sqlite3 pthread sha1 dl)

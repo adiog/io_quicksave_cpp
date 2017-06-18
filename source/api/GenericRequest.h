@@ -8,8 +8,7 @@ template <typename Request>
 class GenericRequest
 {
 public:
-    template<typename RequestContext>
-    static std::unique_ptr<folly::IOBuf> handle(RequestContext *ctx, rapidjson::Document &document)
+    static std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx, rapidjson::Document &document)
     {
         Request request = Request(document);
         return request.handle(ctx);

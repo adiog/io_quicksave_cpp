@@ -13,16 +13,15 @@ class MetaUpdateRequest : public MetaUpdateRequestBean
 public:
     using MetaUpdateRequestBean::MetaUpdateRequestBean;
 
-    template<typename CTX>
-    std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
         MessageBean messageBean;
 
-        auto updated_meta = DatabaseBean<MetaBean>::get(ctx->db.get(), *meta.meta_hash);
+        auto updated_meta = DatabaseBean<MetaBean>::get(ctx.databaseTransaction, *meta.meta_hash);
 
         if (updated_meta) {
             updated_meta->update(meta);
-            DatabaseBean<MetaBean>::update(ctx->db.get(), *updated_meta);
+            DatabaseBean<MetaBean>::update(ctx.databaseTransaction, *updated_meta);
             messageBean.message = "OK";
         } else {
             messageBean.message = "Not found";

@@ -13,12 +13,11 @@ class TagCreateRequest : public TagCreateRequestBean
 public:
     using TagCreateRequestBean::TagCreateRequestBean;
 
-    template<typename CTX>
-    std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
-        tag.user_hash = *(ctx->userBean.user_hash);
+        tag.user_hash = *(ctx.userBean.user_hash);
 
-        std::string tag_hash = DatabaseBean<TagBean>::insert(ctx->db.get(), tag);
+        std::string tag_hash = DatabaseBean<TagBean>::insert(ctx.databaseTransaction, tag);
 
         MessageWithHashBean messageBean;
         messageBean.hash = tag_hash;

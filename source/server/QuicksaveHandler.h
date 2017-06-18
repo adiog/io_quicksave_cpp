@@ -36,7 +36,7 @@
 #include <api/UploadRequest.h>
 #include <http/Exception.h>
 #include <server/RequestContext.h>
-
+#include <database/ProviderFactory.h>
 
 class QuicksaveHandler : public ProxygenHandler
 {
@@ -59,7 +59,7 @@ public:
 
 
 private:
-    RequestContext<SQLite::Database> requestContext;
+    RequestContext requestContext;
     rapidjson::Document document;
 
     std::unique_ptr<folly::IOBuf> response;
@@ -114,7 +114,8 @@ void QuicksaveHandler::handle_post()
     const std::string path = headers_->getPath();
     const std::string contiguousBody = Buffer::to_string(body_);
 
-    Logger::log("< [%luB] %s", contiguousBody.length(), contiguousBody.c_str());
+    int limit = std::min(static_cast<int>(contiguousBody.length()), 512);
+    Logger::log("< [%luB] %s", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
 
     if (path == "/token/put")
     {
@@ -149,42 +150,44 @@ void QuicksaveHandler::handle_post()
 
     SessionBean sessionBean = OAuthAPI::get_session(token);
 
-    requestContext.db = std::make_unique<SQLite::Database>(sessionBean.user.databaseConnectionString, SQLite::OPEN_READWRITE);
+    std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(sessionBean.user.databaseConnectionString);
+    std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
+    requestContext.databaseTransaction = databaseTransaction.get();
     requestContext.userBean = sessionBean.user;
 
     try
     {
         if (path == "/create")
         {
-            response = GenericRequest<CreateRequest>::handle(&requestContext, document);
+            response = GenericRequest<CreateRequest>::handle(requestContext, document);
         }
         else if (path == "/retrieve")
         {
-            response = GenericRequest<RetrieveRequest>::handle(&requestContext, document);
+            response = GenericRequest<RetrieveRequest>::handle(requestContext, document);
         }
         else if (path == "/tag/create")
         {
-            response = GenericRequest<TagCreateRequest>::handle(&requestContext, document);
+            response = GenericRequest<TagCreateRequest>::handle(requestContext, document);
         }
         else if (path == "/tag/update")
         {
-            response = GenericRequest<TagUpdateRequest>::handle(&requestContext, document);
+            response = GenericRequest<TagUpdateRequest>::handle(requestContext, document);
         }
         else if (path == "/tag/delete")
         {
-            response = GenericRequest<TagDeleteRequest>::handle(&requestContext, document);
+            response = GenericRequest<TagDeleteRequest>::handle(requestContext, document);
         }
         else if (path == "/meta/delete")
         {
-            response = GenericRequest<MetaDeleteRequest>::handle(&requestContext, document);
+            response = GenericRequest<MetaDeleteRequest>::handle(requestContext, document);
         }
         else if (path == "/meta/update")
         {
-            response = GenericRequest<MetaUpdateRequest>::handle(&requestContext, document);
+            response = GenericRequest<MetaUpdateRequest>::handle(requestContext, document);
         }
         else if (path == "/upload")
         {
-            response = GenericRequest<UploadRequest>::handle(&requestContext, document);
+            response = GenericRequest<UploadRequest>::handle(requestContext, document);
         }
         else
         {
@@ -196,6 +199,7 @@ void QuicksaveHandler::handle_post()
         return reply(400);
     }
 
+    requestContext.databaseTransaction->commit();
     return reply_response(response);
 }
 

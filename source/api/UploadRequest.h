@@ -7,7 +7,7 @@
 #include <bean/UploadRequestBean.h>
 #include <bean/MessageBean.h>
 #include <folly/io/IOBuf.h>
-#include <provider/FileSystem.h>
+#include <storage/StorageFactory.h>
 #include <databaseBean/DatabaseBeanFile.h>
 
 class UploadRequest : public UploadRequestBean
@@ -15,29 +15,21 @@ class UploadRequest : public UploadRequestBean
 public:
     using UploadRequestBean::UploadRequestBean;
 
-    template<typename CTX>
-    std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
-        std::unique_ptr<Provider> provider = std::make_unique<FileSystem>(ctx->userBean.filesystemConnectionString);
+        std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
+
+        const std::string filebody = qs::Base64::decode(filebase);
+
+        storage->save(meta_hash, filename, filebody);
 
         FileBean file;
         file.meta_hash = meta_hash;
         file.filename = filename;
         file.mimetype = mimetype;
-        file.file_hash = DatabaseBean<FileBean>::insert(ctx->db.get(), file);
+        file.filesize = filebody.size();
 
-        int filesize = provider->accept_base(meta_hash, *file.file_hash, filename, filebase);
-
-        file.filesize = filesize;
-        DatabaseBean<FileBean>::update(ctx->db.get(), file);
-
-
-        /*
-        std::cout << filename << std::endl;
-        std::cout << filebase << std::endl;
-        std::cout << qs::Base64::decode(filebase) << std::endl;
-        */
-
+        file.file_hash = DatabaseBean<FileBean>::insert(ctx.databaseTransaction, file);
 
         MessageWithHashBean messageBean;
 

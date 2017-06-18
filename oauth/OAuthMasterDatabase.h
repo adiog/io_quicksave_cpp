@@ -8,17 +8,27 @@
 #include <libmemcached/memcached.hpp>
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <databaseBean/DatabaseBeanUser.h>
+#include <database/Transaction.h>
+#include <database/Connection.h>
+#include <database/ProviderFactory.h>
+
 
 class OAuthMasterDatabase
 {
 public:
     static std::optional<UserBean> authenticateWithPassword(std::pair<std::string, std::string> credentials)
     {
-        std::string masterDatabaseString = FLAGS_IO_QUICKSAVE_DB_MASTER;
-        auto db = std::make_unique<SQLite::Database>(masterDatabaseString.c_str(),
-                                                     SQLite::OPEN_READWRITE);
+        std::string masterDatabaseConnectionString = FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING;
 
-        List<UserBean> userBeanList = DatabaseBean<UserBean>::get_by(db.get(), "username", credentials.first);
+        std::cout << masterDatabaseConnectionString << std::endl;
+
+        std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(masterDatabaseConnectionString);
+        std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
+
+        List<UserBean> userBeanList = DatabaseBean<UserBean>::get_by(databaseTransaction.get(), "username", credentials.first);
+
+        std::cout << userBeanList.size() << std::endl;
+
 
         if ((userBeanList.size() == 1) && (credentials.second == userBeanList[0].password))
         {

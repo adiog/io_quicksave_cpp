@@ -13,12 +13,11 @@ class TagDeleteRequest : public TagDeleteRequestBean
 public:
     using TagDeleteRequestBean::TagDeleteRequestBean;
 
-    template<typename CTX>
-    std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
         MessageBean messageBean;
 
-        DatabaseBean<TagBean>::remove(ctx->db.get(), tag_hash);
+        DatabaseBean<TagBean>::remove(ctx.databaseTransaction, tag_hash);
         messageBean.message = "OK";
 
         return messageBean;

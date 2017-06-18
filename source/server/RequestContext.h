@@ -6,13 +6,13 @@
 
 #include <bean/UserBean.h>
 #include <bits/unique_ptr.h>
+#include <database/Transaction.h>
 
-template <typename DB>
 struct RequestContext
 {
     UserBean userBean;
     std::string session_hash;
-    std::unique_ptr<DB> db;
+    database::Transaction *databaseTransaction;
 };
 
 

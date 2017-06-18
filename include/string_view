@@ -1,0 +1,11 @@
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
+
+#pragma once
+
+#include <experimental/string_view>
+
+namespace std {
+//    template<typename... Forward>
+    using string_view = std::experimental::basic_string_view<char>;
+}

@@ -16,3 +16,6 @@
 [submodule "deps/rabbitmq-c"]
 	path = deps/rabbitmq-c
 	url = https://github.com/alanxz/rabbitmq-c
+[submodule "deps/gpgmepp"]
+	path = deps/gpgmepp
+	url = https://github.com/adiog/gpgmepp

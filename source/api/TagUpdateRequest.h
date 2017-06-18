@@ -13,16 +13,15 @@ class TagUpdateRequest : public TagUpdateRequestBean
 public:
     using TagUpdateRequestBean::TagUpdateRequestBean;
 
-    template<typename CTX>
-    std::unique_ptr<folly::IOBuf> handle(CTX*ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
         MessageBean messageBean;
 
-        auto updated_tag = DatabaseBean<TagBean>::get(ctx->db.get(), *tag.tag_hash);
+        auto updated_tag = DatabaseBean<TagBean>::get(ctx.databaseTransaction, *tag.tag_hash);
 
         if (updated_tag) {
             updated_tag->update(tag);
-            DatabaseBean<TagBean>::update(ctx->db.get(), *updated_tag);
+            DatabaseBean<TagBean>::update(ctx.databaseTransaction, *updated_tag);
             messageBean.message = "OK";
         } else {
             messageBean.message = "Not found";
