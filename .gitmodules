@@ -10,3 +10,6 @@
 [submodule "deps/rabbitmq-c"]
 	path = deps/rabbitmq-c
 	url = https://github.com/alanxz/rabbitmq-c
+[submodule "deps/postgres"]
+	path = deps/postgres
+	url = https://github.com/adiog/postgres
