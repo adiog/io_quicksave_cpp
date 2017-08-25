@@ -4,9 +4,6 @@
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest
-[submodule "deps/postgres"]
-	path = deps/postgres
-	url = https://github.com/adiog/postgres
 [submodule "deps/SQLiteCpp"]
 	path = deps/SQLiteCpp
 	url = https://github.com/SRombauts/SQLiteCpp

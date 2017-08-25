@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(quicksave)
 
-set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
+#set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-ggdb -O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
 
@@ -98,5 +98,3 @@ ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
 TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme dl)
 
 
-ADD_EXECUTABLE(psql deps/postgres/src/test/postgres/test.cpp)
-TARGET_LINK_LIBRARIES(psql postgres pq SQLiteCpp sqlite3 pthread sha1 dl)
