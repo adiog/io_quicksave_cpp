@@ -30,6 +30,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/PrivacyGuard)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres/include)
 
 include_directories(/usr/include/python3.5m)
+include_directories(/usr/include/antlr4-runtime)
 
 SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags)
 
