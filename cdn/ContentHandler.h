@@ -14,7 +14,7 @@
 #include <bean/SessionBean.h>
 #include <bean/TokenBean.h>
 #include <bean/TokenRequestBean.h>
-#include <databaseBean/DatabaseBeanUser.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 #include <http/Exception.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
@@ -25,9 +25,8 @@
 #include <server/RequestContext.h>
 
 #include <bean/MetaBean.h>
-#include <databaseBean/DatabaseBeanMeta.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <bean/FileBean.h>
-#include <databaseBean/DatabaseBeanFile.h>
 #include <fstream>
 #include <database/ProviderFactory.h>
 #include <storage/StorageFactory.h>
@@ -77,7 +76,7 @@ public:
                 return reply(403);
             }
 
-            auto meta = DatabaseBean<MetaBean>::get(requestContext.databaseTransaction, meta_hash);
+            auto meta = database::Action::get<MetaBean>(requestContext.databaseTransaction, meta_hash);
 
             if (!meta)
             {
@@ -88,7 +87,7 @@ public:
                 return reply(401);
             }
 
-            auto file = DatabaseBean<FileBean>::get(requestContext.databaseTransaction, file_hash);
+            auto file = database::Action::get<FileBean>(requestContext.databaseTransaction, file_hash);
 
             if (!file)
             {

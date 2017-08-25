@@ -7,8 +7,7 @@
 #include <bean/CreateRequestBean.h>
 #include <bean/CreateResponseBean.h>
 #include <bean/InternalCreateRequestBean.h>
-#include <databaseBean/DatabaseBeanMeta.h>
-#include <databaseBean/DatabaseBeanTag.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 #include <storage/StorageFactory.h>
 
@@ -22,24 +21,24 @@ public:
         CreateResponseBean createResponseBean;
 
         meta.user_hash = *ctx.userBean.user_hash;
-        meta.meta_hash = DatabaseBean<MetaBean>::insert(ctx.databaseTransaction, meta);
+        meta.meta_hash = database::Action::insert<MetaBean>(ctx.databaseTransaction, meta);
 
         InternalCreateRequestBean internalCreateRequestBean;
 
         internalCreateRequestBean.createRequest = *this;
         internalCreateRequestBean.storageConnectionString = ctx.userBean.storageConnectionString;
         internalCreateRequestBean.databaseConnectionString = ctx.userBean.databaseConnectionString;
-        internalCreateRequestBean.keys = DatabaseBean<KeyBean>::get_by(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
+        internalCreateRequestBean.keys = database::Action::get_by<KeyBean>(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
 
         auto itemBean = PluginEngine::process(internalCreateRequestBean);
 
-        DatabaseBean<MetaBean>::update(ctx.databaseTransaction, itemBean.meta);
+        database::Action::update<MetaBean>(ctx.databaseTransaction, itemBean.meta);
 
         for(auto& tag : itemBean.tags)
         {
             tag.meta_hash = meta.meta_hash;
             tag.user_hash = meta.user_hash;
-            DatabaseBean<TagBean>::insert(ctx.databaseTransaction, tag);
+            database::Action::insert<TagBean>(ctx.databaseTransaction, tag);
         }
 
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);

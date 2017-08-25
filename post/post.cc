@@ -8,6 +8,8 @@
 #include <thread>
 #include <hash>
 #include <zconf.h>
+
+#include <database/Action.h>
 #include <databaseBean/DatabaseBeans.h>
 #include <database/ProviderFactory.h>
 
@@ -15,13 +17,13 @@
 template<typename DB, typename Bean>
 void insert(DB *db, Bean bean)
 {
-    DatabaseBean<Bean>::insert(db, bean);
+    database::Action::insert(db, bean);
 }
 
 template<typename DB, typename Bean>
 void update(DB *db, Bean bean)
 {
-    DatabaseBean<Bean>::insert(db, bean);
+    database::Action::insert(db, bean);
 }
 
 template<typename DB, typename Bean>

@@ -12,6 +12,7 @@ namespace storage {
 class Storage
 {
 public:
+    virtual ~Storage() = default;
     virtual void init(const std::string& metaHash) abstract;
     virtual void save(const std::string& metaHash, const std::string& filename, const std::string& file) abstract;
     virtual std::string read(const FileBean& fileBean) const abstract;

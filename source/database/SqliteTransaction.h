@@ -8,7 +8,7 @@
 
 namespace database {
 
-class SqliteTransaction : public database::Transaction
+class SqliteTransaction : public Transaction
 {
 public:
     ~SqliteTransaction()
@@ -30,6 +30,11 @@ public:
     void do_rollback() override
     {
    //     sqliteConnection->exec("ROLLBACK TRANSACTION;");
+    }
+
+    TransactionType getRTTI() const override
+    {
+        return database::TransactionType::Sqlite;
     }
 
     SQLite::Database * get()

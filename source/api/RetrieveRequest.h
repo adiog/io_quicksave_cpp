@@ -7,9 +7,7 @@
 #include <bean/RetrieveResponseBean.h>
 #include <folly/io/IOBuf.h>
 #include <qsql/qsqlQuery.h>
-#include <databaseBean/DatabaseBeanMeta.h>
-#include <databaseBean/DatabaseBeanTag.h>
-#include <databaseBean/DatabaseBeanFile.h>
+#include <databaseBean/DatabaseBeans.h>
 
 class RetrieveRequest : public RetrieveRequestBean
 {
@@ -27,12 +25,12 @@ public:
 
             Logger::log("%s", sqlQuery.c_str());
 
-            auto metas = DatabaseBean<MetaBean>::sql(ctx.databaseTransaction, sqlQuery);
+            auto metas = database::Action::sql<MetaBean>(ctx.databaseTransaction, sqlQuery);
             for (auto &meta : metas) {
                 ItemBean itemBean;
                 itemBean.meta = meta;
-                itemBean.tags = DatabaseBean<TagBean>::get_by(ctx.databaseTransaction, "meta_hash", *meta.meta_hash);
-                itemBean.files = DatabaseBean<FileBean>::get_by(ctx.databaseTransaction, "meta_hash", *meta.meta_hash);
+                itemBean.tags = database::Action::get_by<TagBean>(ctx.databaseTransaction, "meta_hash", *meta.meta_hash);
+                itemBean.files = database::Action::get_by<FileBean>(ctx.databaseTransaction, "meta_hash", *meta.meta_hash);
                 retrieveResponseBean.items.push_back(itemBean);
             }
             retrieveResponseBean.total = metas.size();

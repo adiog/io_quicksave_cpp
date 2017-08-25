@@ -5,8 +5,12 @@
 
 #include <style>
 
-
 namespace database {
+
+enum class TransactionType
+{
+    Sqlite, Postgres
+};
 
 class Transaction
 {
@@ -35,6 +39,9 @@ public:
 
     virtual void do_commit() abstract;
     virtual void do_rollback() abstract;
+
+    virtual TransactionType getRTTI() const = 0;
+
 
 private:
     bool closed = false;

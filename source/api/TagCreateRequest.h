@@ -5,7 +5,7 @@
 
 #include <bean/TagCreateRequestBean.h>
 #include <bean/MessageWithHashBean.h>
-#include <databaseBean/DatabaseBeanTag.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 
 class TagCreateRequest : public TagCreateRequestBean
@@ -17,7 +17,7 @@ public:
     {
         tag.user_hash = *(ctx.userBean.user_hash);
 
-        std::string tag_hash = DatabaseBean<TagBean>::insert(ctx.databaseTransaction, tag);
+        std::string tag_hash = database::Action::insert<TagBean>(ctx.databaseTransaction, tag);
 
         MessageWithHashBean messageBean;
         messageBean.hash = tag_hash;

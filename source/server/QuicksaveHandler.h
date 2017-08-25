@@ -14,7 +14,7 @@
 #include <bean/MessageBean.h>
 #include <bean/SessionBean.h>
 #include <bean/TokenBean.h>
-#include <databaseBean/DatabaseBeanUser.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 #include <http/Exception.h>
 #include <proxygen/httpserver/ResponseBuilder.h>

@@ -5,7 +5,7 @@
 
 #include <bean/TagUpdateRequestBean.h>
 #include <bean/MessageBean.h>
-#include <databaseBean/DatabaseBeanTag.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 
 class TagUpdateRequest : public TagUpdateRequestBean
@@ -17,11 +17,11 @@ public:
     {
         MessageBean messageBean;
 
-        auto updated_tag = DatabaseBean<TagBean>::get(ctx.databaseTransaction, *tag.tag_hash);
+        auto updated_tag = database::Action::get<TagBean>(ctx.databaseTransaction, *tag.tag_hash);
 
         if (updated_tag) {
             updated_tag->update(tag);
-            DatabaseBean<TagBean>::update(ctx.databaseTransaction, *updated_tag);
+            database::Action::update<TagBean>(ctx.databaseTransaction, *updated_tag);
             messageBean.message = "OK";
         } else {
             messageBean.message = "Not found";

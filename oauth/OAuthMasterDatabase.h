@@ -1,17 +1,16 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_OAUTHMASTERDATABASE_H
-#define QUICKSAVE_OAUTHMASTERDATABASE_H
+#pragma once
 
 #include <string>
 #include <libmemcached/memcached.hpp>
 #include <SQLiteCpp/SQLiteCpp.h>
-#include <databaseBean/DatabaseBeanUser.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <database/Transaction.h>
 #include <database/Connection.h>
 #include <database/ProviderFactory.h>
-
+#include <database/Action.h>
 
 class OAuthMasterDatabase
 {
@@ -25,7 +24,7 @@ public:
         std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(masterDatabaseConnectionString);
         std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
 
-        List<UserBean> userBeanList = DatabaseBean<UserBean>::get_by(databaseTransaction.get(), "username", credentials.first);
+        List<UserBean> userBeanList = database::Action::get_by<UserBean>(databaseTransaction.get(), "username", credentials.first);
 
         std::cout << userBeanList.size() << std::endl;
 
@@ -43,4 +42,3 @@ public:
     }
 };
 
-#endif

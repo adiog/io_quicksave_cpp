@@ -5,9 +5,9 @@
 
 #include <storage/StorageProvider.h>
 #include <storage/LocalStorage.h>
-#include <databaseBean/DatabaseBeanKey.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <util/split>
-
+#include <database/Action.h>
 
 namespace storage {
 
@@ -57,7 +57,7 @@ public:
         std::string keyPath = Format::format("/keys/%s_id_rsa", ctx.userBean.user_hash->c_str());
         std::string sshPath = Format::format("/sshfs/%s", ctx.userBean.user_hash->c_str());
 
-        auto keys = DatabaseBean<KeyBean>::get_by(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
+        auto keys = database::Action::get_by<KeyBean>(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
         for(auto &key : keys)
         {
             if (key.name == keyName)

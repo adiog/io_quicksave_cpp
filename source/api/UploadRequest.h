@@ -8,7 +8,7 @@
 #include <bean/MessageBean.h>
 #include <folly/io/IOBuf.h>
 #include <storage/StorageFactory.h>
-#include <databaseBean/DatabaseBeanFile.h>
+#include <databaseBean/DatabaseBeans.h>
 
 class UploadRequest : public UploadRequestBean
 {
@@ -29,7 +29,7 @@ public:
         file.mimetype = mimetype;
         file.filesize = filebody.size();
 
-        file.file_hash = DatabaseBean<FileBean>::insert(ctx.databaseTransaction, file);
+        file.file_hash = database::Action::insert<FileBean>(ctx.databaseTransaction, file);
 
         MessageWithHashBean messageBean;
 

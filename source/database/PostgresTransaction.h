@@ -32,6 +32,11 @@ public:
         postgresTransaction->rollback();
     }
 
+    TransactionType getRTTI() const override
+    {
+        return TransactionType::Postgres;
+    }
+
     tao::postgres::transaction* get()
     {
         return postgresTransaction.get();

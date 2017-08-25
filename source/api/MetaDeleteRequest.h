@@ -5,10 +5,7 @@
 
 #include <bean/MetaDeleteRequestBean.h>
 #include <bean/MessageBean.h>
-#include <databaseBean/DatabaseBeanMeta.h>
-#include <databaseBean/DatabaseBeanTag.h>
-#include <databaseBean/DatabaseBeanFile.h>
-#include <databaseBean/DatabaseBeanAction.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 #include <storage/StorageFactory.h>
 
@@ -24,10 +21,10 @@ public:
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
         storage->remove(meta_hash);
 
-        DatabaseBean<TagBean>::remove_by(ctx.databaseTransaction, "meta_hash", meta_hash);
-        DatabaseBean<ActionBean>::remove_by(ctx.databaseTransaction, "meta_hash", meta_hash);
-        DatabaseBean<FileBean>::remove_by(ctx.databaseTransaction, "meta_hash", meta_hash);
-        DatabaseBean<MetaBean>::remove(ctx.databaseTransaction, meta_hash);
+        database::Action::remove_by<TagBean>(ctx.databaseTransaction, "meta_hash", meta_hash);
+        database::Action::remove_by<ActionBean>(ctx.databaseTransaction, "meta_hash", meta_hash);
+        database::Action::remove_by<FileBean>(ctx.databaseTransaction, "meta_hash", meta_hash);
+        database::Action::remove<MetaBean>(ctx.databaseTransaction, meta_hash);
 
         messageBean.message = "OK";
 

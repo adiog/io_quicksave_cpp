@@ -5,7 +5,7 @@
 
 #include <bean/TagDeleteRequestBean.h>
 #include <bean/MessageBean.h>
-#include <databaseBean/DatabaseBeanTag.h>
+#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 
 class TagDeleteRequest : public TagDeleteRequestBean
@@ -17,7 +17,7 @@ public:
     {
         MessageBean messageBean;
 
-        DatabaseBean<TagBean>::remove(ctx.databaseTransaction, tag_hash);
+        database::Action::remove<TagBean>(ctx.databaseTransaction, tag_hash);
         messageBean.message = "OK";
 
         return messageBean;

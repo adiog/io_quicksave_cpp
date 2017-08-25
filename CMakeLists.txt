@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(quicksave)
 
+set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
+set(CMAKE_CXX_FLAGS "-ggdb -O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/api)
@@ -37,7 +38,6 @@ ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
-ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/PrivacyGuard)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres)
 
 MACRO(COLLECT_CC current_path)
@@ -95,7 +95,7 @@ TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} postgres pq memcached pthread SQL
 
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
-TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme PrivacyGuard dl)
+TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme dl)
 
 
 ADD_EXECUTABLE(psql deps/postgres/src/test/postgres/test.cpp)
