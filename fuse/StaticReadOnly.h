@@ -57,7 +57,7 @@ public:
             std::string item_path = std::string("/") + sanitized_name;
             std::cout << item_path << std::endl;
             fs.make_dir(item_path);
-            fs.make_file(item_path, "item.json", ::serialize(item));
+            fs.make_file(item_path, "item.json", ::prettySerialize(item));
             if (!item.files.empty()) {
                 std::string files_path = std::string("/") + sanitized_name + std::string("/files");
                 fs.make_dir(files_path);
