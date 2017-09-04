@@ -85,12 +85,6 @@ FILE(GLOB_RECURSE PROJECT_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/source/**.h)
 ADD_EXECUTABLE(api ${PROJECT_MAIN} ${PROJECT_HEAD})
 TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl)
 
-
-FILE(GLOB_RECURSE FUSE_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/fuse_test/**.cc)
-FILE(GLOB_RECURSE FUSE_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.h)
-ADD_EXECUTABLE(fuse_test ${FUSE_TESTS} ${FUSE_HEAD})
-TARGET_LINK_LIBRARIES(fuse_test ${PROJECT_LIBRARIES} python3.5m postgres pq sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl)
-
 ADD_EXECUTABLE(post post/post.cc)
 TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl)
 
@@ -105,4 +99,14 @@ FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
 TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme dl)
 
+
+ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
+FILE(GLOB_RECURSE FUSE_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.cc)
+ADD_EXECUTABLE(qsfuse ${FUSE_MAIN})
+TARGET_LINK_LIBRARIES(qsfuse ${PROJECT_LIBRARIES} python3.5m postgres pq sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 fuse stdc++fs dl)
+
+FILE(GLOB_RECURSE FUSE_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/fuse_test/**.cc)
+FILE(GLOB_RECURSE FUSE_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.h)
+ADD_EXECUTABLE(fuse_test ${FUSE_TESTS} ${FUSE_HEAD})
+TARGET_LINK_LIBRARIES(fuse_test ${PROJECT_LIBRARIES} python3.5m postgres pq sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 stdc++fs dl)
 
