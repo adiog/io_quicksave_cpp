@@ -5,6 +5,7 @@ project(quicksave)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-ggdb -O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/api)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cdn)
@@ -17,7 +18,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/libbeans)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/plugin-engine)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/qsql)
 
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/antlr4/runtime/Cpp/runtime/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rapidjson/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/beans/cppbeans/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest/googletest/include)
@@ -81,8 +81,15 @@ ADD_EXECUTABLE(api_test ${PROJECT_TESTS})
 TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl)
 
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
-ADD_EXECUTABLE(api ${PROJECT_MAIN})
+FILE(GLOB_RECURSE PROJECT_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/source/**.h)
+ADD_EXECUTABLE(api ${PROJECT_MAIN} ${PROJECT_HEAD})
 TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq python3.5m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl)
+
+
+FILE(GLOB_RECURSE FUSE_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/fuse_test/**.cc)
+FILE(GLOB_RECURSE FUSE_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.h)
+ADD_EXECUTABLE(fuse_test ${FUSE_TESTS} ${FUSE_HEAD})
+TARGET_LINK_LIBRARIES(fuse_test ${PROJECT_LIBRARIES} python3.5m postgres pq sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl)
 
 ADD_EXECUTABLE(post post/post.cc)
 TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl)

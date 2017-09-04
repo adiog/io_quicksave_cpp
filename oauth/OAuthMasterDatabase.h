@@ -19,14 +19,14 @@ public:
     {
         std::string masterDatabaseConnectionString = FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING;
 
-        std::cout << masterDatabaseConnectionString << std::endl;
+        //std::cout << masterDatabaseConnectionString << std::endl;
 
         std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(masterDatabaseConnectionString);
         std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
 
         List<UserBean> userBeanList = database::Action::get_by<UserBean>(databaseTransaction.get(), "username", credentials.first);
 
-        std::cout << userBeanList.size() << std::endl;
+        //std::cout << userBeanList.size() << std::endl;
 
 
         if ((userBeanList.size() == 1) && (credentials.second == userBeanList[0].password))
