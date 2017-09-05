@@ -122,13 +122,19 @@ int cpp_readlink(const char *path, char *buf, size_t size) {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc < 5) {
+        std::cout << "Usage: ./qsfuse /path/to/mount username password \"query\"" << std::endl;
+        return 1;
+    }
     //////// CUT HERE
     ///////////////////////////////////////////////////////////////
     fs.init();
 
-    std::string username = "adiog";
-    std::string password = "pass";
-    StaticReadOnly::build(fs, username, password, "WHERE name ~ ''");
+    std::string username = argv[2];
+    std::string password = argv[3];
+    std::string query = argv[4];
+
+    StaticReadOnly::build(fs, username, password, query);
     //////// CUT HERE
     ///////////////////////////////////////////////////////////////
 
@@ -138,5 +144,5 @@ int main(int argc, char *argv[]) {
     cpp_fuse.open = cpp_open;
     cpp_fuse.read = cpp_read;
 
-    return fuse_main(argc, argv, &cpp_fuse, NULL);
+    return fuse_main(argc-3, argv, &cpp_fuse, NULL);
 }
