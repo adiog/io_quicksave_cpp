@@ -77,7 +77,7 @@ class UserBehavior(TaskSet):
             "name": source_title[random.randint(0,2)],
             "source_url": source_url[random.randint(0,4)],
         }
-        meta = json.loads(self.client.post('/create', data=json.dumps({'meta': meta})).content.decode())['item']['meta$']
+        meta = json.loads(self.client.post('/create', data=json.dumps({'meta': meta})).content.decode())['item']['meta']
         self.metas.put(meta)
         self.meta_hashes.add(meta['meta_hash'])
 

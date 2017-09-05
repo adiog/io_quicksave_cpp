@@ -54,6 +54,9 @@ void consumeBean(DatabaseTaskBean databaseTaskBean)
         if (databaseTaskBean.beanname == "File") {
             FileBean file(databaseTaskBean.beanjson.c_str());
             operation(databaseTaskBean.type, databaseTransaction.get(), file);
+        } else if (databaseTaskBean.beanname == "Tag") {
+            TagBean tag(databaseTaskBean.beanjson.c_str());
+            operation(databaseTaskBean.type, databaseTransaction.get(), tag);
         }
     }
     catch(...)

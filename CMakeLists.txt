@@ -41,6 +41,9 @@ ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres)
 
+ADD_DEFINITIONS(-DSQLITE_THREADSAFE=1)
+
+
 MACRO(COLLECT_CC current_path)
     MESSAGE("-- CollectCC -- Searching for cc-files in ${current_path}")
     FILE(GLOB children RELATIVE ${current_path} ${current_path}/*)
@@ -98,7 +101,6 @@ TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} postgres pq memcached pthread SQL
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
 TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.5m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme dl)
-
 
 ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
 FILE(GLOB_RECURSE FUSE_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.cc)

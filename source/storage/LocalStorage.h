@@ -23,6 +23,11 @@ public:
         return path + "/" + std::string(&metaHash[0], 2) + "/" + std::string(&metaHash[2], 2) + "/" + std::string(&metaHash[4], metaHash.size() - 4) + "/";
     }
 
+    std::string getMetaPrefixPath(const std::string& metaHash) const
+    {
+        return path + "/" + std::string(&metaHash[0], 2) + "/";
+    }
+
     std::string getFilePath(const std::string& metaHash, const std::string& filename) const
     {
         return getMetaPath(metaHash) + filename;
@@ -55,12 +60,12 @@ public:
         return test;
     }
 
-    virtual void remove(const std::string &metaHash) override
+    void remove(const std::string &metaHash) override
     {
-        std::filesystem::remove_all(getMetaPath(metaHash));
+        std::filesystem::remove_all(getMetaPrefixPath(metaHash));
     }
 
-    virtual void remove(const FileBean &fileBean) override
+    void remove(const FileBean &fileBean) override
     {
         std::filesystem::remove_all(getFilePath(fileBean.meta_hash, fileBean.filename));
     }
