@@ -23,7 +23,7 @@ void insert(DB *db, Bean bean)
 template<typename DB, typename Bean>
 void update(DB *db, Bean bean)
 {
-    database::Action::insert(db, bean);
+    database::Action::update(db, bean);
 }
 
 template<typename DB, typename Bean>
@@ -51,12 +51,17 @@ void consumeBean(DatabaseTaskBean databaseTaskBean)
         auto databaseConnection = database::ProviderFactory::create(databaseTaskBean.databaseConnectionString);
         auto databaseTransaction = databaseConnection->getTransaction();
 
-        if (databaseTaskBean.beanname == "File") {
+        if (databaseTaskBean.beanname == "Meta") {
+            MetaBean meta(databaseTaskBean.beanjson.c_str());
+            operation(databaseTaskBean.type, databaseTransaction.get(), meta);
+        } else if (databaseTaskBean.beanname == "File") {
             FileBean file(databaseTaskBean.beanjson.c_str());
             operation(databaseTaskBean.type, databaseTransaction.get(), file);
         } else if (databaseTaskBean.beanname == "Tag") {
             TagBean tag(databaseTaskBean.beanjson.c_str());
             operation(databaseTaskBean.type, databaseTransaction.get(), tag);
+        } else {
+            std::cout << "ERROR: beanname not supported " << databaseTaskBean.beanname << std::endl;
         }
     }
     catch(...)
