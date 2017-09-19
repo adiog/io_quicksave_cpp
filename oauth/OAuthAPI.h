@@ -32,7 +32,7 @@ public:
 
     static bool check_session(Token token)
     {
-        return OAuthMemcached::get(token) != "";
+        return ((OAuthMemcached::get(token) != "") && OAuthMemcached::touch(token));
     }
 
     static SessionBean get_session(Token token)

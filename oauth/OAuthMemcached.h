@@ -39,6 +39,11 @@ public:
         memcache::Memcache mem(FLAGS_IO_QUICKSAVE_MEMCACHED_CONNECTION_STRING.c_str());
         return mem.remove(key);
     }
+
+    static bool touch(std::string key, int expireTime=FLAGS_IO_QUICKSAVE_OAUTH_TOKEN_EXPIRE_TIME) {
+        memcache::Memcache mem(FLAGS_IO_QUICKSAVE_MEMCACHED_CONNECTION_STRING.c_str());
+        return mem.touch(key, expireTime);
+    }
 };
 
 #endif
