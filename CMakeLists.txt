@@ -41,7 +41,7 @@ ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres)
 
-ADD_DEFINITIONS(-DSQLITE_THREADSAFE=1)
+ADD_DEFINITIONS(-DSQLITE_THREADSAFE=1 -Wl,--export-dynamic)
 
 
 MACRO(COLLECT_CC current_path)
@@ -86,7 +86,7 @@ TARGET_LINK_LIBRARIES(api_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runti
 FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
 FILE(GLOB_RECURSE PROJECT_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/source/**.h)
 ADD_EXECUTABLE(api ${PROJECT_MAIN} ${PROJECT_HEAD})
-TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq python3.6m memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl util)
+TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq libpython3.6m.so memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl util)
 
 ADD_EXECUTABLE(post post/post.cc)
 TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl)
