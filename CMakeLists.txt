@@ -91,11 +91,13 @@ TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq libpython3.6m.so memc
 ADD_EXECUTABLE(post post/post.cc)
 TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl)
 
-ADD_EXECUTABLE(oauth oauth/oauth.cc)
+FILE(GLOB_RECURSE OAUTH_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/oauth/**.h)
+ADD_EXECUTABLE(oauth oauth/oauth.cc ${OAUTH_HEADERS})
 TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} postgres pq memcached pthread SQLiteCpp sqlite3 dl)
 
 
-ADD_EXECUTABLE(cdn cdn/cdn.cc)
+FILE(GLOB_RECURSE CDN_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/cdn/**.h)
+ADD_EXECUTABLE(cdn cdn/cdn.cc ${CDN_HEADERS})
 TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} postgres pq memcached pthread SQLiteCpp sqlite3 stdc++fs dl)
 
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)

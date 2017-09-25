@@ -10,6 +10,8 @@
 #include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 #include <storage/StorageFactory.h>
+#include <timestamp.h>
+
 
 class CreateRequest : public CreateRequestBean
 {
@@ -22,6 +24,7 @@ public:
 
         meta.user_hash = *ctx.userBean.user_hash;
         meta.meta_hash = database::Action::insert<MetaBean>(ctx.databaseTransaction, meta);
+        meta.created_at = timestamp();
 
         InternalCreateRequestBean internalCreateRequestBean;
 
