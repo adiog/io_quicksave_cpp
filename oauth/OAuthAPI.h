@@ -3,12 +3,14 @@
 
 #pragma once
 
-#include "OAuthMemcached.h"
 #include <OAuthHelper.h>
-#include <bean/UserBean.h>
-#include <bean/SessionBean.h>
+#include <OAuthMemcached.h>
 #include <uuid>
-#include <util/logger.h>
+#include <bean/SessionBean.h>
+#include <bean/UserBean.h>
+#include <include/util/format.h>
+
+
 class OAuthAPI
 {
 public:
@@ -26,7 +28,7 @@ public:
             throw std::runtime_error("");
         }
 
-        Logger::log("Session                      : CREATED (%s,%s)", userBean.username.c_str(), sessionBean.token.c_str());
+        LOG(INFO) << Format::format("Session                      : CREATED (%s,%s)", userBean.username.c_str(), sessionBean.token.c_str());
         return sessionBean.token;
     }
 

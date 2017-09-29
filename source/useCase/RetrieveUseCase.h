@@ -7,7 +7,7 @@
 #include <database/Action.h>
 #include <database/Transaction.h>
 #include <qsql/qsqlQuery.h>
-#include <util/logger.h>
+
 
 namespace useCase {
 
@@ -20,13 +20,13 @@ public:
             const std::string &userHashParam)
     {
         RetrieveResponseBean retrieveResponseBean;
-        auto ll = List<ItemBean>(0);
+        auto ll = List<ItemBean>();
         retrieveResponseBean.items = List<ItemBean>(ll);
         try
         {
             std::__cxx11::string sqlQuery = QsqlQuery::parseQsqlToSql(userHashParam, queryParam);
 
-            Logger::log("%s", sqlQuery.c_str());
+            DLOG(INFO) << sqlQuery;
 
             auto metas = database::Action::sql<MetaBean>(databaseTransactionParam, sqlQuery);
             for (auto &meta : metas)
@@ -37,7 +37,7 @@ public:
                 itemBean.files = database::Action::get_by<FileBean>(databaseTransactionParam, "meta_hash", *meta.meta_hash);
                 retrieveResponseBean.items.push_back(itemBean);
             }
-            retrieveResponseBean.total = metas.size();
+            retrieveResponseBean.total = static_cast<int>(metas.size());
         }
         catch (QsqlException &e)
         {

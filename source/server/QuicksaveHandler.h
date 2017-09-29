@@ -1,45 +1,39 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_QUICKSAVEHANDLER_H
-#define QUICKSAVE_QUICKSAVEHANDLER_H
+#pragma once
 
-#include "../../oauth/OAuthHelper.h"
-#include "ProxygenHandler.h"
-#include "QuicksaveHandler.h"
-#include "RequestContext.h"
-#include "rapidjson/document.h"
-#include <uuid>
-#include <SQLiteCpp/Database.h>
-#include <bean/MessageBean.h>
-#include <bean/SessionBean.h>
-#include <bean/TokenBean.h>
-#include <databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
-#include <http/Exception.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <rapidjson/document.h>
-#include <util/format.h>
-#include <util/logger.h>
 
-#include "../../oauth/OAuthAPI.h"
-#include "../../oauth/OAuthHelper.h"
+#include <ProxygenHandler.h>
+#include <uuid>
+#include <bean/MessageBean.h>
+#include <bean/SessionBean.h>
+#include <bean/TokenBean.h>
+#include <database/ProviderFactory.h>
+#include <databaseBean/DatabaseBeans.h>
+#include <http/Exception.h>
+#include <oauth/OAuthAPI.h>
+#include <oauth/OAuthHelper.h>
+#include <server/RequestContext.h>
+#include <util/format.h>
+
 #include <api/CreateRequest.h>
 #include <api/GenericRequest.h>
 #include <api/MetaDeleteRequest.h>
 #include <api/MetaUpdateRequest.h>
-#include <api/RetrieveRequest.h>
 #include <api/PerspectiveCreateRequest.h>
-#include <api/PerspectiveUpdateRequest.h>
 #include <api/PerspectiveDeleteRequest.h>
+#include <api/PerspectiveUpdateRequest.h>
+#include <api/RetrieveRequest.h>
 #include <api/TagCreateRequest.h>
 #include <api/TagDeleteRequest.h>
 #include <api/TagUpdateRequest.h>
 #include <api/UploadRequest.h>
-#include <http/Exception.h>
-#include <server/RequestContext.h>
-#include <database/ProviderFactory.h>
+
 
 class QuicksaveHandler : public ProxygenHandler
 {
@@ -118,7 +112,7 @@ void QuicksaveHandler::handle_post()
     const std::string contiguousBody = Buffer::to_string(body_);
 
     int limit = std::min(static_cast<int>(contiguousBody.length()), 512);
-    Logger::log("< [%luB] %s", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
+    LOG(INFO) << Format::format("< [%luB] %s", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
 
     if (path == "/token/put")
     {
@@ -220,4 +214,3 @@ void QuicksaveHandler::handle_post()
     return reply_response(response);
 }
 
-#endif

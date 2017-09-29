@@ -15,7 +15,7 @@ enum class TransactionType
 class Transaction
 {
 public:
-    virtual ~Transaction() = default;
+    virtual ~Transaction() noexcept = default;
 
     void destructor()
     {

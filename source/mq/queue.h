@@ -3,16 +3,10 @@
 
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <amqp.h>
 #include <amqp_framing.h>
 #include <amqp_tcp_socket.h>
-#include <stdint.h>
 
-#include <assert.h>
 #include <functional>
 #include <iostream>
 
@@ -22,23 +16,19 @@
 class Queue
 {
 public:
-    template <typename Bean>
-    static void consume(std::function<void(Bean)> callback)
-    {
-        char const *hostname;
-        int port, status;
-        char const *queuename;
+    amqp_socket_t *socket;
+    amqp_connection_state_t connectionState;
 
-        amqp_socket_t *socket = NULL;
-        amqp_connection_state_t conn;
+    Queue() {
+        char const *hostname = FLAGS_IO_QUICKSAVE_MQ_HOST.c_str();
+        int port = FLAGS_IO_QUICKSAVE_MQ_PORT;
+        int status;
+        char const *queueName = "response";
 
-        hostname = FLAGS_IO_QUICKSAVE_MQ_HOST.c_str();
-        port = FLAGS_IO_QUICKSAVE_MQ_PORT;
-        queuename = "response";
+        socket = nullptr;
+        connectionState = amqp_new_connection();
 
-        conn = amqp_new_connection();
-
-        socket = amqp_tcp_socket_new(conn);
+        socket = amqp_tcp_socket_new(connectionState);
         if (!socket)
         {
             die("creating TCP socket");
@@ -50,23 +40,34 @@ public:
             die("opening TCP socket");
         }
 
-        die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest"),
+        die_on_amqp_error(amqp_login(connectionState, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest"),
                           "Logging in");
-        amqp_channel_open(conn, 1);
-        die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
+        amqp_channel_open(connectionState, 1);
+        die_on_amqp_error(amqp_get_rpc_reply(connectionState), "Opening channel");
 
-        amqp_basic_consume(conn, 1, amqp_cstring_bytes(queuename), amqp_empty_bytes, 0, 0, 0, amqp_empty_table);
-        die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
+        amqp_basic_consume(connectionState, 1, amqp_cstring_bytes(queueName), amqp_empty_bytes, 0, 0, 0, amqp_empty_table);
+        die_on_amqp_error(amqp_get_rpc_reply(connectionState), "Consuming");
+    }
 
+    ~Queue() {
+        die_on_amqp_error(amqp_channel_close(connectionState, 1, AMQP_REPLY_SUCCESS), "Closing channel");
+        die_on_amqp_error(amqp_connection_close(connectionState, AMQP_REPLY_SUCCESS), "Closing connection");
+        die_on_error(amqp_destroy_connection(connectionState), "Ending connection");
+
+    }
+
+    template <typename Bean>
+    void consume(std::function<void(Bean)> callback)
+    {
         {
             for (;;)
             {
                 amqp_rpc_reply_t res;
                 amqp_envelope_t envelope;
 
-                amqp_maybe_release_buffers(conn);
+                amqp_maybe_release_buffers(connectionState);
 
-                res = amqp_consume_message(conn, &envelope, NULL, 0);
+                res = amqp_consume_message(connectionState, &envelope, nullptr, 0);
 
                 if (AMQP_RESPONSE_NORMAL != res.reply_type)
                 {
@@ -103,14 +104,10 @@ public:
                     std::cout << "ACHTUNG" << std::endl;
                 }
                 callback(bean);
-                amqp_basic_ack(conn, 1, envelope.delivery_tag, 0);
+                amqp_basic_ack(connectionState, 1, envelope.delivery_tag, 0);
 
                 amqp_destroy_envelope(&envelope);
             }
         }
-
-        die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS), "Closing channel");
-        die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS), "Closing connection");
-        die_on_error(amqp_destroy_connection(conn), "Ending connection");
     }
 };

@@ -3,42 +3,34 @@
 
 #include <env.h>
 
-#include "server/QuicksaveHandler.h"
 #include <folly/io/async/EventBaseManager.h>
 #include <proxygen/httpserver/HTTPServer.h>
 
 #include <ProxygenHandlerFactory.h>
-
-using folly::EventBase;
-using folly::EventBaseManager;
-using folly::SocketAddress;
-
-using Protocol = proxygen::HTTPServer::Protocol;
+#include <server/QuicksaveHandler.h>
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-
-    std::cout << "api:\t" << FLAGS_IO_QUICKSAVE_API_HOST << ":" << FLAGS_IO_QUICKSAVE_API_PORT << std::endl;
-    std::cout << "master:\t" << FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING << std::endl;
-    std::cout << "mem:\t" << FLAGS_IO_QUICKSAVE_MEMCACHED_HOST << ":" << FLAGS_IO_QUICKSAVE_MEMCACHED_PORT << std::endl;
-    std::cout << "mq:\t" << FLAGS_IO_QUICKSAVE_MQ_HOST << ":" << FLAGS_IO_QUICKSAVE_MQ_PORT << std::endl;
-
-    FLAGS_IO_QUICKSAVE_MEMCACHED_CONNECTION_STRING =
-            std::string("--SERVER=") + FLAGS_IO_QUICKSAVE_MEMCACHED_HOST + std::string(":") +
-            FLAGS_IO_QUICKSAVE_MEMCACHED_PORT;
 
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
 
+    FLAGS_IO_QUICKSAVE_MEMCACHED_CONNECTION_STRING =
+            std::string("--SERVER=") + FLAGS_IO_QUICKSAVE_MEMCACHED_HOST + std::string(":") + FLAGS_IO_QUICKSAVE_MEMCACHED_PORT;
+
+    DLOG(INFO) << "api:\t" << FLAGS_IO_QUICKSAVE_API_HOST << ":" << FLAGS_IO_QUICKSAVE_API_PORT << std::endl;
+    DLOG(INFO) << "master:\t" << FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING << std::endl;
+    DLOG(INFO) << "mem:\t" << FLAGS_IO_QUICKSAVE_MEMCACHED_HOST << ":" << FLAGS_IO_QUICKSAVE_MEMCACHED_PORT << std::endl;
+    DLOG(INFO) << "mq:\t" << FLAGS_IO_QUICKSAVE_MQ_HOST << ":" << FLAGS_IO_QUICKSAVE_MQ_PORT << std::endl;
+
     std::vector<proxygen::HTTPServer::IPConfig> IPs = {
-            {SocketAddress(FLAGS_IO_QUICKSAVE_API_HOST, FLAGS_IO_QUICKSAVE_API_PORT, true), Protocol::HTTP}
-            /*       {SocketAddress(FLAGS_ip, FLAGS_spdy_port, true), Protocol::SPDY},
-            {SocketAddress(FLAGS_ip, FLAGS_h2_port, true), Protocol::HTTP2},*/
-    };
+        {folly::SocketAddress(FLAGS_IO_QUICKSAVE_API_HOST, FLAGS_IO_QUICKSAVE_API_PORT, true), proxygen::HTTPServer::Protocol::HTTP}};
 
     long int threads = FLAGS_api_threads;
-    if (threads <= 0) {
+    if (threads <= 0)
+    {
         threads = sysconf(_SC_NPROCESSORS_ONLN);
         CHECK(threads > 0);
     }
@@ -49,18 +41,18 @@ int main(int argc, char *argv[]) {
     options.shutdownOn = {SIGINT, SIGTERM};
     options.enableContentCompression = false;
     options.handlerFactories = proxygen::RequestHandlerChain()
-            .addThen<ProxygenHandlerFactory<QuicksaveHandler> >()
-            .build();
+                                   .addThen<ProxygenHandlerFactory<QuicksaveHandler> >()
+                                   .build();
     options.h2cEnabled = true;
 
     proxygen::HTTPServer server(std::move(options));
     server.bind(IPs);
 
-    // Start HTTPServer mainloop in a separate thread
     std::thread t([&]() {
         server.start();
     });
 
     t.join();
+
     return 0;
 }

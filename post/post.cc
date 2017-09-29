@@ -70,7 +70,7 @@ void consumeBean(DatabaseTaskBean databaseTaskBean)
 
 void engine_thread()
 {
-    Queue::consume<DatabaseTaskBean>(consumeBean);
+    Queue().consume<DatabaseTaskBean>(consumeBean);
 }
 
 int main(int argc, char* argv[])
@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
 
     std::cout << FLAGS_post_threads << std::endl;
 
-    long int threads = FLAGS_post_threads;
+    int threads = FLAGS_post_threads;
     if (threads <= 0)
     {
-        threads = sysconf(_SC_NPROCESSORS_ONLN);
+        threads = static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
         CHECK(threads > 0);
     }
 

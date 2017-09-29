@@ -32,12 +32,12 @@ public:
 
         if ((userBeanList.size() == 1) && (credentials.second == userBeanList[0].password))
         {
-            Logger::log("Authentication with BasicAuth: SUCCESS (%s,%s)", credentials.first.c_str(), credentials.second.c_str());
+            LOG(INFO) << Format::format("Authentication with BasicAuth: SUCCESS (%s,%s)", credentials.first.c_str(), credentials.second.c_str());
             return userBeanList[0];
         }
         else
         {
-            Logger::log("Authentication with BasicAuth: FAILURE (%s,%s)", credentials.first.c_str(), credentials.second.c_str());
+            LOG(INFO) << Format::format("Authentication with BasicAuth: FAILURE (%s,%s)", credentials.first.c_str(), credentials.second.c_str());
             return absl::nullopt;
         }
     }

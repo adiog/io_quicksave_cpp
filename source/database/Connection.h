@@ -12,7 +12,7 @@ namespace database {
 class Connection
 {
 public:
-    virtual ~Connection() = default;
+    virtual ~Connection() noexcept = default;
     virtual std::unique_ptr<database::Transaction> getTransaction() abstract;
 };
 }

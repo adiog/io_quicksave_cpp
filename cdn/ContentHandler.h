@@ -1,35 +1,33 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_OAUTHHANDLER_H
-#define QUICKSAVE_OAUTHHANDLER_H
+#pragma once
 
+#include <absl/strings/str_split.h>
 
-#include "OAuthHelper.h"
-#include "ProxygenHandler.h"
-#include <OAuthAPI.h>
-#include <OAuthMasterDatabase.h>
-#include <uuid>
+#include <folly/io/IOBuf.h>
+#include <proxygen/httpserver/ResponseBuilder.h>
+#include <proxygen/lib/http/HTTPMessage.h>
 #include <SQLiteCpp/Database.h>
+
+#include <uuid>
+#include <bean/FileBean.h>
+#include <bean/MetaBean.h>
 #include <bean/SessionBean.h>
 #include <bean/TokenBean.h>
 #include <bean/TokenRequestBean.h>
 #include <databaseBean/DatabaseBeans.h>
-#include <folly/io/IOBuf.h>
 #include <http/Exception.h>
-#include <proxygen/httpserver/ResponseBuilder.h>
-#include <proxygen/lib/http/HTTPMessage.h>
-#include <util/format.h>
-#include <util/logger.h>
-#include <absl/strings/str_split.h>
 #include <server/RequestContext.h>
+#include <util/format.h>
 
-#include <bean/MetaBean.h>
-#include <databaseBean/DatabaseBeans.h>
-#include <bean/FileBean.h>
-#include <fstream>
+#include <OAuthAPI.h>
+#include <OAuthHelper.h>
+#include <OAuthMasterDatabase.h>
+#include <ProxygenHandler.h>
 #include <database/ProviderFactory.h>
 #include <storage/StorageFactory.h>
+
 
 class ContentHandler : public ProxygenHandler
 {
@@ -63,7 +61,8 @@ public:
 
             std::vector<std::string> path_split = absl::StrSplit(path, '/');
 
-            if (path_split.size() < 4) {
+            if (path_split.size() < 4)
+            {
                 return reply(400);
             }
 
@@ -103,10 +102,10 @@ public:
             std::string filebody = storage->read(*file);
 
             proxygen::ResponseBuilder(downstream_)
-                    .status(200, "OK")
-                    .header("Content-Type", file->mimetype)
-                    .body(filebody)
-                    .sendWithEOM();
+                .status(200, "OK")
+                .header("Content-Type", file->mimetype)
+                .body(filebody)
+                .sendWithEOM();
         }
         else
         {
@@ -119,7 +118,7 @@ public:
         const std::string path = headers_->getPath();
         const std::string contiguousBody = Buffer::to_string(body_);
 
-        Logger::log("< [%luB] %s", contiguousBody.length(), contiguousBody.c_str());
+        LOG(INFO) << Format::format("< [%luB] %s", contiguousBody.length(), contiguousBody.c_str());
 
         if (path == "/token/put")
         {
@@ -141,5 +140,3 @@ public:
         }
     }
 };
-
-#endif

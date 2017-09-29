@@ -20,7 +20,7 @@
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <util/format.h>
-#include <util/logger.h>
+
 
 class OAuthHandler : public ProxygenHandler
 {

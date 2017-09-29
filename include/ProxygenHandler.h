@@ -3,15 +3,16 @@
 
 #pragma once
 
-#define abstract = 0
 #include <folly/Memory.h>
 #include <proxygen/httpserver/RequestHandler.h>
-#include <util/buffer.h>
-#include <HttpStatusCodeMapping.h>
-#include <timer>
 #include <proxygen/httpserver/ResponseBuilder.h>
+
+#include <HttpStatusCodeMapping.h>
+#include <style>
+#include <timer>
+#include <util/buffer.h>
 #include <util/format.h>
-#include <util/logger.h>
+
 
 class ProxygenHandler : public proxygen::RequestHandler
 {
@@ -54,7 +55,7 @@ protected:
 void ProxygenHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept
 {
     headers_ = std::move(headers);
-    Logger::log("%s %s", headers_->getMethodString().c_str(), headers_->getPath().c_str());
+    LOG(INFO) << Format::format("%s %s", headers_->getMethodString().c_str(), headers_->getPath().c_str());
 }
 
 void ProxygenHandler::onBody(std::unique_ptr<folly::IOBuf> body) noexcept
@@ -112,7 +113,7 @@ void ProxygenHandler::handle_options()
     int statusCode = 200;
     const char* statusText = "OK";
 
-    Logger::log("> %lu", statusCode);
+    LOG(INFO) << Format::format("> %lu", statusCode);
 
     proxygen::ResponseBuilder(downstream_)
         .status(statusCode, statusText)
@@ -139,7 +140,7 @@ void ProxygenHandler::reply_cookie(int statusCode, const std::string& cookieName
 {
     const std::string setCookie = formatSetCookie(cookieName, cookieValue);
 
-    Logger::log("> %lu %s", statusCode, setCookie.c_str());
+    LOG(INFO) << Format::format("> %lu %s", statusCode, setCookie.c_str());
 
     if (statusCode == 200)
     {
@@ -163,7 +164,7 @@ void ProxygenHandler::reply_cookie(int statusCode, const std::string& cookieName
 
 void ProxygenHandler::reply(int statusCode)
 {
-    Logger::log("> %lu", statusCode);
+    LOG(INFO) << Format::format("> %lu", statusCode);
 
     if (statusCode == 200)
     {
@@ -184,7 +185,7 @@ void ProxygenHandler::reply(int statusCode)
 void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf>& response)
 {
     std::string buffer = Buffer::to_string(response);
-    Logger::log("> 200 [%luB] %s", response->length(), buffer.c_str());
+    LOG(INFO) << Format::format("> 200 [%luB] %s", response->length(), buffer.c_str());
 
     proxygen::ResponseBuilder(downstream_)
         .status(200, "OK")

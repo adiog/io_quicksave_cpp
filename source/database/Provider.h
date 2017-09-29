@@ -13,6 +13,7 @@ namespace database {
 class Provider
 {
 public:
+    virtual ~Provider() noexcept = default;
     virtual bool validate(const std::string& connectionString) const abstract;
     virtual std::unique_ptr<database::Connection> accept(const std::string& connectionString) const abstract;
 };
