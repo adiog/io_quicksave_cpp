@@ -21,7 +21,7 @@
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <util/format.h>
 #include <util/logger.h>
-#include <util/split>
+#include <absl/strings/str_split.h>
 #include <server/RequestContext.h>
 
 #include <bean/MetaBean.h>
@@ -61,7 +61,7 @@ public:
             requestContext.databaseTransaction = transaction.get();
             requestContext.userBean = sessionBean.user;
 
-            auto path_split = split(path, '/');
+            std::vector<std::string> path_split = absl::StrSplit(path, '/');
 
             if (path_split.size() < 4) {
                 return reply(400);

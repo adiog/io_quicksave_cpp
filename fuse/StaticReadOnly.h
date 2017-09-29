@@ -20,7 +20,7 @@ public:
     static void build(FS &fs, const std::string &username, const std::string &password, const std::string &query)
     {
         std::pair<std::string, std::string> credentials{username, password};
-        std::optional<UserBean> anOptionalUserBean = OAuthMasterDatabase::authenticateWithPassword(credentials);
+        absl::optional<UserBean> anOptionalUserBean = OAuthMasterDatabase::authenticateWithPassword(credentials);
         if (!anOptionalUserBean)
         {
             throw std::runtime_error("");
@@ -41,7 +41,7 @@ public:
         std::multiset<std::string> names;
         std::set<std::string> tags;
 
-        const std::regex allowed_chars("[^a-zA-Z0-9\.]");
+        const std::regex allowed_chars("[^a-zA-Z0-9\\.]");
         for (const auto& item : retrieveResponseBean.items)
         {
             auto sanitized_name = std::regex_replace(*item.meta.name, allowed_chars, "_");

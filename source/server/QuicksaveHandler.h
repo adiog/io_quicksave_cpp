@@ -30,6 +30,9 @@
 #include <api/MetaDeleteRequest.h>
 #include <api/MetaUpdateRequest.h>
 #include <api/RetrieveRequest.h>
+#include <api/PerspectiveCreateRequest.h>
+#include <api/PerspectiveUpdateRequest.h>
+#include <api/PerspectiveDeleteRequest.h>
 #include <api/TagCreateRequest.h>
 #include <api/TagDeleteRequest.h>
 #include <api/TagUpdateRequest.h>
@@ -165,6 +168,20 @@ void QuicksaveHandler::handle_post()
         {
             response = GenericRequest<RetrieveRequest>::handle(requestContext, document);
         }
+        else if (path == "/perspective/create")
+        {
+            response = GenericRequest<PerspectiveCreateRequest>::handle(requestContext, document);
+        }
+        else if (path == "/perspective/delete")
+        {
+            response = GenericRequest<PerspectiveDeleteRequest>::handle(requestContext, document);
+        }
+        /*
+        else if (path == "/perspective/update")
+        {
+            response = GenericRequest<PerspectiveUpdateRequest>::handle(requestContext, document);
+        }
+        */
         else if (path == "/tag/create")
         {
             response = GenericRequest<TagCreateRequest>::handle(requestContext, document);

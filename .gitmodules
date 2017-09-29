@@ -13,3 +13,9 @@
 [submodule "deps/postgres"]
 	path = deps/postgres
 	url = https://github.com/adiog/postgres
+[submodule "deps/abseil"]
+	path = deps/abseil
+	url = https://github.com/abseil/abseil-cpp
+[submodule "deps/cctz"]
+	path = deps/cctz
+	url = https://github.com/google/cctz

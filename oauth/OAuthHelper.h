@@ -1,13 +1,13 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_AUTHENTICATION_H
-#define QUICKSAVE_AUTHENTICATION_H
+#pragma once
 
 #include <CppBeans.h>
 #include <iostream>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <proxygen/lib/utils/Base64.h>
+
 
 struct OAuthHelper
 {
@@ -60,5 +60,3 @@ struct OAuthHelper
         return {"", ""};
     }
 };
-
-#endif

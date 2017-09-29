@@ -6,7 +6,7 @@
 #include <storage/StorageProvider.h>
 #include <storage/LocalStorage.h>
 #include <databaseBean/DatabaseBeans.h>
-#include <util/split>
+#include <absl/strings/str_split.h>
 #include <database/Action.h>
 
 namespace storage {
@@ -16,7 +16,7 @@ class Sshfs : public storage::LocalStorage
 public:
     Sshfs(RequestContext &ctx, std::string connectionString) {
 
-        auto splitConnectionString = split(connectionString, ' ');
+        auto splitConnectionString = absl::StrSplit(connectionString, ' ');
 
         std::string host = FLAGS_STORAGE_DEFAULT_HOST;
         std::string port = FLAGS_STORAGE_DEFAULT_PORT;
@@ -26,7 +26,7 @@ public:
 
         for(auto arg : splitConnectionString)
         {
-            auto splitArg = split(arg, '=');
+            std::vector<std::string> splitArg = absl::StrSplit(arg, '=');
 
             if (splitArg[0] == "host")
             {

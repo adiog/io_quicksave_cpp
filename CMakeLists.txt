@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 project(quicksave)
 
 #set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-ggdb -O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -28,12 +28,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/PrivacyGuard)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/abseil)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/cctz/include)
 
 include_directories(/usr/include/python3.6m)
 include_directories(/usr/include/antlr4-runtime)
 
-SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags util)
+SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags util abseil)
 
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/SQLiteCpp)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c)
@@ -89,7 +92,7 @@ ADD_EXECUTABLE(api ${PROJECT_MAIN} ${PROJECT_HEAD})
 TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} postgres pq libpython3.6m.so memcached rabbitmq-c-utils rabbitmq-static ssl SQLiteCpp sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl util)
 
 ADD_EXECUTABLE(post post/post.cc)
-TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl)
+TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl abseil)
 
 FILE(GLOB_RECURSE OAUTH_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/oauth/**.h)
 ADD_EXECUTABLE(oauth oauth/oauth.cc ${OAUTH_HEADERS})

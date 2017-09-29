@@ -5,7 +5,6 @@
 
 #include <tao/postgres/connection.hpp>
 #include <database/PostgresTransaction.h>
-#include <util/split>
 
 namespace database {
 

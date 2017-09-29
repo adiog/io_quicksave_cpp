@@ -1,12 +1,12 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_OAUTHMEM_H
-#define QUICKSAVE_OAUTHMEM_H
+#pragma once
 
 #include <string>
 #include <libmemcached/memcached.hpp>
 #include <env.h>
+
 
 class OAuthMemcached
 {
@@ -46,4 +46,3 @@ public:
     }
 };
 
-#endif

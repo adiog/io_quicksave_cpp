@@ -3,19 +3,14 @@
 
 #pragma once
 
-#include <iostream>
-#include <iomanip>
-#include <ctime>
-#include <sstream>
+#include <string>
+#include <absl/time/time.h>
+#include <absl/time/clock.h>
 
 std::string timestamp()
 {
-    auto t = std::time(nullptr);
-    auto tm = *std::localtime(&t);
+    absl::TimeZone timeZone = absl::UTCTimeZone();
+    absl::Time time = absl::Now();
 
-    std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y/%m/%d %H:%M:%S");
-    auto str = oss.str();
-
-    return str;
+    return absl::FormatTime("%Y/%m/%d %H:%M:%E3S", time, timeZone);
 }

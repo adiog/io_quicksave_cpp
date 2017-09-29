@@ -7,7 +7,9 @@
 #include <storage/Storage.h>
 #include <fstream>
 
+
 namespace storage {
+
 class LocalStorage : public storage::Storage
 {
 public:

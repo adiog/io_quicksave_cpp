@@ -5,7 +5,7 @@
 
 #include <storage/StorageProvider.h>
 #include <storage/LocalStorage.h>
-#include <string_view>
+#include <absl/strings/string_view.h>
 
 namespace storage {
 
@@ -23,7 +23,7 @@ public:
         }
         else
         {
-            std::string_view connectionProtocolString = {&storageConnectionString[0], acceptingProtocolStringSize};
+            absl::string_view connectionProtocolString = {&storageConnectionString[0], acceptingProtocolStringSize};
             return connectionProtocolString == acceptingProtocolString;
         }
     }

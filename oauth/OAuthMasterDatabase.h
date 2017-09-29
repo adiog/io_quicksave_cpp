@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <absl/types/optional.h>
 #include <string>
 #include <libmemcached/memcached.hpp>
 #include <SQLiteCpp/SQLiteCpp.h>
@@ -15,7 +16,7 @@
 class OAuthMasterDatabase
 {
 public:
-    static std::optional<UserBean> authenticateWithPassword(std::pair<std::string, std::string> credentials)
+    static absl::optional<UserBean> authenticateWithPassword(std::pair<std::string, std::string> credentials)
     {
         std::string masterDatabaseConnectionString = FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING;
 
@@ -37,7 +38,7 @@ public:
         else
         {
             Logger::log("Authentication with BasicAuth: FAILURE (%s,%s)", credentials.first.c_str(), credentials.second.c_str());
-            return std::none;
+            return absl::nullopt;
         }
     }
 };

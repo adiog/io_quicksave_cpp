@@ -1,11 +1,11 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_HASH_H
-#define QUICKSAVE_HASH_H
+#pragma once
 
 #include <chrono>
 #include <sha1.h>
+
 struct Hash
 {
     static std::string get_sha1(const std::string &string)
@@ -22,4 +22,3 @@ struct Hash
         return Hash::get_sha1(std::to_string((std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch())).count()));
     }
 };
-#endif

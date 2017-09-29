@@ -5,7 +5,7 @@
 
 #include <database/SqliteConnection.h>
 #include <database/Provider.h>
-#include <string_view>
+#include <absl/strings/string_view.h>
 
 
 namespace database {
@@ -24,7 +24,7 @@ public:
         }
         else
         {
-            std::string_view connectionProtocolString = {&providerConnectionString[0], acceptingProtocolStringSize};
+            absl::string_view connectionProtocolString = {&providerConnectionString[0], acceptingProtocolStringSize};
             return connectionProtocolString == acceptingProtocolString;
         }
     }

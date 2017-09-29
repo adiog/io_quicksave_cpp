@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <absl/types/optional.h>
 #include <SQLiteCpp/SQLiteCpp.h>
 //#include <database/PostgresTransaction.h>
 #include <database/SqliteTransaction.h>
@@ -15,7 +16,7 @@ class Action
 {
 public:
     template <typename Bean>
-    static std::optional<Bean> get(Transaction *tr, const std::string &hash)
+    static absl::optional<Bean> get(Transaction *tr, const std::string &hash)
     {
         switch (tr->getRTTI())
         {

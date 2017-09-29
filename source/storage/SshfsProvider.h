@@ -6,6 +6,7 @@
 #include <storage/Sshfs.h>
 #include <storage/Storage.h>
 #include <storage/StorageProvider.h>
+#include <absl/strings/string_view.h>
 
 namespace storage {
 class SshfsProvider : public storage::StorageProvider
@@ -22,7 +23,7 @@ public:
         }
         else
         {
-            std::string_view connectionProtocolString = {&storageConnectionString[0], acceptingProtocolStringSize};
+            absl::string_view connectionProtocolString = {&storageConnectionString[0], acceptingProtocolStringSize};
             return connectionProtocolString == acceptingProtocolString;
         }
     }

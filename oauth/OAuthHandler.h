@@ -1,10 +1,10 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_OAUTHHANDLER_H
-#define QUICKSAVE_OAUTHHANDLER_H
+#pragma once
 
 
+#include <absl/types/optional.h>
 #include "OAuthHelper.h"
 #include "ProxygenHandler.h"
 #include <OAuthAPI.h>
@@ -37,7 +37,7 @@ public:
         {
             const std::string body = Buffer::to_string(body_);
             const TokenRequestBean tokenRequest{body.c_str()};
-            std::optional<UserBean> userBean = OAuthMasterDatabase::authenticateWithPassword(OAuthHelper::dispatchBasicAuth(headers_.get()));
+            absl::optional<UserBean> userBean = OAuthMasterDatabase::authenticateWithPassword(OAuthHelper::dispatchBasicAuth(headers_.get()));
 
             if (userBean)
             {
@@ -96,4 +96,3 @@ public:
     }
 };
 
-#endif

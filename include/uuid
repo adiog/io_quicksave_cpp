@@ -1,9 +1,7 @@
-//
-// Created by adiog on 09.03.17.
-//
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_UUID_H
-#define QUICKSAVE_UUID_H
+#pragma once
 
 #include <cstdlib>
 #include <string>
@@ -46,4 +44,3 @@ public:
     }
 };
 
-#endif  //QUICKSAVE_UUID_H
