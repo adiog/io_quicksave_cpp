@@ -1,10 +1,10 @@
 #include <Python.h>
 #include <gtest/gtest.h>
 #include "PythonBeanAPI.h"
-#include <bean/MetaBean.h>
-#include <bean/ItemBean.h>
+#include <qsgen/bean/MetaBean.h>
+#include <qsgen/bean/ItemBean.h>
 #include <timer>
-#include <bean/InternalCreateRequestBean.h>
+#include <qsgen/bean/InternalCreateRequestBean.h>
 
 
 TEST(PyEngineTestSuite, PureEmbedding)

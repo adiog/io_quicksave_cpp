@@ -3,15 +3,16 @@
 
 #pragma once
 
-#include "FS.h"
-#include <OAuthAPI.h>
-#include <OAuthMasterDatabase.h>
-#include <bean/RetrieveResponseBean.h>
-#include <useCase/RetrieveUseCase.h>
 #include <regex>
-#include <source/storage/Storage.h>
-#include <source/storage/StorageFactory.h>
-#include <source/server/RequestContext.h>
+
+#include <FS.h>
+#include <qs/oauth/OAuthAPI.h>
+#include <qs/oauth/OAuthMasterDatabase.h>
+#include <qs/server/RequestContext.h>
+#include <qs/storage/Storage.h>
+#include <qs/storage/StorageFactory.h>
+#include <qs/useCase/RetrieveUseCase.h>
+#include <qsgen/bean/RetrieveResponseBean.h>
 
 
 class StaticReadOnly
@@ -42,15 +43,17 @@ public:
         std::set<std::string> tags;
 
         const std::regex allowed_chars("[^a-zA-Z0-9\\.]");
-        for (const auto& item : retrieveResponseBean.items)
+        for (const auto &item : retrieveResponseBean.items)
         {
             auto sanitized_name = std::regex_replace(*item.meta.name, allowed_chars, "_");
-            if (sanitized_name == "") {
+            if (sanitized_name == "")
+            {
                 sanitized_name = "noname";
             }
             size_t count = names.count(sanitized_name);
             names.insert(sanitized_name);
-            if (count != 0) {
+            if (count != 0)
+            {
                 sanitized_name += std::string(" (") + std::to_string(count) + std::string(")");
                 names.insert(sanitized_name);
             }
@@ -58,19 +61,23 @@ public:
             std::cout << item_path << std::endl;
             fs.make_dir(item_path);
             fs.make_file(item_path, "item.json", ::prettySerialize(item));
-            if (!item.files.empty()) {
+            if (!item.files.empty())
+            {
                 std::string files_path = std::string("/") + sanitized_name + std::string("/files");
                 fs.make_dir(files_path);
-                for (auto &file : item.files) {
+                for (auto &file : item.files)
+                {
                     std::string filebody = storage->read(file);
                     fs.make_file(files_path, file.filename, filebody);
                 }
             }
-            for(auto & tag : item.tags){
+            for (auto &tag : item.tags)
+            {
                 auto sanitized_tag = std::regex_replace(*tag.name, allowed_chars, "_");
                 size_t count_tags = tags.count(sanitized_tag);
                 std::string tag_dir = std::string("/BY_TAG/") + sanitized_tag;
-                if (count_tags == 0) {
+                if (count_tags == 0)
+                {
                     fs.make_dir(tag_dir);
                     tags.insert(sanitized_tag);
                 }

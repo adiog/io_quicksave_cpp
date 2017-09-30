@@ -3,30 +3,30 @@
 
 #include <env.h>
 
-#include <bean/DatabaseTaskBean.h>
-#include <mq/queue.h>
-#include <thread>
-#include <hash>
 #include <zconf.h>
+#include <hash>
+#include <thread>
+#include <qs/mq/queue.h>
+#include <qsgen/bean/DatabaseTaskBean.h>
 
-#include <database/Action.h>
-#include <databaseBean/DatabaseBeans.h>
-#include <database/ProviderFactory.h>
+#include <qs/database/Action.h>
+#include <qs/database/ProviderFactory.h>
+#include <qsgen/databaseBean/DatabaseBeans.h>
 
 
-template<typename DB, typename Bean>
+template <typename DB, typename Bean>
 void insert(DB *db, Bean bean)
 {
     database::Action::insert(db, bean);
 }
 
-template<typename DB, typename Bean>
+template <typename DB, typename Bean>
 void update(DB *db, Bean bean)
 {
     database::Action::update(db, bean);
 }
 
-template<typename DB, typename Bean>
+template <typename DB, typename Bean>
 void operation(std::string op, DB *db, Bean bean)
 {
     if (op == "insert")
@@ -46,26 +46,35 @@ void operation(std::string op, DB *db, Bean bean)
 
 void consumeBean(DatabaseTaskBean databaseTaskBean)
 {
-    try {
+    try
+    {
         std::cout << databaseTaskBean.to_string() << std::endl;
         auto databaseConnection = database::ProviderFactory::create(databaseTaskBean.databaseConnectionString);
         auto databaseTransaction = databaseConnection->getTransaction();
 
-        if (databaseTaskBean.beanname == "Meta") {
+        if (databaseTaskBean.beanname == "Meta")
+        {
             MetaBean meta(databaseTaskBean.beanjson.c_str());
             operation(databaseTaskBean.type, databaseTransaction.get(), meta);
-        } else if (databaseTaskBean.beanname == "File") {
+        }
+        else if (databaseTaskBean.beanname == "File")
+        {
             FileBean file(databaseTaskBean.beanjson.c_str());
             operation(databaseTaskBean.type, databaseTransaction.get(), file);
-        } else if (databaseTaskBean.beanname == "Tag") {
+        }
+        else if (databaseTaskBean.beanname == "Tag")
+        {
             TagBean tag(databaseTaskBean.beanjson.c_str());
             operation(databaseTaskBean.type, databaseTransaction.get(), tag);
-        } else {
+        }
+        else
+        {
             std::cout << "ERROR: beanname not supported " << databaseTaskBean.beanname << std::endl;
         }
     }
-    catch(...)
-    {}
+    catch (...)
+    {
+    }
 }
 
 void engine_thread()
@@ -73,7 +82,7 @@ void engine_thread()
     Queue().consume<DatabaseTaskBean>(consumeBean);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
@@ -88,11 +97,13 @@ int main(int argc, char* argv[])
 
     std::vector<std::thread> workers(threads);
 
-    for(auto &thread : workers){
+    for (auto &thread : workers)
+    {
         thread = std::thread(engine_thread);
     }
 
-    for(auto &thread : workers) {
+    for (auto &thread : workers)
+    {
         thread.join();
     }
 

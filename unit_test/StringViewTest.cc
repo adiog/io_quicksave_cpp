@@ -1,8 +1,4 @@
-#include <bean/MetaBean.h>
-#include <databaseBean/DatabaseBeans.h>
 #include <gtest/gtest.h>
-#include <SQLiteCpp/Database.h>
-#include <bean/UserBean.h>
 #include <absl/strings/string_view.h>
 
 TEST(BeanTestSuite, BeanTestCase)
