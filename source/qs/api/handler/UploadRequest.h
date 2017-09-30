@@ -7,6 +7,7 @@
 #include <folly/io/IOBuf.h>
 
 #include <qs/storage/StorageFactory.h>
+#include <qs/util/base64.h>
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/UploadRequestBean.h>
 #include <qsgen/databaseBean/DatabaseBeans.h>
@@ -21,7 +22,7 @@ public:
     {
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
 
-        const std::string filebody = qs::Base64::decode(filebase);
+        const std::string filebody = qs::util::Base64::decode(filebase);
 
         storage->save(meta_hash, filename, filebody);
 

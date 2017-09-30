@@ -1,13 +1,15 @@
-//
-// Created by adiog on 15.03.17.
-//
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_BUFFER_H
-#define QUICKSAVE_BUFFER_H
+#pragma once
 
 #include <iostream>
 #include <bits/unique_ptr.h>
 #include <folly/io/IOBuf.h>
+
+
+namespace qs {
+namespace util {
 
 class Buffer
 {
@@ -33,5 +35,5 @@ public:
         return targetString;
     }
 };
-
-#endif  //QUICKSAVE_BUFFER_H
+}
+}

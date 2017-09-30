@@ -1,14 +1,16 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_BASE64_H
-#define QUICKSAVE_BASE64_H
+#pragma once
 
 #include <string>
 
 #include <proxygen/lib/utils/Base64.h>
 
+
 namespace qs {
+namespace util {
+
 class Base64
 {
 public:
@@ -26,5 +28,4 @@ public:
     }
 };
 }
-
-#endif  //QUICKSAVE_BASE64_H
+}

@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <uuid>
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/oauth/OAuthMemcached.h>
+#include <qs/util/format.h>
+#include <qs/util/uuid.h>
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/UserBean.h>
-#include <util/format.h>
 
 
 class OAuthAPI

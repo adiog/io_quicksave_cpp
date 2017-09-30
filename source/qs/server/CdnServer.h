@@ -10,22 +10,22 @@
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 
-#include <ProxygenHandler.h>
-#include <uuid>
 #include <qs/database/ProviderFactory.h>
 #include <qs/http/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/oauth/OAuthMasterDatabase.h>
+#include <qs/server/ProxygenHandler.h>
 #include <qs/server/RequestContext.h>
 #include <qs/storage/StorageFactory.h>
+#include <qs/util/format.h>
+#include <qs/util/uuid.h>
 #include <qsgen/bean/FileBean.h>
 #include <qsgen/bean/MetaBean.h>
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/TokenBean.h>
 #include <qsgen/bean/TokenRequestBean.h>
 #include <qsgen/databaseBean/DatabaseBeans.h>
-#include <util/format.h>
 
 
 namespace qs {
@@ -120,7 +120,7 @@ public:
     void handle_post() override
     {
         const std::string path = headers_->getPath();
-        const std::string contiguousBody = Buffer::to_string(body_);
+        const std::string contiguousBody = qs::util::Buffer::to_string(body_);
 
         LOG(INFO) << Format::format("< [%luB] %s", contiguousBody.length(), contiguousBody.c_str());
 

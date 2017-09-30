@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <ProxygenHandlerFactory.h>
+#include <qs/server/ProxygenHandlerFactory.h>
 
 
 namespace qs {

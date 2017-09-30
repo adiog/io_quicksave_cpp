@@ -1,9 +1,13 @@
-#include <Python.h>
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
+
 #include <gtest/gtest.h>
-#include "PythonBeanAPI.h"
+
+#include <timer>
+
+#include <PythonBeanAPI.h>
 #include <qsgen/bean/MetaBean.h>
 #include <qsgen/bean/ItemBean.h>
-#include <timer>
 #include <qsgen/bean/InternalCreateRequestBean.h>
 
 

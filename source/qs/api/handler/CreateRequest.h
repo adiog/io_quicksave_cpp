@@ -6,7 +6,7 @@
 #include <folly/io/IOBuf.h>
 
 #include <PluginEngine.h>
-#include <timestamp.h>
+#include <qs/util/timestamp.h>
 #include <qs/storage/StorageFactory.h>
 #include <qsgen/bean/CreateRequestBean.h>
 #include <qsgen/bean/CreateResponseBean.h>
@@ -25,7 +25,7 @@ public:
 
         meta.user_hash = *ctx.userBean.user_hash;
         meta.meta_hash = database::Action::insert<MetaBean>(ctx.databaseTransaction, meta);
-        meta.created_at = timestamp();
+        meta.created_at = qs::util::Timestamp::timestamp();
 
         InternalCreateRequestBean internalCreateRequestBean;
 

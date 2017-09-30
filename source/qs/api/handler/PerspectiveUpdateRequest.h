@@ -3,10 +3,13 @@
 
 #pragma once
 
-#include <qsgen/bean/PerspectiveUpdateRequestBean.h>
-#include <qsgen/bean/MessageBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
+#include <absl/strings/str_join.h>
+
 #include <folly/io/IOBuf.h>
+
+#include <qsgen/bean/MessageBean.h>
+#include <qsgen/bean/PerspectiveUpdateRequestBean.h>
+#include <qsgen/databaseBean/DatabaseBeans.h>
 
 class PerspectiveUpdateRequest : public PerspectiveUpdateRequestBean
 {
@@ -19,17 +22,26 @@ public:
 
         std::cout << ::serialize(perspective) << std::endl;
 
+        if (ordering)
+        {
+            std::string orderingJoin = absl::StrJoin(ordering->begin(), ordering->end(), ",");
+            perspective.ordering = orderingJoin;
+        }
+
         auto updated_perspective = database::Action::get<PerspectiveBean>(ctx.databaseTransaction, *perspective.perspective_hash);
 
-        //std::cout << ::serialize(*updated_perspective) << std::endl;
-/*
-        if (updated_perspective) {
-            //updated_perspective->update(perspective);
+        std::cout << ::serialize(*updated_perspective) << std::endl;
+
+        if (updated_perspective)
+        {
+            updated_perspective->update(perspective);
             database::Action::update<PerspectiveBean>(ctx.databaseTransaction, *updated_perspective);
             messageBean.message = "OK";
-        } else {
+        }
+        else
+        {
             messageBean.message = "Not found";
         }
-  */      return messageBean;
+        return messageBean;
     }
 };

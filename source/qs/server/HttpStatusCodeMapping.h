@@ -6,6 +6,9 @@
 #include <unordered_map>
 
 
+namespace qs {
+namespace server {
+
 struct HttpStatusCodeMapping
 {
     static const char *getReasonPhrase(int statusCode)
@@ -70,9 +73,10 @@ struct HttpStatusCodeMapping
             {506, "Variant Also Negotiates"},
             {507, "Insufficient Storage"},
             {509, "Bandwidth Limit Exceeded"},
-            {510, "Not Extended"}
-        };
+            {510, "Not Extended"}};
 
         return mapStatusCodeToReasonPhrase[statusCode];
     }
 };
+}
+}

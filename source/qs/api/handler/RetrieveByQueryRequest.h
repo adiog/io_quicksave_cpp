@@ -5,17 +5,15 @@
 
 #include <folly/io/IOBuf.h>
 
+#include <qs/server/RequestContext.h>
 #include <qs/useCase/RetrieveUseCase.h>
-#include <qsgen/bean/RetrieveRequestBean.h>
-#include <qsgen/bean/RetrieveResponseBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
-#include <qsql/qsqlQuery.h>
+#include <qsgen/bean/RetrieveByQueryRequestBean.h>
 
 
-class RetrieveRequest : public RetrieveRequestBean
+class RetrieveByQueryRequest : public RetrieveByQueryRequestBean
 {
 public:
-    using RetrieveRequestBean::RetrieveRequestBean;
+    using RetrieveByQueryRequestBean::RetrieveByQueryRequestBean;
 
     std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {

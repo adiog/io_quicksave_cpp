@@ -4,7 +4,7 @@
 #include <env.h>
 
 #include <zconf.h>
-#include <hash>
+#include <qs/util/hash.h>
 #include <thread>
 #include <qs/mq/queue.h>
 #include <qsgen/bean/DatabaseTaskBean.h>

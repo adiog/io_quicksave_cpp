@@ -8,16 +8,16 @@
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <rapidjson/document.h>
 
-#include <ProxygenHandler.h>
-#include <uuid>
 #include <qs/api/handler/CreateRequest.h>
 #include <qs/api/handler/GenericRequest.h>
 #include <qs/api/handler/MetaDeleteRequest.h>
 #include <qs/api/handler/MetaUpdateRequest.h>
 #include <qs/api/handler/PerspectiveCreateRequest.h>
-#include <qs/api/handler/PerspectiveDeleteRequest.h>
+#include <qs/api/handler/PerspectiveRetrieveRequest.h>
 #include <qs/api/handler/PerspectiveUpdateRequest.h>
-#include <qs/api/handler/RetrieveRequest.h>
+#include <qs/api/handler/PerspectiveDeleteRequest.h>
+#include <qs/api/handler/RetrieveByPerspectiveRequest.h>
+#include <qs/api/handler/RetrieveByQueryRequest.h>
 #include <qs/api/handler/TagCreateRequest.h>
 #include <qs/api/handler/TagDeleteRequest.h>
 #include <qs/api/handler/TagUpdateRequest.h>
@@ -26,12 +26,14 @@
 #include <qs/http/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
 #include <qs/oauth/OAuthHelper.h>
+#include <qs/server/ProxygenHandler.h>
 #include <qs/server/RequestContext.h>
+#include <qs/util/format.h>
+#include <qs/util/uuid.h>
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/TokenBean.h>
 #include <qsgen/databaseBean/DatabaseBeans.h>
-#include <util/format.h>
 
 
 namespace qs {
@@ -112,7 +114,7 @@ void ApiServer::handle_get()
 void ApiServer::handle_post()
 {
     const std::string path = headers_->getPath();
-    const std::string contiguousBody = Buffer::to_string(body_);
+    const std::string contiguousBody = qs::util::Buffer::to_string(body_);
 
     int limit = std::min(static_cast<int>(contiguousBody.length()), 512);
     LOG(INFO) << Format::format("< [%luB] %s", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
@@ -164,22 +166,28 @@ void ApiServer::handle_post()
         }
         else if (path == "/retrieve")
         {
-            response = GenericRequest<RetrieveRequest>::handle(requestContext, document);
+            response = GenericRequest<RetrieveByQueryRequest>::handle(requestContext, document);
+        }
+        else if (path == "/retrieve_by_perspective")
+        {
+            response = GenericRequest<RetrieveByPerspectiveRequest>::handle(requestContext, document);
         }
         else if (path == "/perspective/create")
         {
             response = GenericRequest<PerspectiveCreateRequest>::handle(requestContext, document);
         }
+        else if (path == "/perspective/retrieve")
+        {
+            response = GenericRequest<PerspectiveRetrieveRequest>::handle(requestContext, document);
+        }
+        else if (path == "/perspective/update")
+        {
+            response = GenericRequest<PerspectiveUpdateRequest>::handle(requestContext, document);
+        }
         else if (path == "/perspective/delete")
         {
             response = GenericRequest<PerspectiveDeleteRequest>::handle(requestContext, document);
         }
-        /*
-                    else if (path == "/perspective/update")
-                    {
-                        response = GenericRequest<PerspectiveUpdateRequest>::handle(requestContext, document);
-                    }
-                    */
         else if (path == "/tag/create")
         {
             response = GenericRequest<TagCreateRequest>::handle(requestContext, document);

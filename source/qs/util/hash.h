@@ -6,6 +6,10 @@
 #include <chrono>
 #include <sha1.h>
 
+
+namespace qs {
+namespace util {
+
 struct Hash
 {
     static std::string get_sha1(const std::string &string)
@@ -19,6 +23,9 @@ struct Hash
     static std::string get()
     {
         auto now = std::chrono::high_resolution_clock::now();
-        return Hash::get_sha1(std::to_string((std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch())).count()));
+        return Hash::get_sha1(std::to_string(
+            (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch())).count()));
     }
 };
+}
+}

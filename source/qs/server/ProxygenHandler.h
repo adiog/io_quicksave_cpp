@@ -7,11 +7,11 @@
 #include <proxygen/httpserver/RequestHandler.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 
-#include <HttpStatusCodeMapping.h>
+#include <qs/server/HttpStatusCodeMapping.h>
 #include <style>
 #include <timer>
-#include <util/buffer.h>
-#include <util/format.h>
+#include <qs/util/buffer.h>
+#include <qs/util/format.h>
 
 
 class ProxygenHandler : public proxygen::RequestHandler
@@ -155,7 +155,7 @@ void ProxygenHandler::reply_cookie(int statusCode, const std::string& cookieName
     else
     {
         proxygen::ResponseBuilder(downstream_)
-            .status(statusCode, HttpStatusCodeMapping::getReasonPhrase(statusCode))
+            .status(statusCode, qs::server::HttpStatusCodeMapping::getReasonPhrase(statusCode))
             .header("Vary", "Cookie")
             .header("Set-Cookie", setCookie.c_str())
             .sendWithEOM();
@@ -177,14 +177,14 @@ void ProxygenHandler::reply(int statusCode)
     else
     {
         proxygen::ResponseBuilder(downstream_)
-            .status(statusCode, HttpStatusCodeMapping::getReasonPhrase(statusCode))
+            .status(statusCode, qs::server::HttpStatusCodeMapping::getReasonPhrase(statusCode))
             .sendWithEOM();
     }
 }
 
 void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf>& response)
 {
-    std::string buffer = Buffer::to_string(response);
+    std::string buffer = qs::util::Buffer::to_string(response);
     LOG(INFO) << Format::format("> 200 [%luB] %s", response->length(), buffer.c_str());
 
     proxygen::ResponseBuilder(downstream_)

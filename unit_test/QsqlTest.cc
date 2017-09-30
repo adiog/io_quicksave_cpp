@@ -1,10 +1,15 @@
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
+
+#include <gtest/gtest.h>
+
+#include <ANTLRInputStream.h>
+
 #include <qsql/qsqlAst.h>
 #include <qsql/qsqlLexer.h>
 #include <qsql/qsqlBaseListener.h>
 #include <qsql/qsqlQuicksaveVisitor.h>
-#include <gtest/gtest.h>
-#include <ANTLRInputStream.h>
-#include "tree/ParseTree.h"
+
 
 TEST(QsqlTestSuite, QsqlTestCase) {
     std::stringstream stream("WHERE name ~ 'pattern'");
@@ -16,9 +21,6 @@ TEST(QsqlTestSuite, QsqlTestCase) {
     auto tree = parser.start();
     Ref<qsqlBaseListener> listener(new qsqlBaseListener());
     auto qsqlVisitor = qsqlQuicksaveVisitor();
-    //auto b = qsqlVisitor.visitStart(tree);
-    //auto a = static_cast<AstNode *>(b);
-    //std::cout << a->buildQuery().first << std::endl;
-
-    //delete b;
+    auto traversedTree = qsqlVisitor.visitStart(tree);
+    std::cout << traversedTree.as<AstNode*>()->buildQuery().first << std::endl;
 }
