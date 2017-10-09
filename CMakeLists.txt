@@ -60,7 +60,7 @@ ADD_EXECUTABLE(oauth oauth/oauth.cc)
 TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} postgres pq memcached pthread SQLiteCpp sqlite3 dl)
 
 ADD_EXECUTABLE(post post/post.cc)
-TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl abseil)
+TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 postgres pq SQLiteCpp sqlite3 dl folly abseil)
 
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})

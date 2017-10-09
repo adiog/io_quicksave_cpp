@@ -12,6 +12,7 @@
 #include <qs/database/Action.h>
 #include <qs/database/ProviderFactory.h>
 #include <qsgen/databaseBean/DatabaseBeans.h>
+#include <qs/server/Config.h>
 
 
 template <typename DB, typename Bean>
@@ -86,16 +87,9 @@ int main(int argc, char *argv[])
 {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-    std::cout << FLAGS_post_threads << std::endl;
+    auto postThreads = qs::server::Config::getThreads(FLAGS_post_threads);
 
-    int threads = FLAGS_post_threads;
-    if (threads <= 0)
-    {
-        threads = static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
-        CHECK(threads > 0);
-    }
-
-    std::vector<std::thread> workers(threads);
+    std::vector<std::thread> workers(postThreads);
 
     for (auto &thread : workers)
     {

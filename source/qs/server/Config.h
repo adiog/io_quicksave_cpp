@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include <vector>
+
+#include <proxygen/httpserver/HTTPServer.h>
+#include <proxygen/httpserver/HTTPServerOptions.h>
+
 #include <qs/server/ProxygenHandlerFactory.h>
 
 

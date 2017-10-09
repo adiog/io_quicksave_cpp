@@ -55,8 +55,8 @@ public:
             }
         }
 
-        std::string keyPath = Format::format("/keys/%s_id_rsa", ctx.userBean.user_hash->c_str());
-        std::string sshPath = Format::format("/sshfs/%s", ctx.userBean.user_hash->c_str());
+        std::string keyPath = folly::format("/keys/{}_id_rsa", ctx.userBean.user_hash->c_str()).str();
+        std::string sshPath = folly::format("/sshfs/{}", ctx.userBean.user_hash->c_str()).str();
 
         auto keys = database::Action::get_by<KeyBean>(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
         for (auto &key : keys)
@@ -67,7 +67,7 @@ public:
                 fileStream << key.value << '\n';
                 fileStream.close();
 
-                std::string chmod = Format::format(std::string("chmod 600 %s"), keyPath.c_str());
+                std::string chmod = folly::format(std::string("chmod 600 {}"), keyPath.c_str()).str();
                 std::system(chmod.c_str());
 
                 break;
@@ -76,11 +76,11 @@ public:
 
         try
         {
-            std::string check_exist = Format::format(std::string("test -d %s"), sshPath.c_str());
+            std::string check_exist = folly::format(std::string("test -d {}"), sshPath.c_str()).str();
             auto check = std::system(check_exist.c_str());
             if (!check)
             {
-                std::string mkdir = Format::format(std::string("mkdir -p %s"), sshPath.c_str());
+                std::string mkdir = folly::format(std::string("mkdir -p {}"), sshPath.c_str()).str();
                 std::system(mkdir.c_str());
             }
         }
@@ -90,12 +90,12 @@ public:
 
         try
         {
-            std::string check_mount = Format::format(std::string("mountpoint -q %s"), sshPath.c_str());
+            std::string check_mount = folly::format(std::string("mountpoint -q {}"), sshPath.c_str()).str();
             auto check = std::system(check_mount.c_str());
             if (!check)
             {
-                std::string command = Format::format(
-                    std::string("sshfs -o IdentityFile=%s -o idmap=user -p %s %s@%s:%s %s"), keyPath.c_str(), port.c_str(), user.c_str(), host.c_str(), path.c_str(), sshPath.c_str());
+                std::string command = folly::format(
+                    std::string("sshfs -o IdentityFile={} -o idmap=user -p {} {}@{}:{} {}"), keyPath.c_str(), port.c_str(), user.c_str(), host.c_str(), path.c_str(), sshPath.c_str()).str();
                 std::cout << command << std::endl;
                 std::system(command.c_str());
             }

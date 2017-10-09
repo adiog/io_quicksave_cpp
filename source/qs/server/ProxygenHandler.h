@@ -3,15 +3,16 @@
 
 #pragma once
 
+#include <folly/Format.h>
 #include <folly/Memory.h>
+
 #include <proxygen/httpserver/RequestHandler.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 
-#include <qs/server/HttpStatusCodeMapping.h>
 #include <style>
 #include <timer>
+#include <qs/server/HttpStatusCodeMapping.h>
 #include <qs/util/buffer.h>
-#include <qs/util/format.h>
 
 
 class ProxygenHandler : public proxygen::RequestHandler
@@ -55,7 +56,7 @@ protected:
 void ProxygenHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept
 {
     headers_ = std::move(headers);
-    LOG(INFO) << Format::format("%s %s", headers_->getMethodString().c_str(), headers_->getPath().c_str());
+    LOG(INFO) << folly::format("{} {}", headers_->getMethodString().c_str(), headers_->getPath().c_str());
 }
 
 void ProxygenHandler::onBody(std::unique_ptr<folly::IOBuf> body) noexcept
@@ -113,7 +114,7 @@ void ProxygenHandler::handle_options()
     int statusCode = 200;
     const char* statusText = "OK";
 
-    LOG(INFO) << Format::format("> %lu", statusCode);
+    LOG(INFO) << folly::format("> {}", statusCode);
 
     proxygen::ResponseBuilder(downstream_)
         .status(statusCode, statusText)
@@ -128,11 +129,11 @@ std::string ProxygenHandler::formatSetCookie(const std::string& cookieName, cons
 {
     if (cookieValue == "")
     {
-        return Format::format("%s=; HttpOnly; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT", cookieName.c_str());
+        return folly::format("{}=; HttpOnly; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT", cookieName.c_str()).str();
     }
     else
     {
-        return Format::format("%s=%s; HttpOnly; Path=/", cookieName.c_str(), cookieValue.c_str());
+        return folly::format("{}={}; HttpOnly; Path=/", cookieName.c_str(), cookieValue.c_str()).str();
     }
 }
 
@@ -140,7 +141,7 @@ void ProxygenHandler::reply_cookie(int statusCode, const std::string& cookieName
 {
     const std::string setCookie = formatSetCookie(cookieName, cookieValue);
 
-    LOG(INFO) << Format::format("> %lu %s", statusCode, setCookie.c_str());
+    LOG(INFO) << folly::format("> {} {}", statusCode, setCookie.c_str());
 
     if (statusCode == 200)
     {
@@ -164,7 +165,7 @@ void ProxygenHandler::reply_cookie(int statusCode, const std::string& cookieName
 
 void ProxygenHandler::reply(int statusCode)
 {
-    LOG(INFO) << Format::format("> %lu", statusCode);
+    LOG(INFO) << folly::format("> {}", statusCode);
 
     if (statusCode == 200)
     {
@@ -185,7 +186,7 @@ void ProxygenHandler::reply(int statusCode)
 void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf>& response)
 {
     std::string buffer = qs::util::Buffer::to_string(response);
-    LOG(INFO) << Format::format("> 200 [%luB] %s", response->length(), buffer.c_str());
+    LOG(INFO) << folly::format("> 200 [{}B] {}", response->length(), buffer.c_str());
 
     proxygen::ResponseBuilder(downstream_)
         .status(200, "OK")

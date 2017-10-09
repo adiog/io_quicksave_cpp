@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <proxygen/httpserver/RequestHandlerFactory.h>
+
+
 template<typename ProxygenHandle>
 class ProxygenHandlerFactory : public proxygen::RequestHandlerFactory
 {

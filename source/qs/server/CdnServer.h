@@ -5,6 +5,8 @@
 
 #include <absl/strings/str_split.h>
 
+#include <folly/Format.h>
+
 #include <SQLiteCpp/Database.h>
 #include <folly/io/IOBuf.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
@@ -18,7 +20,6 @@
 #include <qs/server/ProxygenHandler.h>
 #include <qs/server/RequestContext.h>
 #include <qs/storage/StorageFactory.h>
-#include <qs/util/format.h>
 #include <qs/util/uuid.h>
 #include <qsgen/bean/FileBean.h>
 #include <qsgen/bean/MetaBean.h>
@@ -122,7 +123,7 @@ public:
         const std::string path = headers_->getPath();
         const std::string contiguousBody = qs::util::Buffer::to_string(body_);
 
-        LOG(INFO) << Format::format("< [%luB] %s", contiguousBody.length(), contiguousBody.c_str());
+        LOG(INFO) << folly::format("< [{}B] {}", contiguousBody.length(), contiguousBody.c_str());
 
         if (path == "/token/put")
         {

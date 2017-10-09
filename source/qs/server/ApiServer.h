@@ -4,6 +4,7 @@
 #pragma once
 
 #include <folly/io/IOBuf.h>
+#include <folly/Format.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <rapidjson/document.h>
@@ -28,7 +29,6 @@
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/server/ProxygenHandler.h>
 #include <qs/server/RequestContext.h>
-#include <qs/util/format.h>
 #include <qs/util/uuid.h>
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/SessionBean.h>
@@ -117,7 +117,7 @@ void ApiServer::handle_post()
     const std::string contiguousBody = qs::util::Buffer::to_string(body_);
 
     int limit = std::min(static_cast<int>(contiguousBody.length()), 512);
-    LOG(INFO) << Format::format("< [%luB] %s", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
+    LOG(INFO) << folly::format("< [{}B] {}", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
 
     if (path == "/token/put")
     {

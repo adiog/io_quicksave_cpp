@@ -5,6 +5,8 @@
 
 #include <absl/types/optional.h>
 
+#include <folly/Format.h>
+
 #include <SQLiteCpp/Database.h>
 #include <folly/io/IOBuf.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
@@ -15,7 +17,6 @@
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/oauth/OAuthMasterDatabase.h>
 #include <qs/server/ProxygenHandler.h>
-#include <qs/util/format.h>
 #include <qs/util/uuid.h>
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/TokenBean.h>

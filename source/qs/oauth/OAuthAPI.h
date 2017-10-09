@@ -3,9 +3,10 @@
 
 #pragma once
 
+#include <folly/Format.h>
+
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/oauth/OAuthMemcached.h>
-#include <qs/util/format.h>
 #include <qs/util/uuid.h>
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/UserBean.h>
@@ -28,7 +29,7 @@ public:
             throw std::runtime_error("");
         }
 
-        LOG(INFO) << Format::format("Session                      : CREATED (%s,%s)", userBean.username.c_str(), sessionBean.token.c_str());
+        LOG(INFO) << folly::format("Session                      : CREATED ({},{})", userBean.username.c_str(), sessionBean.token.c_str());
         return sessionBean.token;
     }
 
