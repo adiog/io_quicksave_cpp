@@ -17,7 +17,7 @@ addons:
       - git
 
 before_install:
-  - sudo apt install -y sqlite3 libvsqlitepp-dev uuid uuid-dev libmemcached-dev libpqxx-dev sshfs libc6-pic librabbitmq-dev
+  - sudo apt install -y sqlite3 libvsqlitepp-dev uuid uuid-dev libmemcached-dev libpqxx-dev sshfs libc6-pic librabbitmq-dev libfuse-dev
   - export CXX=g++-6
   - export CC=gcc-6
   - git clone https://github.com/python/cpython
