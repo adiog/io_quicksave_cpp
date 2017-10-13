@@ -15,6 +15,7 @@ addons:
       - libgoogle-glog-dev
       - libgflags-dev
       - git
+      - python3.6-dev
 
 before_install:
   - sudo apt install -y sqlite3 python3 python3-dev libvsqlitepp-dev uuid uuid-dev libmemcached-dev libpqxx-dev sshfs libc6-pic
