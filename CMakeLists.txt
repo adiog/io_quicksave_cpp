@@ -65,7 +65,7 @@ TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils 
 
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
-TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl gpgme dl)
+TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 dl dl)
 
 
 ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
