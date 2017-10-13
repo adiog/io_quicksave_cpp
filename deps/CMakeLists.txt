@@ -21,6 +21,8 @@ ENDMACRO()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/abseil)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cctz/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/googletest/googletest/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/googletest/googlemock/include)
 
 COLLECT_PRODUCTION_CC(CCTZ_FILES ${CMAKE_CURRENT_SOURCE_DIR}/cctz/src)
 ADD_LIBRARY(cctz ${CCTZ_FILES})

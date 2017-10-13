@@ -5,7 +5,7 @@
 
 #include <folly/io/IOBuf.h>
 
-#include <PluginEngine.h>
+#include <qs/api-ext/PluginEngine.h>
 #include <qs/util/timestamp.h>
 #include <qs/storage/StorageFactory.h>
 #include <qsgen/bean/CreateRequestBean.h>
