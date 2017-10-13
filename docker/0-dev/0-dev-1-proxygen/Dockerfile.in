@@ -1,0 +1,7 @@
+FROM quicksave/dev-ubuntu
+
+COPY sudo /usr/sbin/sudo
+
+RUN git clone https://github.com/facebook/proxygen \
+    && proxygen/proxygen/deps.sh \
+    && rm -fr proxygen

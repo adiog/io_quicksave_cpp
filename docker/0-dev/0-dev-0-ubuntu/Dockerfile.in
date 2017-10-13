@@ -1,0 +1,5 @@
+FROM ubuntu:latest
+
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y git make cmake g++-5 gcc-5 sqlite3 python3 python3-dev libvsqlitepp-dev uuid uuid-dev libmemcached-dev libpqxx-dev libgpgme++ sshfs libc6-pic librabbitmq-dev libfuse-dev libgoogle-glog-dev libgflags-dev

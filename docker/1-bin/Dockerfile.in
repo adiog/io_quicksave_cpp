@@ -1,0 +1,7 @@
+FROM quicksave/dev-python
+
+RUN git clone --recursive https://github.com/adiog/io_quicksave_cpp \
+    && mkdir build \
+    && cd build \
+    && cmake -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 ../io_quicksave_cpp \
+    && make -j 4
