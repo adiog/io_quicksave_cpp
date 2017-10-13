@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.2)
 project(abseil)
 
 #set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
