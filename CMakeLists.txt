@@ -30,6 +30,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/qsql/cppqsql/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/qsql/cppqsql/generated)
 
 include_directories(/usr/include/python3.6m)
+include_directories(/usr/local/include/python3.6m)
 include_directories(/usr/include/antlr4-runtime)
 
 SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags util abseil)
