@@ -28,3 +28,6 @@
 [submodule "deps/libbeans"]
 	path = deps/libbeans
 	url = https://github.com/adiog/io_quicksave_libbeans
+[submodule "deps/libmemcached"]
+	path = deps/libmemcached
+	url = https://github.com/adiog/libmemcached

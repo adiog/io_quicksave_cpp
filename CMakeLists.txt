@@ -29,6 +29,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/cctz/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/qsql/cppqsql/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/qsql/cppqsql/generated)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/libbeans/cppbeans/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/libmemcached)
 
 include_directories(/usr/include/python3.6m)
 include_directories(/usr/local/include/python3.6m)
@@ -43,6 +44,7 @@ ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/rabbitmq-c-utils)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/sha1)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/postgres)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/libmemcached)
 
 ADD_DEFINITIONS(-DSQLITE_THREADSAFE=1 -Wl,--export-dynamic)
 
