@@ -22,7 +22,7 @@ before_install:
   - cd antlr4/runtime/Cpp
   - mkdir -p build
   - cd build
-  - cmake ..
+  - cmake -DCMAKE_C_COMPILER=gcc-6 -DCMAKE_CXX_COMPILER=g++-6 -DCMAKE_INSTALL_PREFIX=/usr ..
   - make -j 2
   - make install
   - rm -fr /antlr4
