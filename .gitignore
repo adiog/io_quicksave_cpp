@@ -3,6 +3,5 @@ cmake-build-debug
 */.idea
 build
 dist
-shared
 __pycache__
 *.pyc

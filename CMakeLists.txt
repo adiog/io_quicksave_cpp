@@ -28,6 +28,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/abseil)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/cctz/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/qsql/cppqsql/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/qsql/cppqsql/generated)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/libbeans/cppbeans/include)
 
 include_directories(/usr/include/python3.6m)
 include_directories(/usr/local/include/python3.6m)
