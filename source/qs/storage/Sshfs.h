@@ -68,7 +68,11 @@ public:
                 fileStream.close();
 
                 std::string chmod = folly::format(std::string("chmod 600 {}"), keyPath.c_str()).str();
-                std::system(chmod.c_str());
+                auto chmodReturnCode = std::system(chmod.c_str());
+
+                if (chmodReturnCode != 0) {
+                    throw(std::runtime_error("chmod failed"));
+                }
 
                 break;
             }
@@ -81,7 +85,11 @@ public:
             if (!check)
             {
                 std::string mkdir = folly::format(std::string("mkdir -p {}"), sshPath.c_str()).str();
-                std::system(mkdir.c_str());
+                auto mkdirReturnCode = std::system(mkdir.c_str());
+
+                if (mkdirReturnCode != 0) {
+                    throw(std::runtime_error("mkdir failed"));
+                }
             }
         }
         catch (...)
@@ -97,7 +105,11 @@ public:
                 std::string command = folly::format(
                     std::string("sshfs -o IdentityFile={} -o idmap=user -p {} {}@{}:{} {}"), keyPath.c_str(), port.c_str(), user.c_str(), host.c_str(), path.c_str(), sshPath.c_str()).str();
                 std::cout << command << std::endl;
-                std::system(command.c_str());
+                auto sshfsReturnCode = std::system(command.c_str());
+
+                if (sshfsReturnCode != 0) {
+                    throw(std::runtime_error("sshfs failed"));
+                }
             }
         }
         catch (...)
