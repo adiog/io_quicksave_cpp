@@ -13,7 +13,7 @@ namespace database {
 class SqliteProvider : public database::Provider
 {
 public:
-    bool validate(const std::string &providerConnectionString) const
+    bool validate(const std::string &providerConnectionString) const override
     {
         static const std::string acceptingProtocolString = "sqlite://";
         static const size_t acceptingProtocolStringSize = acceptingProtocolString.size();
