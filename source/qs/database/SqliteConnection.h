@@ -9,6 +9,7 @@
 
 #include <qs/database/Connection.h>
 #include <qs/database/SqliteTransaction.h>
+#include <glog/logging.h>
 
 
 namespace database {
