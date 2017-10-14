@@ -7,4 +7,11 @@ RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/s
 RUN mkdir -p /root/.ssh
 RUN mkdir -p /var/run/sshd
 
+COPY ${KEY_PUB} /root/.ssh/authorized_keys
+
+RUN mkdir -p /storage/users/${USER}
+
+COPY ${SQLITE_MASTER_DB} /storage/${SQLITE_MASTER_DB}
+COPY ${SQLITE_USER_DB} /storage/users/${SQLITE_USER_DB}
+
 CMD /usr/sbin/sshd -D
