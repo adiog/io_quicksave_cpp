@@ -8,11 +8,11 @@
 
 TEST(SqliteConnectionTestSuite, Constructor)
 {
-    auto sqliteConnection = SqliteConnection("/storage/users/testuser.sqlite");
+    auto sqliteConnection = database::SqliteConnection("/storage/users/testuser.sqlite");
 }
 
 TEST(SqliteConnectionTestSuite, GettingTransaction)
 {
-    auto sqliteConnection = SqliteConnection("/storage/users/testuser.sqlite");
+    auto sqliteConnection = database::SqliteConnection("/storage/users/testuser.sqlite");
     auto transaction = sqliteConnection.getTransaction();
 }
