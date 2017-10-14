@@ -20,6 +20,7 @@ CMD . venv/bin/activate \
     && sshfs storage_quicksave_docker:/storage /storage/ -o IdentityFile=/storage_id_rsa -o idmap=user  \
     && export LD_LIBRARY_PATH=/usr/local/lib \
     && export GLOG_logtostderr=1 \
+    && export IO_QUICKSAVE_MQ_HOST=mq_quicksave_docker \
     && ./build/api \
         --IO_QUICKSAVE_MEMCACHED_HOST=mem_quicksave_docker \
         --IO_QUICKSAVE_MEMCACHED_PORT=11211 \
