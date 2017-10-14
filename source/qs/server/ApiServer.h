@@ -136,6 +136,8 @@ void ApiServer::handle_post()
 
     const std::string &token = headers_->getCookie("token").toString();
 
+    LOG(INFO) << token;
+
     if (!OAuthAPI::check_session(token))
     {
         return reply_cookie(401, "token", "");

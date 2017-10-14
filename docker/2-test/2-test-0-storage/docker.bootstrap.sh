@@ -11,9 +11,9 @@ PASS=testpass
 KEY_PRIV=storage_id_rsa
 KEY_PUB=${KEY_PRIV}.pub
 
-SQLITE_MASTER_DB=master.sqlite
+SQLITE_MASTER_DB=master.db
 SQLITE_MASTER_SQL=master.sql
-SQLITE_USER_DB=${USER}.sqlite
+SQLITE_USER_DB=${USER}.db
 SQLITE_USER_SQL=${USER}.sql
 
 

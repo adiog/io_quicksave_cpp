@@ -48,6 +48,7 @@ public:
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
         storage->init(*meta.meta_hash);
         createResponseBean.item = itemBean;
+
         return createResponseBean;
     }
 };
