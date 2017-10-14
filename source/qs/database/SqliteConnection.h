@@ -19,7 +19,9 @@ public:
     SqliteConnection(const std::string& connectionString)
     {
         static const int TIMEOUT = 3000;
+        LOG(INFO) << "sqlite connection";
         databaseConnection.reset(new SQLite::Database(connectionString, SQLite::OPEN_READWRITE, TIMEOUT));
+        LOG(INFO) << "sqlite connection";
     }
 
     std::unique_ptr<database::Transaction> getTransaction()

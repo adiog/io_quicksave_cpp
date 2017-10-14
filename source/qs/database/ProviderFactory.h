@@ -20,8 +20,10 @@ public:
 
         for (const auto& provider : providers)
         {
+            LOG(INFO) << "testing provider";
             if (provider->validate(databaseConnectionString))
             {
+                LOG(INFO) << "accepting provider";
                 return provider->accept(databaseConnectionString);
             }
         }
