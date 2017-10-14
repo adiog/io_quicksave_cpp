@@ -1,0 +1,22 @@
+FROM quicksave/bin
+
+RUN mkdir -p /keys
+RUN mkdir -p /sshfs
+
+RUN apt-get install sshfs -y
+
+COPY storage_id_rsa /
+COPY storage_id_rsa.pub /
+
+CMD mkdir ~/.ssh \
+    && mkdir -p /storage \
+    && ssh-keyscan storage_quicksave_docker >> ~/.ssh/known_hosts \
+    && sshfs storage_quicksave_docker:/storage /storage/ -o IdentityFile=/storage_id_rsa -o idmap=user \
+    && export LD_LIBRARY_PATH=/usr/local/lib \
+    && export GLOG_logtostderr=1 \
+    && ./build/oauth \
+        --IO_QUICKSAVE_MEMCACHED_HOST=mem_quicksave_docker \
+        --IO_QUICKSAVE_MEMCACHED_PORT=11211 \
+        --IO_QUICKSAVE_MQ_HOST=mq_quicksave_docker \
+        --IO_QUICKSAVE_MQ_PORT=5672 \
+        --IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING="sqlite:///storage/master.sqlite"
