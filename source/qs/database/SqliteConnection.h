@@ -21,6 +21,7 @@ public:
     {
         static const int TIMEOUT = 3000;
         LOG(INFO) << "sqlite connection";
+        LOG(INFO) << connectionString;
         databaseConnection.reset(new SQLite::Database(connectionString, SQLite::OPEN_READWRITE, TIMEOUT));
         LOG(INFO) << "sqlite connection";
     }
