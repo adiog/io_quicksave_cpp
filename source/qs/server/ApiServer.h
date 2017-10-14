@@ -136,10 +136,14 @@ void ApiServer::handle_post()
 
     const std::string &token = headers_->getCookie("token").toString();
 
+    LOG(INFO) << token;
+
     if (!OAuthAPI::check_session(token))
     {
         return reply_cookie(401, "token", "");
     }
+
+    LOG(INFO) << "auth";
 
     try
     {
@@ -152,11 +156,15 @@ void ApiServer::handle_post()
 
     SessionBean sessionBean = OAuthAPI::get_session(token);
 
+    LOG(INFO) << "sessionbean";
+
     std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(
         sessionBean.user.databaseConnectionString);
     std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
     requestContext.databaseTransaction = databaseTransaction.get();
     requestContext.userBean = sessionBean.user;
+
+    LOG(INFO) << "database";
 
     try
     {
