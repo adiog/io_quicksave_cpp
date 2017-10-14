@@ -34,8 +34,6 @@ public:
         static const std::string acceptingProtocolString = "sqlite://";
         static const size_t acceptingProtocolStringSize = acceptingProtocolString.size();
 
-        LOG(INFO) << "accepting provider sqlite";
-
         const std::string connectionString(&providerConnectionString[acceptingProtocolStringSize],
                                            providerConnectionString.size() - acceptingProtocolStringSize);
         return std::unique_ptr<database::Connection>(dynamic_cast<database::Connection *>(new database::SqliteConnection(connectionString)));

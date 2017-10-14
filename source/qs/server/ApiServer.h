@@ -143,8 +143,6 @@ void ApiServer::handle_post()
         return reply_cookie(401, "token", "");
     }
 
-    LOG(INFO) << "auth";
-
     try
     {
         document = parse(contiguousBody);
@@ -156,18 +154,11 @@ void ApiServer::handle_post()
 
     SessionBean sessionBean = OAuthAPI::get_session(token);
 
-    LOG(INFO) << "sessionbean";
-
     std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(
         sessionBean.user.databaseConnectionString);
-    LOG(INFO) << "sessionbean2";
     std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
-    LOG(INFO) << "sessionbean3";
     requestContext.databaseTransaction = databaseTransaction.get();
-    LOG(INFO) << "sessionbean4";
     requestContext.userBean = sessionBean.user;
-
-    LOG(INFO) << "database";
 
     try
     {

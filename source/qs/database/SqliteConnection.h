@@ -9,7 +9,6 @@
 
 #include <qs/database/Connection.h>
 #include <qs/database/SqliteTransaction.h>
-#include <glog/logging.h>
 
 
 namespace database {
@@ -20,10 +19,7 @@ public:
     SqliteConnection(const std::string& connectionString)
     {
         static const int TIMEOUT = 3000;
-        LOG(INFO) << "sqlite connection";
-        LOG(INFO) << connectionString;
         databaseConnection.reset(new SQLite::Database(connectionString, SQLite::OPEN_READWRITE, TIMEOUT));
-        LOG(INFO) << "sqlite connection";
     }
 
     std::unique_ptr<database::Transaction> getTransaction()
