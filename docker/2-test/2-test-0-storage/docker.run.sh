@@ -4,6 +4,7 @@
 
 sudo docker rm storage_quicksave_docker
 sudo docker run \
+    --privileged \
     --name storage_quicksave_docker \
     --net network_quicksave_docker \
     --expose 22 \

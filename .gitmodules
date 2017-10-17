@@ -25,6 +25,7 @@
 [submodule "deps/qsql"]
 	path = deps/qsql
 	url = https://github.com/adiog/io_quicksave_qsql.git
+	branch = supersonic
 [submodule "deps/libbeans"]
 	path = deps/libbeans
 	url = https://github.com/adiog/io_quicksave_libbeans
