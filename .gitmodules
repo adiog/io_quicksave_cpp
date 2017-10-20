@@ -29,3 +29,12 @@
 [submodule "deps/beans"]
 	path = deps/io_quicksave_beans
 	url = https://github.com/adiog/io_quicksave_beans.git
+[submodule "deps/sqlpp11"]
+	path = deps/sqlpp11
+	url = https://github.com/adiog/sqlpp11
+[submodule "deps/sqlpp11-connector-postgresql"]
+	path = deps/sqlpp11-connector-postgresql
+	url = https://github.com/adiog/sqlpp11-connector-postgresql
+[submodule "deps/sqlpp11-connector-sqlite3"]
+	path = deps/sqlpp11-connector-sqlite3
+	url = https://github.com/adiog/sqlpp11-connector-sqlite3
