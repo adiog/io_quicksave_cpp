@@ -4,15 +4,9 @@
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest
-[submodule "deps/SQLiteCpp"]
-	path = deps/SQLiteCpp
-	url = https://github.com/SRombauts/SQLiteCpp
 [submodule "deps/rabbitmq-c"]
 	path = deps/rabbitmq-c
 	url = https://github.com/alanxz/rabbitmq-c
-[submodule "deps/postgres"]
-	path = deps/postgres
-	url = https://github.com/adiog/postgres
 [submodule "deps/abseil"]
 	path = deps/abseil
 	url = https://github.com/abseil/abseil-cpp
@@ -23,15 +17,15 @@
 	path = deps/glog
 	url = https://github.com/google/glog
 [submodule "deps/qsql"]
-	path = deps/qsql
+	path = deps/io_quicksave_qsql
 	url = https://github.com/adiog/io_quicksave_qsql.git
 	branch = supersonic
 [submodule "deps/libbeans"]
-	path = deps/libbeans
+	path = deps/io_quicksave_libbeans
 	url = https://github.com/adiog/io_quicksave_libbeans
 [submodule "deps/libmemcached"]
 	path = deps/libmemcached
 	url = https://github.com/adiog/libmemcached
 [submodule "deps/beans"]
-	path = deps/beans
+	path = deps/io_quicksave_beans
 	url = https://github.com/adiog/io_quicksave_beans.git
