@@ -57,17 +57,17 @@ public:
     static MetaBean constructor(const Row& row)
     {
         MetaBean bean;
-        if (row.metaHash.is_null()) bean.meta_hash = row.metaHash.value();
-        if (row.author.is_null()) bean.author = row.author.value();
-        if (row.createdAt.is_null()) bean.created_at = row.createdAt.value();
-        if (row.icon.is_null()) bean.icon = row.icon.value();
-        if (row.metaType.is_null()) bean.meta_type = row.metaType.value();
-        if (row.modifiedAt.is_null()) bean.modified_at = row.modifiedAt.value();
-        if (row.name.is_null()) bean.name = row.name.value();
-        if (row.sourceTitle.is_null()) bean.source_title = row.sourceTitle.value();
-        if (row.sourceUrl.is_null()) bean.source_url = row.sourceUrl.value();
-        if (row.text.is_null()) bean.text = row.text.value();
-        if (row.userHash.is_null()) bean.user_hash = row.userHash.value();
+        if (!row.metaHash.is_null()) bean.meta_hash = row.metaHash.value();
+        if (!row.author.is_null()) bean.author = row.author.value();
+        if (!row.createdAt.is_null()) bean.created_at = row.createdAt.value();
+        if (!row.icon.is_null()) bean.icon = row.icon.value();
+        if (!row.metaType.is_null()) bean.meta_type = row.metaType.value();
+        if (!row.modifiedAt.is_null()) bean.modified_at = row.modifiedAt.value();
+        if (!row.name.is_null()) bean.name = row.name.value();
+        if (!row.sourceTitle.is_null()) bean.source_title = row.sourceTitle.value();
+        if (!row.sourceUrl.is_null()) bean.source_url = row.sourceUrl.value();
+        if (!row.text.is_null()) bean.text = row.text.value();
+        if (!row.userHash.is_null()) bean.user_hash = row.userHash.value();
         return bean;
     }
 
@@ -484,7 +484,7 @@ public:
     static FileBean constructor(const Row& row)
     {
         FileBean bean;
-        if (row.fileHash.is_null()) bean.file_hash = row.fileHash.value();
+        if (!row.fileHash.is_null()) bean.file_hash = row.fileHash.value();
         bean.filename = row.filename.value();
         bean.filesize = row.filesize.value();
         bean.meta_hash = row.metaHash.value();
@@ -805,7 +805,7 @@ public:
     static ActionBean constructor(const Row& row)
     {
         ActionBean bean;
-        if (row.actionHash.is_null()) bean.action_hash = row.actionHash.value();
+        if (!row.actionHash.is_null()) bean.action_hash = row.actionHash.value();
         bean.kwargs = row.kwargs.value();
         bean.meta_hash = row.metaHash.value();
         bean.name = row.name.value();
@@ -1120,11 +1120,11 @@ public:
     static TagBean constructor(const Row& row)
     {
         TagBean bean;
-        if (row.tagHash.is_null()) bean.tag_hash = row.tagHash.value();
-        if (row.metaHash.is_null()) bean.meta_hash = row.metaHash.value();
-        if (row.name.is_null()) bean.name = row.name.value();
-        if (row.userHash.is_null()) bean.user_hash = row.userHash.value();
-        if (row.value.is_null()) bean.value = row.value.value();
+        if (!row.tagHash.is_null()) bean.tag_hash = row.tagHash.value();
+        if (!row.metaHash.is_null()) bean.meta_hash = row.metaHash.value();
+        if (!row.name.is_null()) bean.name = row.name.value();
+        if (!row.userHash.is_null()) bean.user_hash = row.userHash.value();
+        if (!row.value.is_null()) bean.value = row.value.value();
         return bean;
     }
 
@@ -1469,7 +1469,7 @@ public:
     static KeyBean constructor(const Row& row)
     {
         KeyBean bean;
-        if (row.keyHash.is_null()) bean.key_hash = row.keyHash.value();
+        if (!row.keyHash.is_null()) bean.key_hash = row.keyHash.value();
         bean.name = row.name.value();
         bean.user_hash = row.userHash.value();
         bean.value = row.value.value();
@@ -1784,12 +1784,12 @@ public:
     static PerspectiveBean constructor(const Row& row)
     {
         PerspectiveBean bean;
-        if (row.perspectiveHash.is_null()) bean.perspective_hash = row.perspectiveHash.value();
+        if (!row.perspectiveHash.is_null()) bean.perspective_hash = row.perspectiveHash.value();
         bean.defined_query = row.definedQuery.value();
         bean.name = row.name.value();
-        if (row.ordering.is_null()) bean.ordering = row.ordering.value();
-        if (row.refinedQuery.is_null()) bean.refined_query = row.refinedQuery.value();
-        if (row.userHash.is_null()) bean.user_hash = row.userHash.value();
+        if (!row.ordering.is_null()) bean.ordering = row.ordering.value();
+        if (!row.refinedQuery.is_null()) bean.refined_query = row.refinedQuery.value();
+        if (!row.userHash.is_null()) bean.user_hash = row.userHash.value();
         return bean;
     }
 
@@ -2132,7 +2132,7 @@ public:
     static UserBean constructor(const Row& row)
     {
         UserBean bean;
-        if (row.userHash.is_null()) bean.user_hash = row.userHash.value();
+        if (!row.userHash.is_null()) bean.user_hash = row.userHash.value();
         bean.databaseConnectionString = row.databaseConnectionString.value();
         bean.password = row.password.value();
         bean.storageConnectionString = row.storageConnectionString.value();

@@ -50,6 +50,7 @@ private:
     {
         sqlpp::sqlite3::connection_config connectionConfig;
         connectionConfig.path_to_database = std::move(connectionString);
+        connectionConfig.flags = SQLITE_OPEN_READWRITE;
         return std::move(connectionConfig);
     }
 };
