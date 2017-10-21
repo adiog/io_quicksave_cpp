@@ -5,17 +5,16 @@
 
 #include <absl/strings/str_split.h>
 
-#include <qs/database/Action.h>
 #include <qs/storage/LocalStorage.h>
 #include <qs/storage/StorageProvider.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
+
 
 namespace storage {
 
 class Sshfs : public storage::LocalStorage
 {
 public:
-    Sshfs(RequestContext &ctx, std::string connectionString)
+    Sshfs(RequestContext &ctx, const std::string& connectionString)
     {
         auto splitConnectionString = absl::StrSplit(connectionString, ' ');
 
@@ -58,7 +57,7 @@ public:
         std::string keyPath = folly::format("/keys/{}_id_rsa", ctx.userBean.user_hash->c_str()).str();
         std::string sshPath = folly::format("/sshfs/{}", ctx.userBean.user_hash->c_str()).str();
 
-        auto keys = database::Action::get_by<KeyBean>(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
+        auto keys = qsgen::orm::ORM<KeyBean>::getBy(ctx.databaseTransaction, qsgen::orm::Key{}.userHash, *ctx.userBean.user_hash);
         for (auto &key : keys)
         {
             if (key.name == keyName)
@@ -92,7 +91,7 @@ public:
                 }
             }
         }
-        catch (...)
+        catch (...) //TODO
         {
         }
 

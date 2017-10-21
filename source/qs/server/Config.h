@@ -17,14 +17,14 @@ namespace server {
 class Config
 {
 public:
-    static long getThreads(long threads)
+    static unsigned long getThreads(long threads)
     {
         if (threads <= 0)
         {
             threads = sysconf(_SC_NPROCESSORS_ONLN);
             CHECK(threads > 0);
         }
-        return threads;
+        return static_cast<unsigned long>(threads);
     }
 
     template <typename ServerHandler>

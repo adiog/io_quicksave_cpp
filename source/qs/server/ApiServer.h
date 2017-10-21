@@ -13,6 +13,7 @@
 #include <qs/api/handler/GenericRequest.h>
 #include <qs/api/handler/MetaDeleteRequest.h>
 #include <qs/api/handler/MetaUpdateRequest.h>
+/*
 #include <qs/api/handler/PerspectiveCreateRequest.h>
 #include <qs/api/handler/PerspectiveRetrieveRequest.h>
 #include <qs/api/handler/PerspectiveUpdateRequest.h>
@@ -23,8 +24,9 @@
 #include <qs/api/handler/TagDeleteRequest.h>
 #include <qs/api/handler/TagUpdateRequest.h>
 #include <qs/api/handler/UploadRequest.h>
+*/
 #include <qs/database/ProviderFactory.h>
-#include <qs/http/Exception.h>
+#include <qs/server/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/server/ProxygenHandler.h>
@@ -33,7 +35,6 @@
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/TokenBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
 
 
 namespace qs {
@@ -114,7 +115,7 @@ void ApiServer::handle_get()
 void ApiServer::handle_post()
 {
     const std::string path = headers_->getPath();
-    const std::string contiguousBody = qs::util::Buffer::to_string(body_);
+    const std::string contiguousBody = qs::util::Buffer::to_string(reference_cast(body_));
 
     int limit = std::min(static_cast<int>(contiguousBody.length()), 512);
     LOG(INFO) << folly::format("< [{}B] {}", contiguousBody.length(), std::string(&contiguousBody[0], limit).c_str());
@@ -166,7 +167,7 @@ void ApiServer::handle_post()
         {
             response = GenericRequest<CreateRequest>::handle(requestContext, document);
         }
-        else if (path == "/retrieve")
+/*        else if (path == "/retrieve")
         {
             response = GenericRequest<RetrieveByQueryRequest>::handle(requestContext, document);
         }
@@ -201,7 +202,7 @@ void ApiServer::handle_post()
         else if (path == "/tag/delete")
         {
             response = GenericRequest<TagDeleteRequest>::handle(requestContext, document);
-        }
+        }*/
         else if (path == "/meta/delete")
         {
             response = GenericRequest<MetaDeleteRequest>::handle(requestContext, document);
@@ -210,10 +211,10 @@ void ApiServer::handle_post()
         {
             response = GenericRequest<MetaUpdateRequest>::handle(requestContext, document);
         }
-        else if (path == "/upload")
+        /*else if (path == "/upload")
         {
             response = GenericRequest<UploadRequest>::handle(requestContext, document);
-        }
+        }*/
         else
         {
             return reply(404);
@@ -224,7 +225,7 @@ void ApiServer::handle_post()
         return reply(400);
     }
 
-    requestContext.databaseTransaction->commit();
+//    requestContext.databaseTransaction->commit();
     return reply_response(response);
 }
 }

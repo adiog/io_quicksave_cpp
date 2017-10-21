@@ -185,7 +185,7 @@ void ProxygenHandler::reply(int statusCode)
 
 void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf>& response)
 {
-    std::string buffer = qs::util::Buffer::to_string(response);
+    std::string buffer = qs::util::Buffer::to_string(*response.get());
     LOG(INFO) << folly::format("> 200 [{}B] {}", response->length(), buffer.c_str());
 
     proxygen::ResponseBuilder(downstream_)

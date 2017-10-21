@@ -13,7 +13,7 @@
 
 #include <reference_cast>
 
-#include <qs/http/Exception.h>
+#include <qs/server/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/oauth/OAuthMasterDatabase.h>

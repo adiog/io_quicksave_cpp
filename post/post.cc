@@ -3,38 +3,44 @@
 
 #include <env.h>
 
+#include <reference_cast>
+
 #include <zconf.h>
-#include <qs/util/hash.h>
 #include <thread>
-#include <qs/mq/queue.h>
-#include <qsgen/bean/DatabaseTaskBean.h>
 
-#include <qs/database/Action.h>
 #include <qs/database/ProviderFactory.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
+#include <qs/mq/queue.h>
 #include <qs/server/Config.h>
+#include <qs/util/hash.h>
+
+#include <qsgen/bean/DatabaseTaskBean.h>
+#include <qsgen/bean/FileBean.h>
+#include <qsgen/bean/MetaBean.h>
+#include <qsgen/bean/TagBean.h>
+
+#include <qsgen/orm/sqlppWrappers.h>
 
 
 template <typename DB, typename Bean>
-void insert(DB *db, Bean bean)
+void insert(DB &db, Bean& bean)
 {
-    database::Action::insert(db, bean);
+    qsgen::orm::ORM<Bean>::insert(db, bean);
 }
 
 template <typename DB, typename Bean>
-void update(DB *db, Bean bean)
+void update(DB &db, Bean& bean)
 {
-    database::Action::update(db, bean);
+    qsgen::orm::ORM<Bean>::update(db, bean);
 }
 
 template <typename DB, typename Bean>
-void operation(std::string op, DB *db, Bean bean)
+void operation(const std::string& operationName, DB &db, Bean bean)
 {
-    if (op == "insert")
+    if (operationName == "insert")
     {
         insert(db, bean);
     }
-    else if (op == "update")
+    else if (operationName == "update")
     {
         update(db, bean);
     }
@@ -50,23 +56,23 @@ void consumeBean(DatabaseTaskBean databaseTaskBean)
     try
     {
         std::cout << databaseTaskBean.to_string() << std::endl;
-        auto databaseConnection = database::ProviderFactory::create(databaseTaskBean.databaseConnectionString);
-        auto databaseTransaction = databaseConnection->getTransaction();
+        auto databaseConnectionOwner = qs::database::ProviderFactory::create(databaseTaskBean.databaseConnectionString);
+        auto& databaseConnection = reference_cast(databaseConnectionOwner);
 
         if (databaseTaskBean.beanname == "Meta")
         {
             MetaBean meta(databaseTaskBean.beanjson.c_str());
-            operation(databaseTaskBean.type, databaseTransaction.get(), meta);
+            operation(databaseTaskBean.type, databaseConnection, meta);
         }
         else if (databaseTaskBean.beanname == "File")
         {
             FileBean file(databaseTaskBean.beanjson.c_str());
-            operation(databaseTaskBean.type, databaseTransaction.get(), file);
+            operation(databaseTaskBean.type, databaseConnection, file);
         }
         else if (databaseTaskBean.beanname == "Tag")
         {
             TagBean tag(databaseTaskBean.beanjson.c_str());
-            operation(databaseTaskBean.type, databaseTransaction.get(), tag);
+            operation(databaseTaskBean.type, databaseConnection, tag);
         }
         else
         {

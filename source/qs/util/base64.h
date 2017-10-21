@@ -14,7 +14,7 @@ namespace util {
 class Base64
 {
 public:
-    static std::string decode(std::string based)
+    static std::string decode(const std::string& based)
     {
         int trail = 0;
         while (

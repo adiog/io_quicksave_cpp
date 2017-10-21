@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <memory>
+
 
 template <typename B, typename D>
 B& reference_cast(D* d) {return *dynamic_cast<B*>(d);}

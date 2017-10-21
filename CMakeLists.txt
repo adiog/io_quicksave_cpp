@@ -45,7 +45,10 @@ include_directories(/usr/include/python3.6m)
 include_directories(/usr/local/include/python3.6m)
 include_directories(/usr/include/antlr4-runtime)
 
-SET(PROJECT_LIBRARIES proxygenhttpserver folly glog gflags util abseil)
+SET(CORE_LIBRARIES dl util pthread)
+SET(BASE_LIBRARIES glog gflags folly abseil)
+SET(DBMS_LIBRARIES sqlpp11-connector-postgresql pq sqlpp11-connector-sqlite3 sqlite3 sqlpp11)
+SET(HTTP_LIBRARIES proxygenhttpserver )
 
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/deps/googletest)
@@ -67,13 +70,34 @@ ADD_EXECUTABLE(api ${PROJECT_MAIN} ${PROJECT_HEAD})
 TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} pq libpython3.6m.so memcached rabbitmq-c-utils rabbitmq-static ssl sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl util)
 
 ADD_EXECUTABLE(cdn cdn/cdn.cc)
-TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} pq memcached pthread sqlite3 stdc++fs dl util)
+TARGET_LINK_LIBRARIES(cdn
+        memcached
+        stdc++fs
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
 ADD_EXECUTABLE(oauth oauth/oauth.cc)
-TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} memcached sqlpp11-connector-postgresql pq sqlpp11-connector-sqlite3 sqlite3 sqlpp11 util dl pthread)
+TARGET_LINK_LIBRARIES(oauth
+        memcached
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
 ADD_EXECUTABLE(post post/post.cc)
-TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 pq sqlite3 dl folly abseil dl util)
+TARGET_LINK_LIBRARIES(post
+        rabbitmq-static
+        rabbitmq-c-utils
+        sha1
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})

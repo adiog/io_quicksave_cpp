@@ -5,7 +5,8 @@
 
 #include <string>
 
-#include <qs/database/Transaction.h>
+#include <sqlpp11/sqlite3/connection.h>
+
 #include <qsgen/bean/UserBean.h>
 
 
@@ -13,5 +14,5 @@ struct RequestContext
 {
     UserBean userBean;
     std::string session_hash;
-    database::Transaction *databaseTransaction;
+    sqlpp::connection& databaseTransaction;
 };

@@ -471,6 +471,1654 @@ namespace orm {
 using namespace sqlpp;
 
 template <>
+class ORM<FileBean>
+{
+public:
+    static qsgen::orm::File& getTable()
+    {
+        static qsgen::orm::File table{};
+        return table;
+    }
+
+    template <typename Row>
+    static FileBean constructor(const Row& row)
+    {
+        FileBean bean;
+        if (row.fileHash.is_null()) bean.file_hash = row.fileHash.value();
+        bean.filename = row.filename.value();
+        bean.filesize = row.filesize.value();
+        bean.meta_hash = row.metaHash.value();
+        bean.mimetype = row.mimetype.value();
+        return bean;
+    }
+
+    static absl::optional<FileBean> get(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static List<FileBean> getBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void remove(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static void removeBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static std::string insert(sqlpp::connection& db, FileBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void update(sqlpp::connection& db, const FileBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void override(sqlpp::connection& db, const FileBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+
+    /*
+    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+    {
+        List<___BEAN___Bean> result(0);
+
+        try
+        {
+            const char * query = sql.c_str();
+
+            auto query_result = tr->execute(query);
+
+            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
+                auto row = query_result.at(rowIndex);
+
+                ___BEAN___Bean bean;
+
+                int getIndex = 0;
+
+                ___RETRIEVE___
+
+                result.push_back(bean);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+            return result;
+        }
+
+        return result;
+    }
+*/
+private:
+    template <typename DatabaseConnection>
+    static absl::optional<FileBean> getImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(table.fileHash == hash).limit(1U)))
+            {
+                return constructor(row);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return absl::nullopt;
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static List<FileBean> getByImplementation(DatabaseConnection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        List<FileBean> result(0);
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
+            {
+                result.emplace_back(constructor(row));
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return result;
+    }
+
+    template <typename DatabaseConnection>
+    static void removeImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(table.fileHash == hash));
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static void removeByImplementation(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(column == column_value));
+    }
+
+    template <typename DatabaseConnection>
+    static std::string insertImplementation(DatabaseConnection& db, FileBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            if (!bean.file_hash) bean.file_hash = qs::util::Hash::get();
+
+            db(sqlpp::insert_into(table).set(
+                (table.fileHash = ((bean.file_hash) ? (*bean.file_hash) : nullptr)),
+                (table.filename = bean.filename),
+                (table.filesize = bean.filesize),
+                (table.metaHash = bean.meta_hash),
+                (table.mimetype = bean.mimetype)));
+
+            return *bean.file_hash;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void updateImplementation(DatabaseConnection& db, const FileBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.fileHash = parameter(table.fileHash)),
+                                                                     (table.filename = parameter(table.filename)),
+                                                                     (table.filesize = parameter(table.filesize)),
+                                                                     (table.metaHash = parameter(table.metaHash)),
+                                                                     (table.mimetype = parameter(table.mimetype)))
+                                                 .where(table.fileHash == *bean.file_hash));
+
+            if (bean.file_hash) prepare_update.params.fileHash = (*bean.file_hash);
+            prepare_update.params.filename = bean.filename;
+            prepare_update.params.filesize = bean.filesize;
+            prepare_update.params.metaHash = bean.meta_hash;
+            prepare_update.params.mimetype = bean.mimetype;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void overrideImplementation(DatabaseConnection& db, const FileBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.fileHash = parameter(table.fileHash)),
+                                                                     (table.filename = parameter(table.filename)),
+                                                                     (table.filesize = parameter(table.filesize)),
+                                                                     (table.metaHash = parameter(table.metaHash)),
+                                                                     (table.mimetype = parameter(table.mimetype)))
+                                                 .where(table.fileHash == *bean.file_hash));
+
+            if (bean.file_hash)
+            {
+                prepare_update.params.fileHash = (*bean.file_hash);
+            }
+            else
+            {
+                prepare_update.params.fileHash = nullptr;
+            }
+            prepare_update.params.filename = bean.filename;
+            prepare_update.params.filesize = bean.filesize;
+            prepare_update.params.metaHash = bean.meta_hash;
+            prepare_update.params.mimetype = bean.mimetype;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+};
+}
+}
+
+namespace qsgen {
+namespace orm {
+
+using namespace sqlpp;
+
+template <>
+class ORM<ActionBean>
+{
+public:
+    static qsgen::orm::Action& getTable()
+    {
+        static qsgen::orm::Action table{};
+        return table;
+    }
+
+    template <typename Row>
+    static ActionBean constructor(const Row& row)
+    {
+        ActionBean bean;
+        if (row.actionHash.is_null()) bean.action_hash = row.actionHash.value();
+        bean.kwargs = row.kwargs.value();
+        bean.meta_hash = row.metaHash.value();
+        bean.name = row.name.value();
+        return bean;
+    }
+
+    static absl::optional<ActionBean> get(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static List<ActionBean> getBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void remove(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static void removeBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static std::string insert(sqlpp::connection& db, ActionBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void update(sqlpp::connection& db, const ActionBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void override(sqlpp::connection& db, const ActionBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+
+    /*
+    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+    {
+        List<___BEAN___Bean> result(0);
+
+        try
+        {
+            const char * query = sql.c_str();
+
+            auto query_result = tr->execute(query);
+
+            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
+                auto row = query_result.at(rowIndex);
+
+                ___BEAN___Bean bean;
+
+                int getIndex = 0;
+
+                ___RETRIEVE___
+
+                result.push_back(bean);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+            return result;
+        }
+
+        return result;
+    }
+*/
+private:
+    template <typename DatabaseConnection>
+    static absl::optional<ActionBean> getImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(table.actionHash == hash).limit(1U)))
+            {
+                return constructor(row);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return absl::nullopt;
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static List<ActionBean> getByImplementation(DatabaseConnection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        List<ActionBean> result(0);
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
+            {
+                result.emplace_back(constructor(row));
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return result;
+    }
+
+    template <typename DatabaseConnection>
+    static void removeImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(table.actionHash == hash));
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static void removeByImplementation(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(column == column_value));
+    }
+
+    template <typename DatabaseConnection>
+    static std::string insertImplementation(DatabaseConnection& db, ActionBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            if (!bean.action_hash) bean.action_hash = qs::util::Hash::get();
+
+            db(sqlpp::insert_into(table).set(
+                (table.actionHash = ((bean.action_hash) ? (*bean.action_hash) : nullptr)),
+                (table.kwargs = bean.kwargs),
+                (table.metaHash = bean.meta_hash),
+                (table.name = bean.name)));
+
+            return *bean.action_hash;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void updateImplementation(DatabaseConnection& db, const ActionBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.actionHash = parameter(table.actionHash)),
+                                                                     (table.kwargs = parameter(table.kwargs)),
+                                                                     (table.metaHash = parameter(table.metaHash)),
+                                                                     (table.name = parameter(table.name)))
+                                                 .where(table.actionHash == *bean.action_hash));
+
+            if (bean.action_hash) prepare_update.params.actionHash = (*bean.action_hash);
+            prepare_update.params.kwargs = bean.kwargs;
+            prepare_update.params.metaHash = bean.meta_hash;
+            prepare_update.params.name = bean.name;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void overrideImplementation(DatabaseConnection& db, const ActionBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.actionHash = parameter(table.actionHash)),
+                                                                     (table.kwargs = parameter(table.kwargs)),
+                                                                     (table.metaHash = parameter(table.metaHash)),
+                                                                     (table.name = parameter(table.name)))
+                                                 .where(table.actionHash == *bean.action_hash));
+
+            if (bean.action_hash)
+            {
+                prepare_update.params.actionHash = (*bean.action_hash);
+            }
+            else
+            {
+                prepare_update.params.actionHash = nullptr;
+            }
+            prepare_update.params.kwargs = bean.kwargs;
+            prepare_update.params.metaHash = bean.meta_hash;
+            prepare_update.params.name = bean.name;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+};
+}
+}
+
+namespace qsgen {
+namespace orm {
+
+using namespace sqlpp;
+
+template <>
+class ORM<TagBean>
+{
+public:
+    static qsgen::orm::Tag& getTable()
+    {
+        static qsgen::orm::Tag table{};
+        return table;
+    }
+
+    template <typename Row>
+    static TagBean constructor(const Row& row)
+    {
+        TagBean bean;
+        if (row.tagHash.is_null()) bean.tag_hash = row.tagHash.value();
+        if (row.metaHash.is_null()) bean.meta_hash = row.metaHash.value();
+        if (row.name.is_null()) bean.name = row.name.value();
+        if (row.userHash.is_null()) bean.user_hash = row.userHash.value();
+        if (row.value.is_null()) bean.value = row.value.value();
+        return bean;
+    }
+
+    static absl::optional<TagBean> get(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static List<TagBean> getBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void remove(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static void removeBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static std::string insert(sqlpp::connection& db, TagBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void update(sqlpp::connection& db, const TagBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void override(sqlpp::connection& db, const TagBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+
+    /*
+    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+    {
+        List<___BEAN___Bean> result(0);
+
+        try
+        {
+            const char * query = sql.c_str();
+
+            auto query_result = tr->execute(query);
+
+            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
+                auto row = query_result.at(rowIndex);
+
+                ___BEAN___Bean bean;
+
+                int getIndex = 0;
+
+                ___RETRIEVE___
+
+                result.push_back(bean);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+            return result;
+        }
+
+        return result;
+    }
+*/
+private:
+    template <typename DatabaseConnection>
+    static absl::optional<TagBean> getImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(table.tagHash == hash).limit(1U)))
+            {
+                return constructor(row);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return absl::nullopt;
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static List<TagBean> getByImplementation(DatabaseConnection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        List<TagBean> result(0);
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
+            {
+                result.emplace_back(constructor(row));
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return result;
+    }
+
+    template <typename DatabaseConnection>
+    static void removeImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(table.tagHash == hash));
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static void removeByImplementation(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(column == column_value));
+    }
+
+    template <typename DatabaseConnection>
+    static std::string insertImplementation(DatabaseConnection& db, TagBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            if (!bean.tag_hash) bean.tag_hash = qs::util::Hash::get();
+
+            db(sqlpp::insert_into(table).set(
+                (table.tagHash = ((bean.tag_hash) ? (*bean.tag_hash) : nullptr)),
+                (table.metaHash = ((bean.meta_hash) ? (*bean.meta_hash) : nullptr)),
+                (table.name = ((bean.name) ? (*bean.name) : nullptr)),
+                (table.userHash = ((bean.user_hash) ? (*bean.user_hash) : nullptr)),
+                (table.value = ((bean.value) ? (*bean.value) : nullptr))));
+
+            return *bean.tag_hash;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void updateImplementation(DatabaseConnection& db, const TagBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.tagHash = parameter(table.tagHash)),
+                                                                     (table.metaHash = parameter(table.metaHash)),
+                                                                     (table.name = parameter(table.name)),
+                                                                     (table.userHash = parameter(table.userHash)),
+                                                                     (table.value = parameter(table.value)))
+                                                 .where(table.tagHash == *bean.tag_hash));
+
+            if (bean.tag_hash) prepare_update.params.tagHash = (*bean.tag_hash);
+            if (bean.meta_hash) prepare_update.params.metaHash = (*bean.meta_hash);
+            if (bean.name) prepare_update.params.name = (*bean.name);
+            if (bean.user_hash) prepare_update.params.userHash = (*bean.user_hash);
+            if (bean.value) prepare_update.params.value = (*bean.value);
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void overrideImplementation(DatabaseConnection& db, const TagBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.tagHash = parameter(table.tagHash)),
+                                                                     (table.metaHash = parameter(table.metaHash)),
+                                                                     (table.name = parameter(table.name)),
+                                                                     (table.userHash = parameter(table.userHash)),
+                                                                     (table.value = parameter(table.value)))
+                                                 .where(table.tagHash == *bean.tag_hash));
+
+            if (bean.tag_hash)
+            {
+                prepare_update.params.tagHash = (*bean.tag_hash);
+            }
+            else
+            {
+                prepare_update.params.tagHash = nullptr;
+            }
+            if (bean.meta_hash)
+            {
+                prepare_update.params.metaHash = (*bean.meta_hash);
+            }
+            else
+            {
+                prepare_update.params.metaHash = nullptr;
+            }
+            if (bean.name)
+            {
+                prepare_update.params.name = (*bean.name);
+            }
+            else
+            {
+                prepare_update.params.name = nullptr;
+            }
+            if (bean.user_hash)
+            {
+                prepare_update.params.userHash = (*bean.user_hash);
+            }
+            else
+            {
+                prepare_update.params.userHash = nullptr;
+            }
+            if (bean.value)
+            {
+                prepare_update.params.value = (*bean.value);
+            }
+            else
+            {
+                prepare_update.params.value = nullptr;
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+};
+}
+}
+
+namespace qsgen {
+namespace orm {
+
+using namespace sqlpp;
+
+template <>
+class ORM<KeyBean>
+{
+public:
+    static qsgen::orm::Key& getTable()
+    {
+        static qsgen::orm::Key table{};
+        return table;
+    }
+
+    template <typename Row>
+    static KeyBean constructor(const Row& row)
+    {
+        KeyBean bean;
+        if (row.keyHash.is_null()) bean.key_hash = row.keyHash.value();
+        bean.name = row.name.value();
+        bean.user_hash = row.userHash.value();
+        bean.value = row.value.value();
+        return bean;
+    }
+
+    static absl::optional<KeyBean> get(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static List<KeyBean> getBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void remove(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static void removeBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static std::string insert(sqlpp::connection& db, KeyBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void update(sqlpp::connection& db, const KeyBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void override(sqlpp::connection& db, const KeyBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+
+    /*
+    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+    {
+        List<___BEAN___Bean> result(0);
+
+        try
+        {
+            const char * query = sql.c_str();
+
+            auto query_result = tr->execute(query);
+
+            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
+                auto row = query_result.at(rowIndex);
+
+                ___BEAN___Bean bean;
+
+                int getIndex = 0;
+
+                ___RETRIEVE___
+
+                result.push_back(bean);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+            return result;
+        }
+
+        return result;
+    }
+*/
+private:
+    template <typename DatabaseConnection>
+    static absl::optional<KeyBean> getImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(table.keyHash == hash).limit(1U)))
+            {
+                return constructor(row);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return absl::nullopt;
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static List<KeyBean> getByImplementation(DatabaseConnection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        List<KeyBean> result(0);
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
+            {
+                result.emplace_back(constructor(row));
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return result;
+    }
+
+    template <typename DatabaseConnection>
+    static void removeImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(table.keyHash == hash));
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static void removeByImplementation(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(column == column_value));
+    }
+
+    template <typename DatabaseConnection>
+    static std::string insertImplementation(DatabaseConnection& db, KeyBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            if (!bean.key_hash) bean.key_hash = qs::util::Hash::get();
+
+            db(sqlpp::insert_into(table).set(
+                (table.keyHash = ((bean.key_hash) ? (*bean.key_hash) : nullptr)),
+                (table.name = bean.name),
+                (table.userHash = bean.user_hash),
+                (table.value = bean.value)));
+
+            return *bean.key_hash;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void updateImplementation(DatabaseConnection& db, const KeyBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.keyHash = parameter(table.keyHash)),
+                                                                     (table.name = parameter(table.name)),
+                                                                     (table.userHash = parameter(table.userHash)),
+                                                                     (table.value = parameter(table.value)))
+                                                 .where(table.keyHash == *bean.key_hash));
+
+            if (bean.key_hash) prepare_update.params.keyHash = (*bean.key_hash);
+            prepare_update.params.name = bean.name;
+            prepare_update.params.userHash = bean.user_hash;
+            prepare_update.params.value = bean.value;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void overrideImplementation(DatabaseConnection& db, const KeyBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.keyHash = parameter(table.keyHash)),
+                                                                     (table.name = parameter(table.name)),
+                                                                     (table.userHash = parameter(table.userHash)),
+                                                                     (table.value = parameter(table.value)))
+                                                 .where(table.keyHash == *bean.key_hash));
+
+            if (bean.key_hash)
+            {
+                prepare_update.params.keyHash = (*bean.key_hash);
+            }
+            else
+            {
+                prepare_update.params.keyHash = nullptr;
+            }
+            prepare_update.params.name = bean.name;
+            prepare_update.params.userHash = bean.user_hash;
+            prepare_update.params.value = bean.value;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+};
+}
+}
+
+namespace qsgen {
+namespace orm {
+
+using namespace sqlpp;
+
+template <>
+class ORM<PerspectiveBean>
+{
+public:
+    static qsgen::orm::Perspective& getTable()
+    {
+        static qsgen::orm::Perspective table{};
+        return table;
+    }
+
+    template <typename Row>
+    static PerspectiveBean constructor(const Row& row)
+    {
+        PerspectiveBean bean;
+        if (row.perspectiveHash.is_null()) bean.perspective_hash = row.perspectiveHash.value();
+        bean.defined_query = row.definedQuery.value();
+        bean.name = row.name.value();
+        if (row.ordering.is_null()) bean.ordering = row.ordering.value();
+        if (row.refinedQuery.is_null()) bean.refined_query = row.refinedQuery.value();
+        if (row.userHash.is_null()) bean.user_hash = row.userHash.value();
+        return bean;
+    }
+
+    static absl::optional<PerspectiveBean> get(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static List<PerspectiveBean> getBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return getByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void remove(sqlpp::connection& db, const std::string& hash)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), hash);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), hash);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    template <typename ColumnName, typename ColumnType>
+    static void removeBy(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), column, column_value);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return removeByImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), column, column_value);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static std::string insert(sqlpp::connection& db, PerspectiveBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return insertImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void update(sqlpp::connection& db, const PerspectiveBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return updateImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+    static void override(sqlpp::connection& db, const PerspectiveBean& bean)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), bean);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return overrideImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), bean);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
+
+    /*
+    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+    {
+        List<___BEAN___Bean> result(0);
+
+        try
+        {
+            const char * query = sql.c_str();
+
+            auto query_result = tr->execute(query);
+
+            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
+                auto row = query_result.at(rowIndex);
+
+                ___BEAN___Bean bean;
+
+                int getIndex = 0;
+
+                ___RETRIEVE___
+
+                result.push_back(bean);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+            return result;
+        }
+
+        return result;
+    }
+*/
+private:
+    template <typename DatabaseConnection>
+    static absl::optional<PerspectiveBean> getImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(table.perspectiveHash == hash).limit(1U)))
+            {
+                return constructor(row);
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return absl::nullopt;
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static List<PerspectiveBean> getByImplementation(DatabaseConnection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        List<PerspectiveBean> result(0);
+
+        try
+        {
+            for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
+            {
+                result.emplace_back(constructor(row));
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+
+        return result;
+    }
+
+    template <typename DatabaseConnection>
+    static void removeImplementation(DatabaseConnection& db, const std::string& hash)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(table.perspectiveHash == hash));
+    }
+
+    template <typename DatabaseConnection, typename ColumnName, typename ColumnType>
+    static void removeByImplementation(sqlpp::connection& db, const ColumnName& column, const ColumnType& column_value)
+    {
+        const auto table = getTable();
+
+        db(remove_from(table).where(column == column_value));
+    }
+
+    template <typename DatabaseConnection>
+    static std::string insertImplementation(DatabaseConnection& db, PerspectiveBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            if (!bean.perspective_hash) bean.perspective_hash = qs::util::Hash::get();
+
+            db(sqlpp::insert_into(table).set(
+                (table.perspectiveHash = ((bean.perspective_hash) ? (*bean.perspective_hash) : nullptr)),
+                (table.definedQuery = bean.defined_query),
+                (table.name = bean.name),
+                (table.ordering = ((bean.ordering) ? (*bean.ordering) : nullptr)),
+                (table.refinedQuery = ((bean.refined_query) ? (*bean.refined_query) : nullptr)),
+                (table.userHash = ((bean.user_hash) ? (*bean.user_hash) : nullptr))));
+
+            return *bean.perspective_hash;
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void updateImplementation(DatabaseConnection& db, const PerspectiveBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.perspectiveHash = parameter(table.perspectiveHash)),
+                                                                     (table.definedQuery = parameter(table.definedQuery)),
+                                                                     (table.name = parameter(table.name)),
+                                                                     (table.ordering = parameter(table.ordering)),
+                                                                     (table.refinedQuery = parameter(table.refinedQuery)),
+                                                                     (table.userHash = parameter(table.userHash)))
+                                                 .where(table.perspectiveHash == *bean.perspective_hash));
+
+            if (bean.perspective_hash) prepare_update.params.perspectiveHash = (*bean.perspective_hash);
+            prepare_update.params.definedQuery = bean.defined_query;
+            prepare_update.params.name = bean.name;
+            if (bean.ordering) prepare_update.params.ordering = (*bean.ordering);
+            if (bean.refined_query) prepare_update.params.refinedQuery = (*bean.refined_query);
+            if (bean.user_hash) prepare_update.params.userHash = (*bean.user_hash);
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+
+    template <typename DatabaseConnection>
+    static void overrideImplementation(DatabaseConnection& db, const PerspectiveBean& bean)
+    {
+        try
+        {
+            const auto table = getTable();
+
+            auto prepare_update = db.prepare(sqlpp::update(table).set(
+                                                                     (table.perspectiveHash = parameter(table.perspectiveHash)),
+                                                                     (table.definedQuery = parameter(table.definedQuery)),
+                                                                     (table.name = parameter(table.name)),
+                                                                     (table.ordering = parameter(table.ordering)),
+                                                                     (table.refinedQuery = parameter(table.refinedQuery)),
+                                                                     (table.userHash = parameter(table.userHash)))
+                                                 .where(table.perspectiveHash == *bean.perspective_hash));
+
+            if (bean.perspective_hash)
+            {
+                prepare_update.params.perspectiveHash = (*bean.perspective_hash);
+            }
+            else
+            {
+                prepare_update.params.perspectiveHash = nullptr;
+            }
+            prepare_update.params.definedQuery = bean.defined_query;
+            prepare_update.params.name = bean.name;
+            if (bean.ordering)
+            {
+                prepare_update.params.ordering = (*bean.ordering);
+            }
+            else
+            {
+                prepare_update.params.ordering = nullptr;
+            }
+            if (bean.refined_query)
+            {
+                prepare_update.params.refinedQuery = (*bean.refined_query);
+            }
+            else
+            {
+                prepare_update.params.refinedQuery = nullptr;
+            }
+            if (bean.user_hash)
+            {
+                prepare_update.params.userHash = (*bean.user_hash);
+            }
+            else
+            {
+                prepare_update.params.userHash = nullptr;
+            }
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "exception: " << e.what() << std::endl;
+        }
+    }
+};
+}
+}
+
+namespace qsgen {
+namespace orm {
+
+using namespace sqlpp;
+
+template <>
 class ORM<UserBean>
 {
 public:
