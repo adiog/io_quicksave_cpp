@@ -11,6 +11,7 @@
 #include <sqlpp11/alias_provider.h>
 #include <sqlpp11/char_sequence.h>
 #include <sqlpp11/column_types.h>
+#include <sqlpp11/custom_query.h>
 #include <sqlpp11/functions.h>
 #include <sqlpp11/insert.h>
 #include <sqlpp11/multi_column.h>
@@ -69,6 +70,22 @@ public:
         if (!row.text.is_null()) bean.text = row.text.value();
         if (!row.userHash.is_null()) bean.user_hash = row.userHash.value();
         return bean;
+    }
+
+    static List<MetaBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
     }
 
     static absl::optional<MetaBean> get(sqlpp::connection& db, const std::string& hash)
@@ -185,28 +202,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<MetaBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<MetaBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -217,8 +227,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<MetaBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -250,7 +259,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -492,6 +501,22 @@ public:
         return bean;
     }
 
+    static List<FileBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
     static absl::optional<FileBean> get(sqlpp::connection& db, const std::string& hash)
     {
         if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
@@ -606,28 +631,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<FileBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<FileBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -638,8 +656,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<FileBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -671,7 +688,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -812,6 +829,22 @@ public:
         return bean;
     }
 
+    static List<ActionBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
     static absl::optional<ActionBean> get(sqlpp::connection& db, const std::string& hash)
     {
         if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
@@ -926,28 +959,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<ActionBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<ActionBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -958,8 +984,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<ActionBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -991,7 +1016,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -1128,6 +1153,22 @@ public:
         return bean;
     }
 
+    static List<TagBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
     static absl::optional<TagBean> get(sqlpp::connection& db, const std::string& hash)
     {
         if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
@@ -1242,28 +1283,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<TagBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<TagBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -1274,8 +1308,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<TagBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -1307,7 +1340,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -1476,6 +1509,22 @@ public:
         return bean;
     }
 
+    static List<KeyBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
     static absl::optional<KeyBean> get(sqlpp::connection& db, const std::string& hash)
     {
         if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
@@ -1590,28 +1639,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<KeyBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<KeyBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -1622,8 +1664,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<KeyBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -1655,7 +1696,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -1793,6 +1834,22 @@ public:
         return bean;
     }
 
+    static List<PerspectiveBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
     static absl::optional<PerspectiveBean> get(sqlpp::connection& db, const std::string& hash)
     {
         if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
@@ -1907,28 +1964,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<PerspectiveBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<PerspectiveBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -1939,8 +1989,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<PerspectiveBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -1972,7 +2021,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -2140,6 +2189,22 @@ public:
         return bean;
     }
 
+    static List<UserBean> query(sqlpp::connection& db, const std::string& sqlQuery)
+    {
+        if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::sqlite3::connection*>(&db), sqlQuery);
+        }
+        else if (db.getRTTI() == sqlpp::connection::connection_backend::POSTGRESQL)
+        {
+            return queryImplementation(*dynamic_cast<sqlpp::postgresql::connection*>(&db), sqlQuery);
+        }
+        else
+        {
+            throw std::runtime_error("");
+        }
+    }
+
     static absl::optional<UserBean> get(sqlpp::connection& db, const std::string& hash)
     {
         if (db.getRTTI() == sqlpp::connection::connection_backend::SQLITE3)
@@ -2254,28 +2319,21 @@ public:
         }
     }
 
-
-    /*
-    static List<___BEAN___Bean> sql(PostgresTransactionImpl* tr, std::string sql)
+private:
+    template <typename DatabaseConnection>
+    static List<UserBean> queryImplementation(DatabaseConnection& db, const std::string& sqlQuery)
     {
-        List<___BEAN___Bean> result(0);
+        const auto table = getTable();
+
+        List<UserBean> result(0);
 
         try
         {
-            const char * query = sql.c_str();
-
-            auto query_result = tr->execute(query);
-
-            for(int rowIndex = 0; rowIndex < query_result.size(); ++rowIndex){
-                auto row = query_result.at(rowIndex);
-
-                ___BEAN___Bean bean;
-
-                int getIndex = 0;
-
-                ___RETRIEVE___
-
-                result.push_back(bean);
+            for (const auto& row : db(
+                     sqlpp::custom_query(sqlpp::verbatim(sqlQuery))
+                         .with_result_type_of(sqlpp::select(all_of(table)))))
+            {
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)
@@ -2286,8 +2344,7 @@ public:
 
         return result;
     }
-*/
-private:
+
     template <typename DatabaseConnection>
     static absl::optional<UserBean> getImplementation(DatabaseConnection& db, const std::string& hash)
     {
@@ -2319,7 +2376,7 @@ private:
         {
             for (const auto& row : db(select(all_of(table)).from(table).where(column == column_value)))
             {
-                result.emplace_back(constructor(row));
+                result.push_back(constructor(row));
             }
         }
         catch (std::exception& e)

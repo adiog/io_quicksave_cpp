@@ -25,22 +25,21 @@ public:
             std::__cxx11::string sqlQuery = QsqlQuery::parseQsqlToSql(userHashParam, queryParam);
 
             DLOG(INFO) << sqlQuery;
-/*
-            auto metas = qsgen::orm::ORM<MetaBean>::sql(databaseTransactionParam, sqlQuery);
+
+            auto metas = qsgen::orm::ORM<MetaBean>::query(db, sqlQuery);
             for (auto &meta : metas)
             {
                 ItemBean itemBean;
                 itemBean.meta = meta;
-                itemBean.tags = database::Action::get_by<TagBean>(databaseTransactionParam, "meta_hash", *meta.meta_hash);
-                itemBean.files = database::Action::get_by<FileBean>(databaseTransactionParam, "meta_hash", *meta.meta_hash);
+                itemBean.tags = qsgen::orm::ORM<TagBean>::getBy(db, qsgen::orm::Tag{}.metaHash, *meta.meta_hash);
+                itemBean.files = qsgen::orm::ORM<FileBean>::getBy(db, qsgen::orm::File{}.metaHash, *meta.meta_hash);
                 retrieveResponseBean.items.push_back(itemBean);
             }
             retrieveResponseBean.total = static_cast<int>(metas.size());
-*/
         }
         catch (QsqlException &e)
         {
-            std::cout << "QSQL FUCKED" << std::endl;
+            std::cout << "QSQL FAILED" << std::endl;
         }
         return retrieveResponseBean;
     }
