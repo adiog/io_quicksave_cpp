@@ -6,51 +6,72 @@
 
 #include <CppBeans.h>
 
-#include <folly/io/IOBuf.h>
 #include <memory>
+#include <folly/io/IOBuf.h>
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-class MetaDeleteRequestBean {
+
+class MetaDeleteRequestBean
+{
 public:
-  MetaDeleteRequestBean() = default;
+    MetaDeleteRequestBean() = default;
 
-  MetaDeleteRequestBean(const char *json)
-      : MetaDeleteRequestBean(rapidjson::Document{}.Parse(json)) {}
+    MetaDeleteRequestBean(const char* json)
+            : MetaDeleteRequestBean(rapidjson::Document{}.Parse(json))
+    {
+    }
 
-  MetaDeleteRequestBean(std::string meta_hash) : meta_hash(meta_hash) {}
+    MetaDeleteRequestBean(std::string meta_hash)
+            : meta_hash(meta_hash)
+    {
+    }
 
-  MetaDeleteRequestBean(const rapidjson::Value &value) {
-    if (value.HasMember(meta_hash_label))
-      this->meta_hash = Typoid<std::string>::FromValue(value[meta_hash_label]);
-    else
-      throw(missing_mandatory_field(meta_hash_label));
-  }
+    MetaDeleteRequestBean(const rapidjson::Value& value)
+    {
+        if (value.HasMember(meta_hash_label))
+            this->meta_hash = Typoid<std::string>::FromValue(value[meta_hash_label]);
+        else
+            throw(missing_mandatory_field(meta_hash_label));
+    }
 
-  void update(MetaDeleteRequestBean bean) { meta_hash = bean.meta_hash; }
+    void update(MetaDeleteRequestBean bean)
+    {
+        meta_hash = bean.meta_hash;
+    }
 
-  template <typename Writer> void Serialize(Writer &writer) const {
-    writer.StartObject();
-    writer.String(meta_hash_label);
-    Typoid<std::string>::Serialize(meta_hash, writer);
-    writer.EndObject();
-  }
+    template <typename Writer>
+    void Serialize(Writer& writer) const
+    {
+        writer.StartObject();
+        writer.String(meta_hash_label);
+        Typoid<std::string>::Serialize(meta_hash, writer);
+        writer.EndObject();
+    }
 
-  std::string to_string() const {
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-    Serialize(writer);
-    return s.GetString();
-  }
+    friend std::ostream& operator<<(std::ostream& os, const MetaDeleteRequestBean& bean)
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+        bean.Serialize(writer);
+        os << s.GetString();
+        return os;
+    }
 
-  operator std::unique_ptr<folly::IOBuf>() const {
-    return folly::IOBuf::copyBuffer(::serialize(*this));
-  }
+    std::string to_string() const
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+        Serialize(writer);
+        return s.GetString();
+    }
 
-  const char *__name__ = "MetaDeleteRequestBean";
-  std::string meta_hash;
-  const char *meta_hash_label = "meta_hash";
+    operator std::unique_ptr<folly::IOBuf>() const { return folly::IOBuf::copyBuffer(::serialize(*this)); }
+
+    const char* __name__ = "MetaDeleteRequestBean";
+    std::string meta_hash;
+    const char* meta_hash_label = "meta_hash";
 };
 
 #endif

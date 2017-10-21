@@ -7,14 +7,11 @@
 
 #include <absl/types/optional.h>
 
-#include <SQLiteCpp/SQLiteCpp.h>
 #include <libmemcached/memcached.hpp>
 
-#include <qs/database/Action.h>
-#include <qs/database/Connection.h>
 #include <qs/database/ProviderFactory.h>
-#include <qs/database/Transaction.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
+
+#include <qsgen/orm/sqlppWrappers.h>
 
 
 class OAuthMasterDatabase
@@ -24,16 +21,14 @@ public:
     {
         std::string masterDatabaseConnectionString = FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING;
 
-        //std::cout << masterDatabaseConnectionString << std::endl;
+        std::unique_ptr<sqlpp::connection> databaseConnection = qs::database::ProviderFactory::create(masterDatabaseConnectionString);
 
-        std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(masterDatabaseConnectionString);
-        std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
+        List<UserBean> userBeanList = qsgen::orm::ORM<UserBean>::getBy(
+            reference_cast(databaseConnection),
+            qsgen::orm::User{}.username,
+            credentials.first);
 
-        List<UserBean> userBeanList = database::Action::get_by<UserBean>(databaseTransaction.get(), "username", credentials.first);
-
-        //std::cout << userBeanList.size() << std::endl;
-
-
+        // TODO: SALTY
         if ((userBeanList.size() == 1) && (credentials.second == userBeanList[0].password))
         {
             LOG(INFO) << folly::format("Authentication with BasicAuth: SUCCESS ({},{})", credentials.first.c_str(), credentials.second.c_str());

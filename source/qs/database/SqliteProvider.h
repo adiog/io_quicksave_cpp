@@ -4,10 +4,13 @@
 #pragma once
 
 #include <absl/strings/string_view.h>
+
+#include <sqlpp11/sqlite3/connection.h>
+
 #include <qs/database/Provider.h>
-#include <qs/database/SqliteConnection.h>
 
 
+namespace qs {
 namespace database {
 
 class SqliteProvider : public database::Provider
@@ -29,14 +32,26 @@ public:
         }
     }
 
-    std::unique_ptr<database::Connection> accept(const std::string &providerConnectionString) const
+    std::unique_ptr<sqlpp::connection> accept(const std::string &providerConnectionString) const override
     {
         static const std::string acceptingProtocolString = "sqlite://";
         static const size_t acceptingProtocolStringSize = acceptingProtocolString.size();
 
         const std::string connectionString(&providerConnectionString[acceptingProtocolStringSize],
                                            providerConnectionString.size() - acceptingProtocolStringSize);
-        return std::unique_ptr<database::Connection>(dynamic_cast<database::Connection *>(new database::SqliteConnection(connectionString)));
+
+        const sqlpp::sqlite3::connection_config connectionConfig = parseConnectionString(connectionString);
+
+        return std::unique_ptr<sqlpp::connection>(new sqlpp::sqlite3::connection(connectionConfig));
+    }
+
+private:
+    sqlpp::sqlite3::connection_config parseConnectionString(const std::string connectionString) const
+    {
+        sqlpp::sqlite3::connection_config connectionConfig;
+        connectionConfig.path_to_database = std::move(connectionString);
+        return std::move(connectionConfig);
     }
 };
+}
 }

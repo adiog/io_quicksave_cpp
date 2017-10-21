@@ -6,55 +6,72 @@
 
 #include <CppBeans.h>
 
-#include <folly/io/IOBuf.h>
 #include <memory>
+#include <folly/io/IOBuf.h>
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-class PerspectiveDeleteRequestBean {
+
+class PerspectiveDeleteRequestBean
+{
 public:
-  PerspectiveDeleteRequestBean() = default;
+    PerspectiveDeleteRequestBean() = default;
 
-  PerspectiveDeleteRequestBean(const char *json)
-      : PerspectiveDeleteRequestBean(rapidjson::Document{}.Parse(json)) {}
+    PerspectiveDeleteRequestBean(const char* json)
+            : PerspectiveDeleteRequestBean(rapidjson::Document{}.Parse(json))
+    {
+    }
 
-  PerspectiveDeleteRequestBean(std::string perspective_hash)
-      : perspective_hash(perspective_hash) {}
+    PerspectiveDeleteRequestBean(std::string perspective_hash)
+            : perspective_hash(perspective_hash)
+    {
+    }
 
-  PerspectiveDeleteRequestBean(const rapidjson::Value &value) {
-    if (value.HasMember(perspective_hash_label))
-      this->perspective_hash =
-          Typoid<std::string>::FromValue(value[perspective_hash_label]);
-    else
-      throw(missing_mandatory_field(perspective_hash_label));
-  }
+    PerspectiveDeleteRequestBean(const rapidjson::Value& value)
+    {
+        if (value.HasMember(perspective_hash_label))
+            this->perspective_hash = Typoid<std::string>::FromValue(value[perspective_hash_label]);
+        else
+            throw(missing_mandatory_field(perspective_hash_label));
+    }
 
-  void update(PerspectiveDeleteRequestBean bean) {
-    perspective_hash = bean.perspective_hash;
-  }
+    void update(PerspectiveDeleteRequestBean bean)
+    {
+        perspective_hash = bean.perspective_hash;
+    }
 
-  template <typename Writer> void Serialize(Writer &writer) const {
-    writer.StartObject();
-    writer.String(perspective_hash_label);
-    Typoid<std::string>::Serialize(perspective_hash, writer);
-    writer.EndObject();
-  }
+    template <typename Writer>
+    void Serialize(Writer& writer) const
+    {
+        writer.StartObject();
+        writer.String(perspective_hash_label);
+        Typoid<std::string>::Serialize(perspective_hash, writer);
+        writer.EndObject();
+    }
 
-  std::string to_string() const {
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-    Serialize(writer);
-    return s.GetString();
-  }
+    friend std::ostream& operator<<(std::ostream& os, const PerspectiveDeleteRequestBean& bean)
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+        bean.Serialize(writer);
+        os << s.GetString();
+        return os;
+    }
 
-  operator std::unique_ptr<folly::IOBuf>() const {
-    return folly::IOBuf::copyBuffer(::serialize(*this));
-  }
+    std::string to_string() const
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+        Serialize(writer);
+        return s.GetString();
+    }
 
-  const char *__name__ = "PerspectiveDeleteRequestBean";
-  std::string perspective_hash;
-  const char *perspective_hash_label = "perspective_hash";
+    operator std::unique_ptr<folly::IOBuf>() const { return folly::IOBuf::copyBuffer(::serialize(*this)); }
+
+    const char* __name__ = "PerspectiveDeleteRequestBean";
+    std::string perspective_hash;
+    const char* perspective_hash_label = "perspective_hash";
 };
 
 #endif

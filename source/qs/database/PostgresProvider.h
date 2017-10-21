@@ -5,16 +5,18 @@
 
 #include <absl/strings/string_view.h>
 
-#include <qs/database/PostgresConnection.h>
+#include <sqlpp11/postgresql/connection.h>
+
 #include <qs/database/Provider.h>
 
 
+namespace qs {
 namespace database {
 
-class PostgresProvider : public database::Provider
+class PostgresProvider : public qs::database::Provider
 {
 public:
-    bool validate(const std::string &providerConnectionString) const
+    bool validate(const std::string &providerConnectionString) const override
     {
         static const std::string acceptingProtocolString = "postgres://";
         static const size_t acceptingProtocolStringSize = acceptingProtocolString.size();
@@ -30,14 +32,15 @@ public:
         }
     }
 
-    std::unique_ptr<database::Connection> accept(const std::string &providerConnectionString) const
+    std::unique_ptr<sqlpp::connection> accept(const std::string &providerConnectionString) const override
     {
         static const std::string acceptingProtocolString = "postgres://";
         static const size_t acceptingProtocolStringSize = acceptingProtocolString.size();
 
         const std::string connectionString(&providerConnectionString[acceptingProtocolStringSize],
                                            providerConnectionString.size() - acceptingProtocolStringSize);
-        return std::unique_ptr<database::Connection>(dynamic_cast<database::Connection*>(new database::PostgresConnection(connectionString)));
+        return std::unique_ptr<sqlpp::connection>(new sqlpp::postgresql::connection{});
     }
 };
+}
 }

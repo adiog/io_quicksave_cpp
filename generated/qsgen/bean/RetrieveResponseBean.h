@@ -6,65 +6,84 @@
 
 #include <CppBeans.h>
 
-#include <folly/io/IOBuf.h>
 #include <memory>
+#include <folly/io/IOBuf.h>
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
 #include <qsgen/bean/ItemBean.h>
 
-class RetrieveResponseBean {
+
+class RetrieveResponseBean
+{
 public:
-  RetrieveResponseBean() = default;
+    RetrieveResponseBean() = default;
 
-  RetrieveResponseBean(const char *json)
-      : RetrieveResponseBean(rapidjson::Document{}.Parse(json)) {}
+    RetrieveResponseBean(const char* json)
+            : RetrieveResponseBean(rapidjson::Document{}.Parse(json))
+    {
+    }
 
-  RetrieveResponseBean(List<ItemBean> items, int total)
-      : items(items), total(total) {}
+    RetrieveResponseBean(List<ItemBean> items, int total)
+            : items(items)
+            , total(total)
+    {
+    }
 
-  RetrieveResponseBean(const rapidjson::Value &value) {
-    if (value.HasMember(items_label))
-      this->items = Typoid<List<ItemBean>>::FromValue(value[items_label]);
-    else
-      throw(missing_mandatory_field(items_label));
-    if (value.HasMember(total_label))
-      this->total = Typoid<int>::FromValue(value[total_label]);
-    else
-      throw(missing_mandatory_field(total_label));
-  }
+    RetrieveResponseBean(const rapidjson::Value& value)
+    {
+        if (value.HasMember(items_label))
+            this->items = Typoid<List<ItemBean>>::FromValue(value[items_label]);
+        else
+            throw(missing_mandatory_field(items_label));
+        if (value.HasMember(total_label))
+            this->total = Typoid<int>::FromValue(value[total_label]);
+        else
+            throw(missing_mandatory_field(total_label));
+    }
 
-  void update(RetrieveResponseBean bean) {
-    items = bean.items;
-    total = bean.total;
-  }
+    void update(RetrieveResponseBean bean)
+    {
+        items = bean.items;
+        total = bean.total;
+    }
 
-  template <typename Writer> void Serialize(Writer &writer) const {
-    writer.StartObject();
-    writer.String(items_label);
-    Typoid<List<ItemBean>>::Serialize(items, writer);
-    writer.String(total_label);
-    Typoid<int>::Serialize(total, writer);
-    writer.EndObject();
-  }
+    template <typename Writer>
+    void Serialize(Writer& writer) const
+    {
+        writer.StartObject();
+        writer.String(items_label);
+        Typoid<List<ItemBean>>::Serialize(items, writer);
+        writer.String(total_label);
+        Typoid<int>::Serialize(total, writer);
+        writer.EndObject();
+    }
 
-  std::string to_string() const {
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-    Serialize(writer);
-    return s.GetString();
-  }
+    friend std::ostream& operator<<(std::ostream& os, const RetrieveResponseBean& bean)
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+        bean.Serialize(writer);
+        os << s.GetString();
+        return os;
+    }
 
-  operator std::unique_ptr<folly::IOBuf>() const {
-    return folly::IOBuf::copyBuffer(::serialize(*this));
-  }
+    std::string to_string() const
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+        Serialize(writer);
+        return s.GetString();
+    }
 
-  const char *__name__ = "RetrieveResponseBean";
-  List<ItemBean> items;
-  const char *items_label = "items";
-  int total;
-  const char *total_label = "total";
+    operator std::unique_ptr<folly::IOBuf>() const { return folly::IOBuf::copyBuffer(::serialize(*this)); }
+
+    const char* __name__ = "RetrieveResponseBean";
+    List<ItemBean> items;
+    const char* items_label = "items";
+    int total;
+    const char* total_label = "total";
 };
 
 #endif

@@ -6,51 +6,72 @@
 
 #include <CppBeans.h>
 
-#include <folly/io/IOBuf.h>
 #include <memory>
+#include <folly/io/IOBuf.h>
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-class TagDeleteRequestBean {
+
+class TagDeleteRequestBean
+{
 public:
-  TagDeleteRequestBean() = default;
+    TagDeleteRequestBean() = default;
 
-  TagDeleteRequestBean(const char *json)
-      : TagDeleteRequestBean(rapidjson::Document{}.Parse(json)) {}
+    TagDeleteRequestBean(const char* json)
+            : TagDeleteRequestBean(rapidjson::Document{}.Parse(json))
+    {
+    }
 
-  TagDeleteRequestBean(std::string tag_hash) : tag_hash(tag_hash) {}
+    TagDeleteRequestBean(std::string tag_hash)
+            : tag_hash(tag_hash)
+    {
+    }
 
-  TagDeleteRequestBean(const rapidjson::Value &value) {
-    if (value.HasMember(tag_hash_label))
-      this->tag_hash = Typoid<std::string>::FromValue(value[tag_hash_label]);
-    else
-      throw(missing_mandatory_field(tag_hash_label));
-  }
+    TagDeleteRequestBean(const rapidjson::Value& value)
+    {
+        if (value.HasMember(tag_hash_label))
+            this->tag_hash = Typoid<std::string>::FromValue(value[tag_hash_label]);
+        else
+            throw(missing_mandatory_field(tag_hash_label));
+    }
 
-  void update(TagDeleteRequestBean bean) { tag_hash = bean.tag_hash; }
+    void update(TagDeleteRequestBean bean)
+    {
+        tag_hash = bean.tag_hash;
+    }
 
-  template <typename Writer> void Serialize(Writer &writer) const {
-    writer.StartObject();
-    writer.String(tag_hash_label);
-    Typoid<std::string>::Serialize(tag_hash, writer);
-    writer.EndObject();
-  }
+    template <typename Writer>
+    void Serialize(Writer& writer) const
+    {
+        writer.StartObject();
+        writer.String(tag_hash_label);
+        Typoid<std::string>::Serialize(tag_hash, writer);
+        writer.EndObject();
+    }
 
-  std::string to_string() const {
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-    Serialize(writer);
-    return s.GetString();
-  }
+    friend std::ostream& operator<<(std::ostream& os, const TagDeleteRequestBean& bean)
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+        bean.Serialize(writer);
+        os << s.GetString();
+        return os;
+    }
 
-  operator std::unique_ptr<folly::IOBuf>() const {
-    return folly::IOBuf::copyBuffer(::serialize(*this));
-  }
+    std::string to_string() const
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+        Serialize(writer);
+        return s.GetString();
+    }
 
-  const char *__name__ = "TagDeleteRequestBean";
-  std::string tag_hash;
-  const char *tag_hash_label = "tag_hash";
+    operator std::unique_ptr<folly::IOBuf>() const { return folly::IOBuf::copyBuffer(::serialize(*this)); }
+
+    const char* __name__ = "TagDeleteRequestBean";
+    std::string tag_hash;
+    const char* tag_hash_label = "tag_hash";
 };
 
 #endif

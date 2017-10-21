@@ -3,22 +3,14 @@
 
 #pragma once
 
-#include <CppBeans.h>
 #include <iostream>
+
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <proxygen/lib/utils/Base64.h>
 
 
 struct OAuthHelper
 {
-    /*
-    static std::pair<std::string, std::string> dispatchPost(const proxygen::HTTPMessage* headers)
-    {
-        std::cout << headers->getQueryParam("name") << " " << headers->getQueryParam("pass") << std::endl;
-        return {headers->getQueryParam("name"), headers->getQueryParam("pass")};
-    }
-    */
-
     static std::pair<std::string, std::string> dispatchBasicAuth(const proxygen::HTTPMessage* headers)
     {
         std::string auth_with_prefix_based = headers->getHeaders().rawGet("Authorization");
@@ -47,7 +39,6 @@ struct OAuthHelper
                     login = {&auth[0], p};
                     pass = {&auth[p + 1], auth.size() - p - 1};
                     return {login, pass};
-
                 }
                 ++p;
             }

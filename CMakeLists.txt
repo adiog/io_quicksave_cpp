@@ -32,6 +32,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/io_quicksave_qsql/cppqsql/g
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/io_quicksave_libbeans/cppbeans/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/libmemcached)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sqlpp11/deps/date/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sqlpp11/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sqlpp11-connector-sqlite3/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/sqlpp11-connector-postgresql/include)
@@ -69,7 +70,7 @@ ADD_EXECUTABLE(cdn cdn/cdn.cc)
 TARGET_LINK_LIBRARIES(cdn ${PROJECT_LIBRARIES} pq memcached pthread sqlite3 stdc++fs dl util)
 
 ADD_EXECUTABLE(oauth oauth/oauth.cc)
-TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} pq memcached pthread sqlite3 dl util)
+TARGET_LINK_LIBRARIES(oauth ${PROJECT_LIBRARIES} memcached sqlpp11-connector-postgresql pq sqlpp11-connector-sqlite3 sqlite3 sqlpp11 util dl pthread)
 
 ADD_EXECUTABLE(post post/post.cc)
 TARGET_LINK_LIBRARIES(post pthread glog gflags rabbitmq-static rabbitmq-c-utils sha1 pq sqlite3 dl folly abseil dl util)

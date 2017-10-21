@@ -1,0 +1,43 @@
+// This file is a part of quicksave project.
+// Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
+
+#pragma once
+
+
+template <typename B, typename D>
+B& reference_cast(D* d) {return *dynamic_cast<B*>(d);}
+
+template <typename B, typename D>
+B& reference_cast(const std::unique_ptr<D>& d) {return *dynamic_cast<B*>(d.get());}
+
+template <typename B, typename D>
+B& reference_cast(const std::shared_ptr<D>& d) {return *dynamic_cast<B*>(d.get());}
+
+template <typename T>
+T& reference_cast(T* t) {return *t;}
+
+template <typename T>
+T& reference_cast(const std::unique_ptr<T>& t) {return *t;}
+
+template <typename T>
+T& reference_cast(const std::shared_ptr<T>& t) {return *t;}
+
+
+template <typename B, typename D>
+const B& reference_cast(const D* d) {return *dynamic_cast<const B*>(d);}
+
+template <typename B, typename D>
+const B& reference_cast(const std::unique_ptr<const D>& d) {return *dynamic_cast<const B*>(d.get());}
+
+template <typename B, typename D>
+const B& reference_cast(const std::shared_ptr<const D>& d) {return *dynamic_cast<const B*>(d.get());}
+
+template <typename T>
+const T& reference_cast(const T* t) {return *t;}
+
+template <typename T>
+const T& reference_cast(const std::unique_ptr<const T>& t) {return *t;}
+
+template <typename T>
+const T& reference_cast(const std::shared_ptr<const T>& t) {return *t;}
+

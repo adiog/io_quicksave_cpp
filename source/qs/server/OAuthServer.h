@@ -7,10 +7,11 @@
 
 #include <folly/Format.h>
 
-#include <SQLiteCpp/Database.h>
 #include <folly/io/IOBuf.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <proxygen/lib/http/HTTPMessage.h>
+
+#include <reference_cast>
 
 #include <qs/http/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
@@ -18,10 +19,10 @@
 #include <qs/oauth/OAuthMasterDatabase.h>
 #include <qs/server/ProxygenHandler.h>
 #include <qs/util/uuid.h>
+
 #include <qsgen/bean/SessionBean.h>
 #include <qsgen/bean/TokenBean.h>
 #include <qsgen/bean/TokenRequestBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
 
 
 namespace qs {
@@ -40,7 +41,7 @@ public:
         const std::string path = headers_->getPath();
         if (path == "/token/get")
         {
-            const std::string body = qs::util::Buffer::to_string(body_);
+            const std::string body = qs::util::Buffer::to_string(reference_cast(body_));
             const TokenRequestBean tokenRequest{body.c_str()};
             absl::optional<UserBean> userBean = OAuthMasterDatabase::authenticateWithPassword(
                 OAuthHelper::dispatchBasicAuth(headers_.get()));
@@ -57,7 +58,7 @@ public:
         }
         else if (path == "/token/delete")
         {
-            const std::string body = qs::util::Buffer::to_string(body_);
+            const std::string body = qs::util::Buffer::to_string(reference_cast(body_));
             const TokenBean tokenBean{body.c_str()};
             const std::string token = tokenBean.token;
 
@@ -72,7 +73,7 @@ public:
         }
         else if (path == "/token/check")
         {
-            const std::string body = qs::util::Buffer::to_string(body_);
+            const std::string body = qs::util::Buffer::to_string(reference_cast(body_));
             const TokenBean tokenBean{body.c_str()};
             const std::string token = tokenBean.token;
 

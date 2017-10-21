@@ -6,53 +6,74 @@
 
 #include <CppBeans.h>
 
-#include <folly/io/IOBuf.h>
 #include <memory>
+#include <folly/io/IOBuf.h>
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
 #include <qsgen/bean/TagBean.h>
 
-class TagUpdateRequestBean {
+
+class TagUpdateRequestBean
+{
 public:
-  TagUpdateRequestBean() = default;
+    TagUpdateRequestBean() = default;
 
-  TagUpdateRequestBean(const char *json)
-      : TagUpdateRequestBean(rapidjson::Document{}.Parse(json)) {}
+    TagUpdateRequestBean(const char* json)
+            : TagUpdateRequestBean(rapidjson::Document{}.Parse(json))
+    {
+    }
 
-  TagUpdateRequestBean(TagBean tag) : tag(tag) {}
+    TagUpdateRequestBean(TagBean tag)
+            : tag(tag)
+    {
+    }
 
-  TagUpdateRequestBean(const rapidjson::Value &value) {
-    if (value.HasMember(tag_label))
-      this->tag = Typoid<TagBean>::FromValue(value[tag_label]);
-    else
-      throw(missing_mandatory_field(tag_label));
-  }
+    TagUpdateRequestBean(const rapidjson::Value& value)
+    {
+        if (value.HasMember(tag_label))
+            this->tag = Typoid<TagBean>::FromValue(value[tag_label]);
+        else
+            throw(missing_mandatory_field(tag_label));
+    }
 
-  void update(TagUpdateRequestBean bean) { tag = bean.tag; }
+    void update(TagUpdateRequestBean bean)
+    {
+        tag = bean.tag;
+    }
 
-  template <typename Writer> void Serialize(Writer &writer) const {
-    writer.StartObject();
-    writer.String(tag_label);
-    Typoid<TagBean>::Serialize(tag, writer);
-    writer.EndObject();
-  }
+    template <typename Writer>
+    void Serialize(Writer& writer) const
+    {
+        writer.StartObject();
+        writer.String(tag_label);
+        Typoid<TagBean>::Serialize(tag, writer);
+        writer.EndObject();
+    }
 
-  std::string to_string() const {
-    rapidjson::StringBuffer s;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(s);
-    Serialize(writer);
-    return s.GetString();
-  }
+    friend std::ostream& operator<<(std::ostream& os, const TagUpdateRequestBean& bean)
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+        bean.Serialize(writer);
+        os << s.GetString();
+        return os;
+    }
 
-  operator std::unique_ptr<folly::IOBuf>() const {
-    return folly::IOBuf::copyBuffer(::serialize(*this));
-  }
+    std::string to_string() const
+    {
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+        Serialize(writer);
+        return s.GetString();
+    }
 
-  const char *__name__ = "TagUpdateRequestBean";
-  TagBean tag;
-  const char *tag_label = "tag";
+    operator std::unique_ptr<folly::IOBuf>() const { return folly::IOBuf::copyBuffer(::serialize(*this)); }
+
+    const char* __name__ = "TagUpdateRequestBean";
+    TagBean tag;
+    const char* tag_label = "tag";
 };
 
 #endif
