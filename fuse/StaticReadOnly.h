@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <reference_cast>
+#include <iostream>
+
 #include <regex>
 
 #include <FS.h>
@@ -27,15 +30,18 @@ public:
             throw std::runtime_error("");
         }
 
-        std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(anOptionalUserBean->databaseConnectionString);
-        std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
-        auto databaseTransactionPtr = databaseTransaction.get();
+        auto databaseConnectionOwner = qs::database::ProviderFactory::create(anOptionalUserBean->databaseConnectionString);
+        auto& databaseConnection = reference_cast(databaseConnectionOwner);
 
-        RequestContext mockRequestContext;
+        RequestContext mockRequestContext {
+                *anOptionalUserBean,
+                "",
+                databaseConnection
+        };
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(mockRequestContext, anOptionalUserBean->storageConnectionString);
 
 
-        RetrieveResponseBean retrieveResponseBean = useCase::Retrieve::getBean(databaseTransactionPtr, query, *anOptionalUserBean->user_hash);
+        RetrieveResponseBean retrieveResponseBean = useCase::Retrieve::getBean(databaseConnection, query, *anOptionalUserBean->user_hash);
 
         std::cout << ::serialize(retrieveResponseBean) << std::endl;
 

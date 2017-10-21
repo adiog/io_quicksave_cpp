@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <reference_cast>
+
 #include <string>
 
 #include <absl/types/optional.h>
@@ -21,12 +23,14 @@ public:
     {
         std::string masterDatabaseConnectionString = FLAGS_IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING;
 
-        std::unique_ptr<sqlpp::connection> databaseConnection = qs::database::ProviderFactory::create(masterDatabaseConnectionString);
+        auto databaseConnectionOwner = qs::database::ProviderFactory::create(masterDatabaseConnectionString);
+        auto& databaseConnection = reference_cast(databaseConnectionOwner);
 
         List<UserBean> userBeanList = qsgen::orm::ORM<UserBean>::getBy(
-            reference_cast(databaseConnection),
+            databaseConnection,
             qsgen::orm::User{}.username,
-            credentials.first);
+            credentials.first
+        );
 
         // TODO: SALTY
         if ((userBeanList.size() == 1) && (credentials.second == userBeanList[0].password))

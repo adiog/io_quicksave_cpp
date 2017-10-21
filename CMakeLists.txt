@@ -113,16 +113,45 @@ TARGET_LINK_LIBRARIES(post
 
 FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
-TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runtime qsql gtest gmock pthread sqlite3 sqlpp11 sqlpp-postgresql postgres pq dl util)
+TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runtime qsql
+        gtest gmock
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
 
 ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
 FILE(GLOB_RECURSE FUSE_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.cc)
 ADD_EXECUTABLE(qsfuse ${FUSE_MAIN})
-TARGET_LINK_LIBRARIES(qsfuse ${PROJECT_LIBRARIES} python3.6m postgres pq sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 fuse stdc++fs dl util)
+TARGET_LINK_LIBRARIES(qsfuse
+        fuse
+        qsql antlr4-runtime
+        libpython3.6m.so
+        memcached
+        sha1
+        stdc++fs
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
 FILE(GLOB_RECURSE FUSE_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/fuse_test/**.cc)
 FILE(GLOB_RECURSE FUSE_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/fuse/**.h)
 ADD_EXECUTABLE(fuse_test ${FUSE_TESTS} ${FUSE_HEAD})
-TARGET_LINK_LIBRARIES(fuse_test ${PROJECT_LIBRARIES} python3.6m postgres pq sha1 antlr4-runtime qsql gtest gmock pthread SQLiteCpp sqlite3 stdc++fs dl util)
+TARGET_LINK_LIBRARIES(fuse_test ${PROJECT_LIBRARIES}
+        fuse
+        gtest gmock
+        qsql antlr4-runtime
+        libpython3.6m.so
+        memcached
+        sha1
+        stdc++fs
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
