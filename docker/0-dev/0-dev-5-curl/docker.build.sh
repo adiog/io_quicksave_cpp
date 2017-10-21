@@ -3,5 +3,5 @@
 # Copyright 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
 cat Dockerfile.in | envsubst > Dockerfile
-sudo docker build -t quicksave/dev-python36 .
+sudo docker build -t quicksave/dev-curl .
 rm Dockerfile

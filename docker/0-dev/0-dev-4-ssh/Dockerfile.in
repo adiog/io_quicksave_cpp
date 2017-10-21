@@ -1,0 +1,3 @@
+FROM quicksave/dev-python36
+
+RUN apt-get install -y openssh-server sshfs

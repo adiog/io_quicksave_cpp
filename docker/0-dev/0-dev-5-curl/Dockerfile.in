@@ -1,0 +1,13 @@
+FROM quicksave/dev-ssh
+
+RUN git clone https://github.com/curl/curl \
+    && mkdir -p curl/build \
+    && cd curl/build \
+    && export CC=gcc-5 \
+    && export CXX=g++-5 \
+    && cmake -DCMAKE_INSTALL_PREFIX=/usr .. \
+    && make -j 4 \
+    && make install \
+    && cd - \
+    && rm -fr curl
+
