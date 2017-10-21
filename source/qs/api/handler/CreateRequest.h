@@ -29,7 +29,7 @@ public:
 
         InternalCreateRequestBean internalCreateRequestBean;
 
-        internalCreateRequestBean.createRequest = *this;
+        internalCreateRequestBean.createRequest = *static_cast<CreateRequestBean*>(this);
         internalCreateRequestBean.storageConnectionString = ctx.userBean.storageConnectionString;
         internalCreateRequestBean.databaseConnectionString = ctx.userBean.databaseConnectionString;
         internalCreateRequestBean.keys = qsgen::orm::ORM<KeyBean>::getBy(ctx.databaseTransaction, qsgen::orm::Key{}.userHash, *ctx.userBean.user_hash);

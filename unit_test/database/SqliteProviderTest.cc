@@ -35,36 +35,42 @@ TEST_F(SqliteProviderTestSuite, ConnectionStringNotOk)
     EXPECT_FALSE(provider.validate("postgres:///storage/users/testuser.sqlite"));
 }
 
-template <typename DatabaseConnection>
-static List<MetaBean> sql(DatabaseConnection &db, std::string sql)
-{
-    const auto table = qsgen::orm::Meta();
-
-    List<MetaBean> result(0);
-
-    try
-    {
-        for (const auto& row : db(
-                sqlpp::custom_query(sqlpp::verbatim(sql))
-                        .with_result_type_of(sqlpp::select(all_of(qsgen::orm::Meta{})))))
-        {
-            result.emplace_back(qsgen::orm::ORM<MetaBean>::constructor(row));
-        }
-    }
-    catch (std::exception& e)
-    {
-        std::cout << "exception: " << e.what() << std::endl;
-    }
-
-    return result;
-}
-
-TEST_F(SqliteProviderTestSuite, Accept)
+TEST_F(SqliteProviderTestSuite, CRUD)
 {
     auto databaseConnectionOwner = provider.accept("sqlite:///quicksave-storage/adiog.db");
     auto& databaseConnection = reference_cast<sqlpp::sqlite3::connection>(databaseConnectionOwner);
 
-    for(auto& meta : sql(databaseConnection, "SELECT * FROM meta;"))
+    MetaBean metaBean;
+    metaBean.name = "label";
+    metaBean.text = "abc";
+    metaBean.user_hash = "adiog_hash";
+
+    auto metaHash = qsgen::orm::ORM<MetaBean>::insert(databaseConnection, metaBean);
+    std::cout << metaHash << std::endl;
+
+    auto optMetaBean = qsgen::orm::ORM<MetaBean>::get(databaseConnection, metaHash);
+    std::cout << *optMetaBean << std::endl;
+
+    metaBean.text = absl::nullopt;
+    qsgen::orm::ORM<MetaBean>::override(databaseConnection, metaBean);
+
+    std::cout << *qsgen::orm::ORM<MetaBean>::get(databaseConnection, metaHash) << std::endl;
+    MetaBean metaUp;
+    metaUp.meta_hash = metaBean.meta_hash;
+    metaUp.author = "updateField";
+
+    qsgen::orm::ORM<MetaBean>::update(databaseConnection, metaUp);
+
+    std::cout << *qsgen::orm::ORM<MetaBean>::get(databaseConnection, metaHash) << std::endl;
+
+}
+
+TEST_F(SqliteProviderTestSuite, SqlQuery)
+{
+    auto databaseConnectionOwner = provider.accept("sqlite:///quicksave-storage/adiog.db");
+    auto& databaseConnection = reference_cast<sqlpp::sqlite3::connection>(databaseConnectionOwner);
+
+    for(auto& meta : qsgen::orm::ORM<MetaBean>::query(databaseConnection, "SELECT * FROM meta;"))
     {
         std::cout << meta << std::endl;
     }

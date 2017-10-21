@@ -295,18 +295,65 @@ private:
 
             if (!bean.meta_hash) bean.meta_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.metaHash = ((bean.meta_hash) ? (*bean.meta_hash) : nullptr)),
-                (table.author = ((bean.author) ? (*bean.author) : nullptr)),
-                (table.createdAt = ((bean.created_at) ? (*bean.created_at) : nullptr)),
-                (table.icon = ((bean.icon) ? (*bean.icon) : nullptr)),
-                (table.metaType = ((bean.meta_type) ? (*bean.meta_type) : nullptr)),
-                (table.modifiedAt = ((bean.modified_at) ? (*bean.modified_at) : nullptr)),
-                (table.name = ((bean.name) ? (*bean.name) : nullptr)),
-                (table.sourceTitle = ((bean.source_title) ? (*bean.source_title) : nullptr)),
-                (table.sourceUrl = ((bean.source_url) ? (*bean.source_url) : nullptr)),
-                (table.text = ((bean.text) ? (*bean.text) : nullptr)),
-                (table.userHash = ((bean.user_hash) ? (*bean.user_hash) : nullptr))));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.metaHash = parameter(table.metaHash)),
+                (table.author = parameter(table.author)),
+                (table.createdAt = parameter(table.createdAt)),
+                (table.icon = parameter(table.icon)),
+                (table.metaType = parameter(table.metaType)),
+                (table.modifiedAt = parameter(table.modifiedAt)),
+                (table.name = parameter(table.name)),
+                (table.sourceTitle = parameter(table.sourceTitle)),
+                (table.sourceUrl = parameter(table.sourceUrl)),
+                (table.text = parameter(table.text)),
+                (table.userHash = parameter(table.userHash))));
+
+            if (bean.meta_hash)
+            {
+                prepareStatement.params.metaHash = (*bean.meta_hash);
+            }
+            if (bean.author)
+            {
+                prepareStatement.params.author = (*bean.author);
+            }
+            if (bean.created_at)
+            {
+                prepareStatement.params.createdAt = (*bean.created_at);
+            }
+            if (bean.icon)
+            {
+                prepareStatement.params.icon = (*bean.icon);
+            }
+            if (bean.meta_type)
+            {
+                prepareStatement.params.metaType = (*bean.meta_type);
+            }
+            if (bean.modified_at)
+            {
+                prepareStatement.params.modifiedAt = (*bean.modified_at);
+            }
+            if (bean.name)
+            {
+                prepareStatement.params.name = (*bean.name);
+            }
+            if (bean.source_title)
+            {
+                prepareStatement.params.sourceTitle = (*bean.source_title);
+            }
+            if (bean.source_url)
+            {
+                prepareStatement.params.sourceUrl = (*bean.source_url);
+            }
+            if (bean.text)
+            {
+                prepareStatement.params.text = (*bean.text);
+            }
+            if (bean.user_hash)
+            {
+                prepareStatement.params.userHash = (*bean.user_hash);
+            }
+
+            db(prepareStatement);
 
             return *bean.meta_hash;
         }
@@ -323,31 +370,55 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.author = parameter(table.author)),
-                                                                     (table.createdAt = parameter(table.createdAt)),
-                                                                     (table.icon = parameter(table.icon)),
-                                                                     (table.metaType = parameter(table.metaType)),
-                                                                     (table.modifiedAt = parameter(table.modifiedAt)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.sourceTitle = parameter(table.sourceTitle)),
-                                                                     (table.sourceUrl = parameter(table.sourceUrl)),
-                                                                     (table.text = parameter(table.text)),
-                                                                     (table.userHash = parameter(table.userHash)))
-                                                 .where(table.metaHash == *bean.meta_hash));
+            auto optOrigBean = getImplementation(db, *bean.meta_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.meta_hash) prepare_update.params.metaHash = (*bean.meta_hash);
-            if (bean.author) prepare_update.params.author = (*bean.author);
-            if (bean.created_at) prepare_update.params.createdAt = (*bean.created_at);
-            if (bean.icon) prepare_update.params.icon = (*bean.icon);
-            if (bean.meta_type) prepare_update.params.metaType = (*bean.meta_type);
-            if (bean.modified_at) prepare_update.params.modifiedAt = (*bean.modified_at);
-            if (bean.name) prepare_update.params.name = (*bean.name);
-            if (bean.source_title) prepare_update.params.sourceTitle = (*bean.source_title);
-            if (bean.source_url) prepare_update.params.sourceUrl = (*bean.source_url);
-            if (bean.text) prepare_update.params.text = (*bean.text);
-            if (bean.user_hash) prepare_update.params.userHash = (*bean.user_hash);
+            if (bean.meta_hash)
+            {
+                origBean.meta_hash = bean.meta_hash;
+            }
+            if (bean.author)
+            {
+                origBean.author = bean.author;
+            }
+            if (bean.created_at)
+            {
+                origBean.created_at = bean.created_at;
+            }
+            if (bean.icon)
+            {
+                origBean.icon = bean.icon;
+            }
+            if (bean.meta_type)
+            {
+                origBean.meta_type = bean.meta_type;
+            }
+            if (bean.modified_at)
+            {
+                origBean.modified_at = bean.modified_at;
+            }
+            if (bean.name)
+            {
+                origBean.name = bean.name;
+            }
+            if (bean.source_title)
+            {
+                origBean.source_title = bean.source_title;
+            }
+            if (bean.source_url)
+            {
+                origBean.source_url = bean.source_url;
+            }
+            if (bean.text)
+            {
+                origBean.text = bean.text;
+            }
+            if (bean.user_hash)
+            {
+                origBean.user_hash = bean.user_hash;
+            }
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -362,108 +433,66 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.author = parameter(table.author)),
-                                                                     (table.createdAt = parameter(table.createdAt)),
-                                                                     (table.icon = parameter(table.icon)),
-                                                                     (table.metaType = parameter(table.metaType)),
-                                                                     (table.modifiedAt = parameter(table.modifiedAt)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.sourceTitle = parameter(table.sourceTitle)),
-                                                                     (table.sourceUrl = parameter(table.sourceUrl)),
-                                                                     (table.text = parameter(table.text)),
-                                                                     (table.userHash = parameter(table.userHash)))
-                                                 .where(table.metaHash == *bean.meta_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.metaHash = parameter(table.metaHash)),
+                                                                       (table.author = parameter(table.author)),
+                                                                       (table.createdAt = parameter(table.createdAt)),
+                                                                       (table.icon = parameter(table.icon)),
+                                                                       (table.metaType = parameter(table.metaType)),
+                                                                       (table.modifiedAt = parameter(table.modifiedAt)),
+                                                                       (table.name = parameter(table.name)),
+                                                                       (table.sourceTitle = parameter(table.sourceTitle)),
+                                                                       (table.sourceUrl = parameter(table.sourceUrl)),
+                                                                       (table.text = parameter(table.text)),
+                                                                       (table.userHash = parameter(table.userHash)))
+                                                   .where(table.metaHash == *bean.meta_hash));
 
             if (bean.meta_hash)
             {
-                prepare_update.params.metaHash = (*bean.meta_hash);
-            }
-            else
-            {
-                prepare_update.params.metaHash = nullptr;
+                prepareStatement.params.metaHash = (*bean.meta_hash);
             }
             if (bean.author)
             {
-                prepare_update.params.author = (*bean.author);
-            }
-            else
-            {
-                prepare_update.params.author = nullptr;
+                prepareStatement.params.author = (*bean.author);
             }
             if (bean.created_at)
             {
-                prepare_update.params.createdAt = (*bean.created_at);
-            }
-            else
-            {
-                prepare_update.params.createdAt = nullptr;
+                prepareStatement.params.createdAt = (*bean.created_at);
             }
             if (bean.icon)
             {
-                prepare_update.params.icon = (*bean.icon);
-            }
-            else
-            {
-                prepare_update.params.icon = nullptr;
+                prepareStatement.params.icon = (*bean.icon);
             }
             if (bean.meta_type)
             {
-                prepare_update.params.metaType = (*bean.meta_type);
-            }
-            else
-            {
-                prepare_update.params.metaType = nullptr;
+                prepareStatement.params.metaType = (*bean.meta_type);
             }
             if (bean.modified_at)
             {
-                prepare_update.params.modifiedAt = (*bean.modified_at);
-            }
-            else
-            {
-                prepare_update.params.modifiedAt = nullptr;
+                prepareStatement.params.modifiedAt = (*bean.modified_at);
             }
             if (bean.name)
             {
-                prepare_update.params.name = (*bean.name);
-            }
-            else
-            {
-                prepare_update.params.name = nullptr;
+                prepareStatement.params.name = (*bean.name);
             }
             if (bean.source_title)
             {
-                prepare_update.params.sourceTitle = (*bean.source_title);
-            }
-            else
-            {
-                prepare_update.params.sourceTitle = nullptr;
+                prepareStatement.params.sourceTitle = (*bean.source_title);
             }
             if (bean.source_url)
             {
-                prepare_update.params.sourceUrl = (*bean.source_url);
-            }
-            else
-            {
-                prepare_update.params.sourceUrl = nullptr;
+                prepareStatement.params.sourceUrl = (*bean.source_url);
             }
             if (bean.text)
             {
-                prepare_update.params.text = (*bean.text);
-            }
-            else
-            {
-                prepare_update.params.text = nullptr;
+                prepareStatement.params.text = (*bean.text);
             }
             if (bean.user_hash)
             {
-                prepare_update.params.userHash = (*bean.user_hash);
+                prepareStatement.params.userHash = (*bean.user_hash);
             }
-            else
-            {
-                prepare_update.params.userHash = nullptr;
-            }
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
@@ -724,12 +753,23 @@ private:
 
             if (!bean.file_hash) bean.file_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.fileHash = ((bean.file_hash) ? (*bean.file_hash) : nullptr)),
-                (table.filename = bean.filename),
-                (table.filesize = bean.filesize),
-                (table.metaHash = bean.meta_hash),
-                (table.mimetype = bean.mimetype)));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.fileHash = parameter(table.fileHash)),
+                (table.filename = parameter(table.filename)),
+                (table.filesize = parameter(table.filesize)),
+                (table.metaHash = parameter(table.metaHash)),
+                (table.mimetype = parameter(table.mimetype))));
+
+            if (bean.file_hash)
+            {
+                prepareStatement.params.fileHash = (*bean.file_hash);
+            }
+            prepareStatement.params.filename = bean.filename;
+            prepareStatement.params.filesize = bean.filesize;
+            prepareStatement.params.metaHash = bean.meta_hash;
+            prepareStatement.params.mimetype = bean.mimetype;
+
+            db(prepareStatement);
 
             return *bean.file_hash;
         }
@@ -746,19 +786,19 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.fileHash = parameter(table.fileHash)),
-                                                                     (table.filename = parameter(table.filename)),
-                                                                     (table.filesize = parameter(table.filesize)),
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.mimetype = parameter(table.mimetype)))
-                                                 .where(table.fileHash == *bean.file_hash));
+            auto optOrigBean = getImplementation(db, *bean.file_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.file_hash) prepare_update.params.fileHash = (*bean.file_hash);
-            prepare_update.params.filename = bean.filename;
-            prepare_update.params.filesize = bean.filesize;
-            prepare_update.params.metaHash = bean.meta_hash;
-            prepare_update.params.mimetype = bean.mimetype;
+            if (bean.file_hash)
+            {
+                origBean.file_hash = bean.file_hash;
+            }
+            origBean.filename = bean.filename;
+            origBean.filesize = bean.filesize;
+            origBean.meta_hash = bean.meta_hash;
+            origBean.mimetype = bean.mimetype;
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -773,26 +813,24 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.fileHash = parameter(table.fileHash)),
-                                                                     (table.filename = parameter(table.filename)),
-                                                                     (table.filesize = parameter(table.filesize)),
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.mimetype = parameter(table.mimetype)))
-                                                 .where(table.fileHash == *bean.file_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.fileHash = parameter(table.fileHash)),
+                                                                       (table.filename = parameter(table.filename)),
+                                                                       (table.filesize = parameter(table.filesize)),
+                                                                       (table.metaHash = parameter(table.metaHash)),
+                                                                       (table.mimetype = parameter(table.mimetype)))
+                                                   .where(table.fileHash == *bean.file_hash));
 
             if (bean.file_hash)
             {
-                prepare_update.params.fileHash = (*bean.file_hash);
+                prepareStatement.params.fileHash = (*bean.file_hash);
             }
-            else
-            {
-                prepare_update.params.fileHash = nullptr;
-            }
-            prepare_update.params.filename = bean.filename;
-            prepare_update.params.filesize = bean.filesize;
-            prepare_update.params.metaHash = bean.meta_hash;
-            prepare_update.params.mimetype = bean.mimetype;
+            prepareStatement.params.filename = bean.filename;
+            prepareStatement.params.filesize = bean.filesize;
+            prepareStatement.params.metaHash = bean.meta_hash;
+            prepareStatement.params.mimetype = bean.mimetype;
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
@@ -1052,11 +1090,21 @@ private:
 
             if (!bean.action_hash) bean.action_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.actionHash = ((bean.action_hash) ? (*bean.action_hash) : nullptr)),
-                (table.kwargs = bean.kwargs),
-                (table.metaHash = bean.meta_hash),
-                (table.name = bean.name)));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.actionHash = parameter(table.actionHash)),
+                (table.kwargs = parameter(table.kwargs)),
+                (table.metaHash = parameter(table.metaHash)),
+                (table.name = parameter(table.name))));
+
+            if (bean.action_hash)
+            {
+                prepareStatement.params.actionHash = (*bean.action_hash);
+            }
+            prepareStatement.params.kwargs = bean.kwargs;
+            prepareStatement.params.metaHash = bean.meta_hash;
+            prepareStatement.params.name = bean.name;
+
+            db(prepareStatement);
 
             return *bean.action_hash;
         }
@@ -1073,17 +1121,18 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.actionHash = parameter(table.actionHash)),
-                                                                     (table.kwargs = parameter(table.kwargs)),
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.name = parameter(table.name)))
-                                                 .where(table.actionHash == *bean.action_hash));
+            auto optOrigBean = getImplementation(db, *bean.action_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.action_hash) prepare_update.params.actionHash = (*bean.action_hash);
-            prepare_update.params.kwargs = bean.kwargs;
-            prepare_update.params.metaHash = bean.meta_hash;
-            prepare_update.params.name = bean.name;
+            if (bean.action_hash)
+            {
+                origBean.action_hash = bean.action_hash;
+            }
+            origBean.kwargs = bean.kwargs;
+            origBean.meta_hash = bean.meta_hash;
+            origBean.name = bean.name;
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -1098,24 +1147,22 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.actionHash = parameter(table.actionHash)),
-                                                                     (table.kwargs = parameter(table.kwargs)),
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.name = parameter(table.name)))
-                                                 .where(table.actionHash == *bean.action_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.actionHash = parameter(table.actionHash)),
+                                                                       (table.kwargs = parameter(table.kwargs)),
+                                                                       (table.metaHash = parameter(table.metaHash)),
+                                                                       (table.name = parameter(table.name)))
+                                                   .where(table.actionHash == *bean.action_hash));
 
             if (bean.action_hash)
             {
-                prepare_update.params.actionHash = (*bean.action_hash);
+                prepareStatement.params.actionHash = (*bean.action_hash);
             }
-            else
-            {
-                prepare_update.params.actionHash = nullptr;
-            }
-            prepare_update.params.kwargs = bean.kwargs;
-            prepare_update.params.metaHash = bean.meta_hash;
-            prepare_update.params.name = bean.name;
+            prepareStatement.params.kwargs = bean.kwargs;
+            prepareStatement.params.metaHash = bean.meta_hash;
+            prepareStatement.params.name = bean.name;
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
@@ -1376,12 +1423,35 @@ private:
 
             if (!bean.tag_hash) bean.tag_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.tagHash = ((bean.tag_hash) ? (*bean.tag_hash) : nullptr)),
-                (table.metaHash = ((bean.meta_hash) ? (*bean.meta_hash) : nullptr)),
-                (table.name = ((bean.name) ? (*bean.name) : nullptr)),
-                (table.userHash = ((bean.user_hash) ? (*bean.user_hash) : nullptr)),
-                (table.value = ((bean.value) ? (*bean.value) : nullptr))));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.tagHash = parameter(table.tagHash)),
+                (table.metaHash = parameter(table.metaHash)),
+                (table.name = parameter(table.name)),
+                (table.userHash = parameter(table.userHash)),
+                (table.value = parameter(table.value))));
+
+            if (bean.tag_hash)
+            {
+                prepareStatement.params.tagHash = (*bean.tag_hash);
+            }
+            if (bean.meta_hash)
+            {
+                prepareStatement.params.metaHash = (*bean.meta_hash);
+            }
+            if (bean.name)
+            {
+                prepareStatement.params.name = (*bean.name);
+            }
+            if (bean.user_hash)
+            {
+                prepareStatement.params.userHash = (*bean.user_hash);
+            }
+            if (bean.value)
+            {
+                prepareStatement.params.value = (*bean.value);
+            }
+
+            db(prepareStatement);
 
             return *bean.tag_hash;
         }
@@ -1398,19 +1468,31 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.tagHash = parameter(table.tagHash)),
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.userHash = parameter(table.userHash)),
-                                                                     (table.value = parameter(table.value)))
-                                                 .where(table.tagHash == *bean.tag_hash));
+            auto optOrigBean = getImplementation(db, *bean.tag_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.tag_hash) prepare_update.params.tagHash = (*bean.tag_hash);
-            if (bean.meta_hash) prepare_update.params.metaHash = (*bean.meta_hash);
-            if (bean.name) prepare_update.params.name = (*bean.name);
-            if (bean.user_hash) prepare_update.params.userHash = (*bean.user_hash);
-            if (bean.value) prepare_update.params.value = (*bean.value);
+            if (bean.tag_hash)
+            {
+                origBean.tag_hash = bean.tag_hash;
+            }
+            if (bean.meta_hash)
+            {
+                origBean.meta_hash = bean.meta_hash;
+            }
+            if (bean.name)
+            {
+                origBean.name = bean.name;
+            }
+            if (bean.user_hash)
+            {
+                origBean.user_hash = bean.user_hash;
+            }
+            if (bean.value)
+            {
+                origBean.value = bean.value;
+            }
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -1425,54 +1507,36 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.tagHash = parameter(table.tagHash)),
-                                                                     (table.metaHash = parameter(table.metaHash)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.userHash = parameter(table.userHash)),
-                                                                     (table.value = parameter(table.value)))
-                                                 .where(table.tagHash == *bean.tag_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.tagHash = parameter(table.tagHash)),
+                                                                       (table.metaHash = parameter(table.metaHash)),
+                                                                       (table.name = parameter(table.name)),
+                                                                       (table.userHash = parameter(table.userHash)),
+                                                                       (table.value = parameter(table.value)))
+                                                   .where(table.tagHash == *bean.tag_hash));
 
             if (bean.tag_hash)
             {
-                prepare_update.params.tagHash = (*bean.tag_hash);
-            }
-            else
-            {
-                prepare_update.params.tagHash = nullptr;
+                prepareStatement.params.tagHash = (*bean.tag_hash);
             }
             if (bean.meta_hash)
             {
-                prepare_update.params.metaHash = (*bean.meta_hash);
-            }
-            else
-            {
-                prepare_update.params.metaHash = nullptr;
+                prepareStatement.params.metaHash = (*bean.meta_hash);
             }
             if (bean.name)
             {
-                prepare_update.params.name = (*bean.name);
-            }
-            else
-            {
-                prepare_update.params.name = nullptr;
+                prepareStatement.params.name = (*bean.name);
             }
             if (bean.user_hash)
             {
-                prepare_update.params.userHash = (*bean.user_hash);
-            }
-            else
-            {
-                prepare_update.params.userHash = nullptr;
+                prepareStatement.params.userHash = (*bean.user_hash);
             }
             if (bean.value)
             {
-                prepare_update.params.value = (*bean.value);
+                prepareStatement.params.value = (*bean.value);
             }
-            else
-            {
-                prepare_update.params.value = nullptr;
-            }
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
@@ -1732,11 +1796,21 @@ private:
 
             if (!bean.key_hash) bean.key_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.keyHash = ((bean.key_hash) ? (*bean.key_hash) : nullptr)),
-                (table.name = bean.name),
-                (table.userHash = bean.user_hash),
-                (table.value = bean.value)));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.keyHash = parameter(table.keyHash)),
+                (table.name = parameter(table.name)),
+                (table.userHash = parameter(table.userHash)),
+                (table.value = parameter(table.value))));
+
+            if (bean.key_hash)
+            {
+                prepareStatement.params.keyHash = (*bean.key_hash);
+            }
+            prepareStatement.params.name = bean.name;
+            prepareStatement.params.userHash = bean.user_hash;
+            prepareStatement.params.value = bean.value;
+
+            db(prepareStatement);
 
             return *bean.key_hash;
         }
@@ -1753,17 +1827,18 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.keyHash = parameter(table.keyHash)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.userHash = parameter(table.userHash)),
-                                                                     (table.value = parameter(table.value)))
-                                                 .where(table.keyHash == *bean.key_hash));
+            auto optOrigBean = getImplementation(db, *bean.key_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.key_hash) prepare_update.params.keyHash = (*bean.key_hash);
-            prepare_update.params.name = bean.name;
-            prepare_update.params.userHash = bean.user_hash;
-            prepare_update.params.value = bean.value;
+            if (bean.key_hash)
+            {
+                origBean.key_hash = bean.key_hash;
+            }
+            origBean.name = bean.name;
+            origBean.user_hash = bean.user_hash;
+            origBean.value = bean.value;
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -1778,24 +1853,22 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.keyHash = parameter(table.keyHash)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.userHash = parameter(table.userHash)),
-                                                                     (table.value = parameter(table.value)))
-                                                 .where(table.keyHash == *bean.key_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.keyHash = parameter(table.keyHash)),
+                                                                       (table.name = parameter(table.name)),
+                                                                       (table.userHash = parameter(table.userHash)),
+                                                                       (table.value = parameter(table.value)))
+                                                   .where(table.keyHash == *bean.key_hash));
 
             if (bean.key_hash)
             {
-                prepare_update.params.keyHash = (*bean.key_hash);
+                prepareStatement.params.keyHash = (*bean.key_hash);
             }
-            else
-            {
-                prepare_update.params.keyHash = nullptr;
-            }
-            prepare_update.params.name = bean.name;
-            prepare_update.params.userHash = bean.user_hash;
-            prepare_update.params.value = bean.value;
+            prepareStatement.params.name = bean.name;
+            prepareStatement.params.userHash = bean.user_hash;
+            prepareStatement.params.value = bean.value;
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
@@ -2057,13 +2130,34 @@ private:
 
             if (!bean.perspective_hash) bean.perspective_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.perspectiveHash = ((bean.perspective_hash) ? (*bean.perspective_hash) : nullptr)),
-                (table.definedQuery = bean.defined_query),
-                (table.name = bean.name),
-                (table.ordering = ((bean.ordering) ? (*bean.ordering) : nullptr)),
-                (table.refinedQuery = ((bean.refined_query) ? (*bean.refined_query) : nullptr)),
-                (table.userHash = ((bean.user_hash) ? (*bean.user_hash) : nullptr))));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.perspectiveHash = parameter(table.perspectiveHash)),
+                (table.definedQuery = parameter(table.definedQuery)),
+                (table.name = parameter(table.name)),
+                (table.ordering = parameter(table.ordering)),
+                (table.refinedQuery = parameter(table.refinedQuery)),
+                (table.userHash = parameter(table.userHash))));
+
+            if (bean.perspective_hash)
+            {
+                prepareStatement.params.perspectiveHash = (*bean.perspective_hash);
+            }
+            prepareStatement.params.definedQuery = bean.defined_query;
+            prepareStatement.params.name = bean.name;
+            if (bean.ordering)
+            {
+                prepareStatement.params.ordering = (*bean.ordering);
+            }
+            if (bean.refined_query)
+            {
+                prepareStatement.params.refinedQuery = (*bean.refined_query);
+            }
+            if (bean.user_hash)
+            {
+                prepareStatement.params.userHash = (*bean.user_hash);
+            }
+
+            db(prepareStatement);
 
             return *bean.perspective_hash;
         }
@@ -2080,21 +2174,29 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.perspectiveHash = parameter(table.perspectiveHash)),
-                                                                     (table.definedQuery = parameter(table.definedQuery)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.ordering = parameter(table.ordering)),
-                                                                     (table.refinedQuery = parameter(table.refinedQuery)),
-                                                                     (table.userHash = parameter(table.userHash)))
-                                                 .where(table.perspectiveHash == *bean.perspective_hash));
+            auto optOrigBean = getImplementation(db, *bean.perspective_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.perspective_hash) prepare_update.params.perspectiveHash = (*bean.perspective_hash);
-            prepare_update.params.definedQuery = bean.defined_query;
-            prepare_update.params.name = bean.name;
-            if (bean.ordering) prepare_update.params.ordering = (*bean.ordering);
-            if (bean.refined_query) prepare_update.params.refinedQuery = (*bean.refined_query);
-            if (bean.user_hash) prepare_update.params.userHash = (*bean.user_hash);
+            if (bean.perspective_hash)
+            {
+                origBean.perspective_hash = bean.perspective_hash;
+            }
+            origBean.defined_query = bean.defined_query;
+            origBean.name = bean.name;
+            if (bean.ordering)
+            {
+                origBean.ordering = bean.ordering;
+            }
+            if (bean.refined_query)
+            {
+                origBean.refined_query = bean.refined_query;
+            }
+            if (bean.user_hash)
+            {
+                origBean.user_hash = bean.user_hash;
+            }
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -2109,49 +2211,35 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.perspectiveHash = parameter(table.perspectiveHash)),
-                                                                     (table.definedQuery = parameter(table.definedQuery)),
-                                                                     (table.name = parameter(table.name)),
-                                                                     (table.ordering = parameter(table.ordering)),
-                                                                     (table.refinedQuery = parameter(table.refinedQuery)),
-                                                                     (table.userHash = parameter(table.userHash)))
-                                                 .where(table.perspectiveHash == *bean.perspective_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.perspectiveHash = parameter(table.perspectiveHash)),
+                                                                       (table.definedQuery = parameter(table.definedQuery)),
+                                                                       (table.name = parameter(table.name)),
+                                                                       (table.ordering = parameter(table.ordering)),
+                                                                       (table.refinedQuery = parameter(table.refinedQuery)),
+                                                                       (table.userHash = parameter(table.userHash)))
+                                                   .where(table.perspectiveHash == *bean.perspective_hash));
 
             if (bean.perspective_hash)
             {
-                prepare_update.params.perspectiveHash = (*bean.perspective_hash);
+                prepareStatement.params.perspectiveHash = (*bean.perspective_hash);
             }
-            else
-            {
-                prepare_update.params.perspectiveHash = nullptr;
-            }
-            prepare_update.params.definedQuery = bean.defined_query;
-            prepare_update.params.name = bean.name;
+            prepareStatement.params.definedQuery = bean.defined_query;
+            prepareStatement.params.name = bean.name;
             if (bean.ordering)
             {
-                prepare_update.params.ordering = (*bean.ordering);
-            }
-            else
-            {
-                prepare_update.params.ordering = nullptr;
+                prepareStatement.params.ordering = (*bean.ordering);
             }
             if (bean.refined_query)
             {
-                prepare_update.params.refinedQuery = (*bean.refined_query);
-            }
-            else
-            {
-                prepare_update.params.refinedQuery = nullptr;
+                prepareStatement.params.refinedQuery = (*bean.refined_query);
             }
             if (bean.user_hash)
             {
-                prepare_update.params.userHash = (*bean.user_hash);
+                prepareStatement.params.userHash = (*bean.user_hash);
             }
-            else
-            {
-                prepare_update.params.userHash = nullptr;
-            }
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
@@ -2412,12 +2500,23 @@ private:
 
             if (!bean.user_hash) bean.user_hash = qs::util::Hash::get();
 
-            db(sqlpp::insert_into(table).set(
-                (table.userHash = ((bean.user_hash) ? (*bean.user_hash) : nullptr)),
-                (table.databaseConnectionString = bean.databaseConnectionString),
-                (table.password = bean.password),
-                (table.storageConnectionString = bean.storageConnectionString),
-                (table.username = bean.username)));
+            auto prepareStatement = db.prepare(sqlpp::insert_into(table).set(
+                (table.userHash = parameter(table.userHash)),
+                (table.databaseConnectionString = parameter(table.databaseConnectionString)),
+                (table.password = parameter(table.password)),
+                (table.storageConnectionString = parameter(table.storageConnectionString)),
+                (table.username = parameter(table.username))));
+
+            if (bean.user_hash)
+            {
+                prepareStatement.params.userHash = (*bean.user_hash);
+            }
+            prepareStatement.params.databaseConnectionString = bean.databaseConnectionString;
+            prepareStatement.params.password = bean.password;
+            prepareStatement.params.storageConnectionString = bean.storageConnectionString;
+            prepareStatement.params.username = bean.username;
+
+            db(prepareStatement);
 
             return *bean.user_hash;
         }
@@ -2434,19 +2533,19 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.userHash = parameter(table.userHash)),
-                                                                     (table.databaseConnectionString = parameter(table.databaseConnectionString)),
-                                                                     (table.password = parameter(table.password)),
-                                                                     (table.storageConnectionString = parameter(table.storageConnectionString)),
-                                                                     (table.username = parameter(table.username)))
-                                                 .where(table.userHash == *bean.user_hash));
+            auto optOrigBean = getImplementation(db, *bean.user_hash);
+            auto& origBean = *optOrigBean;
 
-            if (bean.user_hash) prepare_update.params.userHash = (*bean.user_hash);
-            prepare_update.params.databaseConnectionString = bean.databaseConnectionString;
-            prepare_update.params.password = bean.password;
-            prepare_update.params.storageConnectionString = bean.storageConnectionString;
-            prepare_update.params.username = bean.username;
+            if (bean.user_hash)
+            {
+                origBean.user_hash = bean.user_hash;
+            }
+            origBean.databaseConnectionString = bean.databaseConnectionString;
+            origBean.password = bean.password;
+            origBean.storageConnectionString = bean.storageConnectionString;
+            origBean.username = bean.username;
+
+            overrideImplementation(db, origBean);
         }
         catch (std::exception& e)
         {
@@ -2461,26 +2560,24 @@ private:
         {
             const auto table = getTable();
 
-            auto prepare_update = db.prepare(sqlpp::update(table).set(
-                                                                     (table.userHash = parameter(table.userHash)),
-                                                                     (table.databaseConnectionString = parameter(table.databaseConnectionString)),
-                                                                     (table.password = parameter(table.password)),
-                                                                     (table.storageConnectionString = parameter(table.storageConnectionString)),
-                                                                     (table.username = parameter(table.username)))
-                                                 .where(table.userHash == *bean.user_hash));
+            auto prepareStatement = db.prepare(sqlpp::update(table).set(
+                                                                       (table.userHash = parameter(table.userHash)),
+                                                                       (table.databaseConnectionString = parameter(table.databaseConnectionString)),
+                                                                       (table.password = parameter(table.password)),
+                                                                       (table.storageConnectionString = parameter(table.storageConnectionString)),
+                                                                       (table.username = parameter(table.username)))
+                                                   .where(table.userHash == *bean.user_hash));
 
             if (bean.user_hash)
             {
-                prepare_update.params.userHash = (*bean.user_hash);
+                prepareStatement.params.userHash = (*bean.user_hash);
             }
-            else
-            {
-                prepare_update.params.userHash = nullptr;
-            }
-            prepare_update.params.databaseConnectionString = bean.databaseConnectionString;
-            prepare_update.params.password = bean.password;
-            prepare_update.params.storageConnectionString = bean.storageConnectionString;
-            prepare_update.params.username = bean.username;
+            prepareStatement.params.databaseConnectionString = bean.databaseConnectionString;
+            prepareStatement.params.password = bean.password;
+            prepareStatement.params.storageConnectionString = bean.storageConnectionString;
+            prepareStatement.params.username = bean.username;
+
+            db(prepareStatement);
         }
         catch (std::exception& e)
         {
