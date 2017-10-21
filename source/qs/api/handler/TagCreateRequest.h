@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include <folly/io/IOBuf.h>
+
 #include <qsgen/bean/TagCreateRequestBean.h>
 #include <qsgen/bean/MessageWithHashBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
-#include <folly/io/IOBuf.h>
+
 
 class TagCreateRequest : public TagCreateRequestBean
 {
@@ -17,7 +18,7 @@ public:
     {
         tag.user_hash = *(ctx.userBean.user_hash);
 
-        std::string tag_hash = database::Action::insert<TagBean>(ctx.databaseTransaction, tag);
+        std::string tag_hash = qsgen::orm::ORM<TagBean>::insert(ctx.databaseTransaction, tag);
 
         MessageWithHashBean messageBean;
         messageBean.hash = tag_hash;

@@ -17,7 +17,7 @@ public:
 
     std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
-        auto perspective = database::Action::get<PerspectiveBean>(ctx.databaseTransaction, perspective_hash);
+        auto perspective = qsgen::orm::ORM<PerspectiveBean>::get(ctx.databaseTransaction, perspective_hash);
         return useCase::Retrieve::getBean(ctx.databaseTransaction, perspective->defined_query, *ctx.userBean.user_hash);
     }
 };

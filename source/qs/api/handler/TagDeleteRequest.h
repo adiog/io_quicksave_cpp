@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include <folly/io/IOBuf.h>
+
 #include <qsgen/bean/TagDeleteRequestBean.h>
 #include <qsgen/bean/MessageBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
-#include <folly/io/IOBuf.h>
+
 
 class TagDeleteRequest : public TagDeleteRequestBean
 {
@@ -17,7 +18,7 @@ public:
     {
         MessageBean messageBean;
 
-        database::Action::remove<TagBean>(ctx.databaseTransaction, tag_hash);
+        qsgen::orm::ORM<TagBean>::remove(ctx.databaseTransaction, tag_hash);
         messageBean.message = "OK";
 
         return messageBean;

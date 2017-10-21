@@ -8,8 +8,8 @@
 #include <qs/storage/StorageFactory.h>
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/MetaDeleteRequestBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
 
+#include <qsgen/orm/sqlppWrappers.h>
 
 class MetaDeleteRequest : public MetaDeleteRequestBean
 {
@@ -23,10 +23,10 @@ public:
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
         storage->remove(meta_hash);
 
-        database::Action::remove_by<TagBean>(ctx.databaseTransaction, "meta_hash", meta_hash);
-        database::Action::remove_by<ActionBean>(ctx.databaseTransaction, "meta_hash", meta_hash);
-        database::Action::remove_by<FileBean>(ctx.databaseTransaction, "meta_hash", meta_hash);
-        database::Action::remove<MetaBean>(ctx.databaseTransaction, meta_hash);
+        qsgen::orm::ORM<TagBean>::removeBy(ctx.databaseTransaction, qsgen::orm::Tag{}.metaHash, meta_hash);
+        qsgen::orm::ORM<ActionBean>::removeBy(ctx.databaseTransaction, qsgen::orm::Action{}.metaHash, meta_hash);
+        qsgen::orm::ORM<FileBean>::removeBy(ctx.databaseTransaction, qsgen::orm::File{}.metaHash, meta_hash);
+        qsgen::orm::ORM<MetaBean>::remove(ctx.databaseTransaction, meta_hash);
 
         messageBean.message = "OK";
 

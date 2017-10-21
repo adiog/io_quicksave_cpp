@@ -11,7 +11,7 @@
 #include <qsgen/bean/CreateRequestBean.h>
 #include <qsgen/bean/CreateResponseBean.h>
 #include <qsgen/bean/InternalCreateRequestBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
+#include <qsgen/orm/sqlppWrappers.h>
 
 
 class CreateRequest : public CreateRequestBean
@@ -24,7 +24,7 @@ public:
         CreateResponseBean createResponseBean;
 
         meta.user_hash = *ctx.userBean.user_hash;
-        meta.meta_hash = database::Action::insert<MetaBean>(ctx.databaseTransaction, meta);
+        meta.meta_hash = qsgen::orm::ORM<MetaBean>::insert(ctx.databaseTransaction, meta);
         meta.created_at = qs::util::Timestamp::timestamp();
 
         InternalCreateRequestBean internalCreateRequestBean;
@@ -32,17 +32,17 @@ public:
         internalCreateRequestBean.createRequest = *this;
         internalCreateRequestBean.storageConnectionString = ctx.userBean.storageConnectionString;
         internalCreateRequestBean.databaseConnectionString = ctx.userBean.databaseConnectionString;
-        internalCreateRequestBean.keys = database::Action::get_by<KeyBean>(ctx.databaseTransaction, "user_hash", *ctx.userBean.user_hash);
+        internalCreateRequestBean.keys = qsgen::orm::ORM<KeyBean>::getBy(ctx.databaseTransaction, qsgen::orm::Key{}.userHash, *ctx.userBean.user_hash);
 
         auto itemBean = PluginEngine::process(internalCreateRequestBean);
 
-        database::Action::update<MetaBean>(ctx.databaseTransaction, itemBean.meta);
+        qsgen::orm::ORM<MetaBean>::update(ctx.databaseTransaction, itemBean.meta);
 
         for (auto& tag : itemBean.tags)
         {
             tag.meta_hash = meta.meta_hash;
             tag.user_hash = meta.user_hash;
-            database::Action::insert<TagBean>(ctx.databaseTransaction, tag);
+            qsgen::orm::ORM<TagBean>::insert(ctx.databaseTransaction, tag);
         }
 
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);

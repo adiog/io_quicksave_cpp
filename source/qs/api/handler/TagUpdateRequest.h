@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include <folly/io/IOBuf.h>
+
 #include <qsgen/bean/TagUpdateRequestBean.h>
 #include <qsgen/bean/MessageBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
-#include <folly/io/IOBuf.h>
+
 
 class TagUpdateRequest : public TagUpdateRequestBean
 {
@@ -17,11 +18,11 @@ public:
     {
         MessageBean messageBean;
 
-        auto updated_tag = database::Action::get<TagBean>(ctx.databaseTransaction, *tag.tag_hash);
+        auto updated_tag = qsgen::orm::ORM<TagBean>::get(ctx.databaseTransaction, *tag.tag_hash);
 
         if (updated_tag) {
             updated_tag->update(tag);
-            database::Action::update<TagBean>(ctx.databaseTransaction, *updated_tag);
+            qsgen::orm::ORM<TagBean>::update(ctx.databaseTransaction, *updated_tag);
             messageBean.message = "OK";
         } else {
             messageBean.message = "Not found";

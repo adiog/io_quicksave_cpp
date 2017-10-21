@@ -5,7 +5,6 @@
 
 #include <qsgen/bean/PerspectiveDeleteRequestBean.h>
 #include <qsgen/bean/MessageBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
 #include <folly/io/IOBuf.h>
 
 class PerspectiveDeleteRequest : public PerspectiveDeleteRequestBean
@@ -17,7 +16,7 @@ public:
     {
         MessageBean messageBean;
 
-        database::Action::remove<PerspectiveBean>(ctx.databaseTransaction, perspective_hash);
+        qsgen::orm::ORM<PerspectiveBean>::remove(ctx.databaseTransaction, perspective_hash);
         messageBean.message = "OK";
 
         return messageBean;

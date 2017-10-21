@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <reference_cast>
+
 #include <folly/io/IOBuf.h>
 #include <folly/Format.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
@@ -13,7 +15,6 @@
 #include <qs/api/handler/GenericRequest.h>
 #include <qs/api/handler/MetaDeleteRequest.h>
 #include <qs/api/handler/MetaUpdateRequest.h>
-/*
 #include <qs/api/handler/PerspectiveCreateRequest.h>
 #include <qs/api/handler/PerspectiveRetrieveRequest.h>
 #include <qs/api/handler/PerspectiveUpdateRequest.h>
@@ -24,7 +25,7 @@
 #include <qs/api/handler/TagDeleteRequest.h>
 #include <qs/api/handler/TagUpdateRequest.h>
 #include <qs/api/handler/UploadRequest.h>
-*/
+
 #include <qs/database/ProviderFactory.h>
 #include <qs/server/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
@@ -62,7 +63,6 @@ public:
 
 
 private:
-    RequestContext requestContext;
     rapidjson::Document document;
 
     std::unique_ptr<folly::IOBuf> response;
@@ -155,11 +155,14 @@ void ApiServer::handle_post()
 
     SessionBean sessionBean = OAuthAPI::get_session(token);
 
-    std::unique_ptr<database::Connection> databaseConnection = database::ProviderFactory::create(
-        sessionBean.user.databaseConnectionString);
-    std::unique_ptr<database::Transaction> databaseTransaction = databaseConnection->getTransaction();
-    requestContext.databaseTransaction = databaseTransaction.get();
-    requestContext.userBean = sessionBean.user;
+    auto databaseConnectionOwner = database::ProviderFactory::create(sessionBean.user.databaseConnectionString);
+    auto& databaseConnection = reference_cast(databaseConnectionOwner);
+
+    RequestContext requestContext{
+            sessionBean.user,
+            sessionBean.token,
+            databaseConnection
+    };
 
     try
     {
@@ -167,7 +170,7 @@ void ApiServer::handle_post()
         {
             response = GenericRequest<CreateRequest>::handle(requestContext, document);
         }
-/*        else if (path == "/retrieve")
+        else if (path == "/retrieve")
         {
             response = GenericRequest<RetrieveByQueryRequest>::handle(requestContext, document);
         }
@@ -202,7 +205,7 @@ void ApiServer::handle_post()
         else if (path == "/tag/delete")
         {
             response = GenericRequest<TagDeleteRequest>::handle(requestContext, document);
-        }*/
+        }
         else if (path == "/meta/delete")
         {
             response = GenericRequest<MetaDeleteRequest>::handle(requestContext, document);
@@ -211,10 +214,10 @@ void ApiServer::handle_post()
         {
             response = GenericRequest<MetaUpdateRequest>::handle(requestContext, document);
         }
-        /*else if (path == "/upload")
+        else if (path == "/upload")
         {
             response = GenericRequest<UploadRequest>::handle(requestContext, document);
-        }*/
+        }
         else
         {
             return reply(404);

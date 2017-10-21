@@ -64,10 +64,22 @@ FILE(GLOB_RECURSE PROJECT_QSQL ${CMAKE_CURRENT_SOURCE_DIR}/deps/io_quicksave_qsq
 ADD_LIBRARY(qsql ${PROJECT_QSQL})
 TARGET_LINK_LIBRARIES(qsql dl antlr4-runtime)
 
-FILE(GLOB_RECURSE PROJECT_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
-FILE(GLOB_RECURSE PROJECT_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/source/**.h)
-ADD_EXECUTABLE(api ${PROJECT_MAIN} ${PROJECT_HEAD})
-TARGET_LINK_LIBRARIES(api ${PROJECT_LIBRARIES} pq libpython3.6m.so memcached rabbitmq-c-utils rabbitmq-static ssl sqlite3 antlr4-runtime qsql pthread sha1 stdc++fs dl util)
+FILE(GLOB_RECURSE PROJECT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/api/**.cc)
+FILE(GLOB_RECURSE PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/source/**.h)
+ADD_EXECUTABLE(api
+        ${PROJECT_SOURCES}
+        ${PROJECT_HEADERS})
+TARGET_LINK_LIBRARIES(api
+        qsql antlr4-runtime
+        libpython3.6m.so
+        memcached
+        sha1
+        stdc++fs
+        ${CORE_LIBRARIES}
+        ${BASE_LIBRARIES}
+        ${DBMS_LIBRARIES}
+        ${HTTP_LIBRARIES}
+        )
 
 ADD_EXECUTABLE(cdn cdn/cdn.cc)
 TARGET_LINK_LIBRARIES(cdn

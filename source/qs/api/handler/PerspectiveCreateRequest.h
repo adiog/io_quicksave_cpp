@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include <folly/io/IOBuf.h>
+
 #include <qsgen/bean/PerspectiveCreateRequestBean.h>
 #include <qsgen/bean/MessageWithHashBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
-#include <folly/io/IOBuf.h>
+
 
 class PerspectiveCreateRequest : public PerspectiveCreateRequestBean
 {
@@ -17,7 +18,7 @@ public:
     {
         perspective.user_hash = *(ctx.userBean.user_hash);
 
-        std::string perspective_hash = database::Action::insert<PerspectiveBean>(ctx.databaseTransaction, perspective);
+        std::string perspective_hash = qsgen::orm::ORM<PerspectiveBean>::insert(ctx.databaseTransaction, perspective);
 
         MessageWithHashBean messageBean;
         messageBean.hash = perspective_hash;

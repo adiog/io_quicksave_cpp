@@ -10,7 +10,6 @@
 #include <qs/util/base64.h>
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/UploadRequestBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
 
 
 class UploadRequest : public UploadRequestBean
@@ -32,7 +31,7 @@ public:
         file.mimetype = mimetype;
         file.filesize = filebody.size();
 
-        file.file_hash = database::Action::insert<FileBean>(ctx.databaseTransaction, file);
+        file.file_hash = qsgen::orm::ORM<FileBean>::insert(ctx.databaseTransaction, file);
 
         MessageWithHashBean messageBean;
 

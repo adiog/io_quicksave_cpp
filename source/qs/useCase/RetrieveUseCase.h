@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include <qsgen/bean/RetrieveResponseBean.h>
-#include <qs/database/Action.h>
-#include <qs/database/Transaction.h>
 #include <qsql/qsqlQuery.h>
+
+#include <qsgen/bean/RetrieveResponseBean.h>
 
 
 namespace useCase {
@@ -14,8 +13,7 @@ namespace useCase {
 class Retrieve
 {
 public:
-    static RetrieveResponseBean
-    getBean(database::Transaction *const &databaseTransactionParam,
+    static RetrieveResponseBean getBean(sqlpp::connection &db,
             const std::string &queryParam,
             const std::string &userHashParam)
     {
@@ -27,8 +25,8 @@ public:
             std::__cxx11::string sqlQuery = QsqlQuery::parseQsqlToSql(userHashParam, queryParam);
 
             DLOG(INFO) << sqlQuery;
-
-            auto metas = database::Action::sql<MetaBean>(databaseTransactionParam, sqlQuery);
+/*
+            auto metas = qsgen::orm::ORM<MetaBean>::sql(databaseTransactionParam, sqlQuery);
             for (auto &meta : metas)
             {
                 ItemBean itemBean;
@@ -38,6 +36,7 @@ public:
                 retrieveResponseBean.items.push_back(itemBean);
             }
             retrieveResponseBean.total = static_cast<int>(metas.size());
+*/
         }
         catch (QsqlException &e)
         {

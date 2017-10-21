@@ -9,7 +9,6 @@
 
 #include <qsgen/bean/MessageBean.h>
 #include <qsgen/bean/PerspectiveUpdateRequestBean.h>
-#include <qsgen/databaseBean/DatabaseBeans.h>
 
 class PerspectiveUpdateRequest : public PerspectiveUpdateRequestBean
 {
@@ -28,14 +27,14 @@ public:
             perspective.ordering = orderingJoin;
         }
 
-        auto updated_perspective = database::Action::get<PerspectiveBean>(ctx.databaseTransaction, *perspective.perspective_hash);
+        auto updated_perspective = qsgen::orm::ORM<PerspectiveBean>::get(ctx.databaseTransaction, *perspective.perspective_hash);
 
         std::cout << ::serialize(*updated_perspective) << std::endl;
 
         if (updated_perspective)
         {
             updated_perspective->update(perspective);
-            database::Action::update<PerspectiveBean>(ctx.databaseTransaction, *updated_perspective);
+            qsgen::orm::ORM<PerspectiveBean>::update(ctx.databaseTransaction, *updated_perspective);
             messageBean.message = "OK";
         }
         else

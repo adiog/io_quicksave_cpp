@@ -8,6 +8,8 @@
 #include <qs/storage/LocalStorage.h>
 #include <qs/storage/StorageProvider.h>
 
+#include <qsgen/orm/sqlppWrappers.h>
+
 
 namespace storage {
 
