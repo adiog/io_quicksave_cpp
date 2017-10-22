@@ -19,4 +19,5 @@ CMD mkdir ~/.ssh \
         --IO_QUICKSAVE_MEMCACHED_PORT=11211 \
         --IO_QUICKSAVE_MQ_HOST=mq_quicksave_docker \
         --IO_QUICKSAVE_MQ_PORT=5672 \
-        --IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING="sqlite:///storage/master.db"
+        --IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING="sqlite:///storage/master.db" \
+    || qs-audit fatal "quicksave post crashed" && bash

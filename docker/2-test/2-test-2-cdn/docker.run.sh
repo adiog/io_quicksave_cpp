@@ -9,5 +9,6 @@ sudo docker run \
     --privileged \
         --name cdn_quicksave_docker \
         --net network_quicksave_docker \
+        --add-host audit.quicksave.io:192.168.0.1 \
         -p 12000:12000 \
         -it quicksave/test-cdn

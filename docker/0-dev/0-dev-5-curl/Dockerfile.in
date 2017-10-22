@@ -1,5 +1,7 @@
 FROM quicksave/dev-ssh
 
+COPY qs-audit /usr/bin/qs-audit
+
 RUN git clone https://github.com/curl/curl \
     && mkdir -p curl/build \
     && cd curl/build \
