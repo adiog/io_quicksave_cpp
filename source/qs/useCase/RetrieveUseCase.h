@@ -15,14 +15,17 @@ class Retrieve
 public:
     static RetrieveResponseBean getBean(sqlpp::connection &db,
             const std::string &queryParam,
-            const std::string &userHashParam)
+            const std::string &userHashParam,
+            int limit,
+            int offset
+    )
     {
         RetrieveResponseBean retrieveResponseBean;
         auto ll = List<ItemBean>();
         retrieveResponseBean.items = List<ItemBean>(ll);
         try
         {
-            std::__cxx11::string sqlQuery = QsqlQuery::parseQsqlToSql(userHashParam, queryParam);
+            std::__cxx11::string sqlQuery = QsqlQuery::parseQsqlToSql(userHashParam, queryParam, limit, offset);
 
             DLOG(INFO) << sqlQuery;
 

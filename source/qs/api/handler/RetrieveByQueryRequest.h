@@ -7,6 +7,8 @@
 
 #include <qs/server/RequestContext.h>
 #include <qs/useCase/RetrieveUseCase.h>
+#include <qs/util/integer.h>
+
 #include <qsgen/bean/RetrieveByQueryRequestBean.h>
 
 
@@ -17,6 +19,8 @@ public:
 
     std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
     {
-        return useCase::Retrieve::getBean(ctx.databaseTransaction, query, *ctx.userBean.user_hash);
+        int safe_limit = (limit) ? qs::util::Integer::safe_bounds(*limit, 0, 10) : 10;
+        int safe_offset = (offset) ? qs::util::Integer::safe_bounds(*offset, 0, 10) : 0;
+        return useCase::Retrieve::getBean(ctx.databaseTransaction, query, *ctx.userBean.user_hash, safe_limit, safe_offset);
     }
 };

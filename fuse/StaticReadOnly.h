@@ -41,7 +41,7 @@ public:
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(mockRequestContext, anOptionalUserBean->storageConnectionString);
 
 
-        RetrieveResponseBean retrieveResponseBean = useCase::Retrieve::getBean(databaseConnection, query, *anOptionalUserBean->user_hash);
+        RetrieveResponseBean retrieveResponseBean = useCase::Retrieve::getBean(databaseConnection, query, *anOptionalUserBean->user_hash, 1000, 0);
 
         std::cout << ::serialize(retrieveResponseBean) << std::endl;
 
