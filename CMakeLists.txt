@@ -115,6 +115,7 @@ FILE(GLOB_RECURSE UNIT_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/unit_test/**.cc)
 ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
 TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runtime qsql
         gtest gmock
+        curl
         ${CORE_LIBRARIES}
         ${BASE_LIBRARIES}
         ${DBMS_LIBRARIES}

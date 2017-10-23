@@ -6,9 +6,8 @@
 
 #include <gflags/gflags.h>
 
-DEFINE_string(QUICKSAVE, "/io.quicksave.bootstrap", "");
-DEFINE_string(QUICKSAVE_PREFIX, "/", "");
 DEFINE_string(IO_QUICKSAVE, "quicksave.io", "");
+DEFINE_string(IO_QUICKSAVE_AUDIT, "http:/audit.quicksave.io", "");
 DEFINE_string(IO_QUICKSAVE_GIT, "http://gitlab.brainfuck.pl/adiog", "");
 DEFINE_string(IO_QUICKSAVE_CERT_DIR, "/io.quicksave.bootstrap/cert", "");
 DEFINE_string(IO_QUICKSAVE_API, "api.quicksave.io", "");

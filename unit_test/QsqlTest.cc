@@ -9,6 +9,7 @@
 #include <qsql/qsqlLexer.h>
 #include <qsql/qsqlBaseListener.h>
 #include <qsql/qsqlQuicksaveVisitor.h>
+#include <qsql/qsqlQuery.h>
 
 
 TEST(QsqlTestSuite, QsqlTestCase) {
@@ -19,8 +20,10 @@ TEST(QsqlTestSuite, QsqlTestCase) {
     qsqlParser parser(&tokens);
 
     auto tree = parser.start();
-    Ref<qsqlBaseListener> listener(new qsqlBaseListener());
     auto qsqlVisitor = qsqlQuicksaveVisitor();
-    auto traversedTree = qsqlVisitor.visitStart(tree);
-    std::cout << traversedTree.as<AstNode*>()->buildQuery().first << std::endl;
+    auto anyNode = qsqlVisitor.visitStart(tree);
+    auto output = FORMAT("SELECT * FROM meta WHERE ((user_hash = '{}') AND ({})) ORDER BY created_at DESC LIMIT {} OFFSET {};", "user_hash", GETSQL(anyNode).first.c_str(), 100, 0);
+
+    EXPECT_EQ(output, "SELECT * FROM meta WHERE ((user_hash = 'user_hash') AND ((meta.name LIKE ('%%pattern%%')))) ORDER BY created_at DESC LIMIT 100 OFFSET 0;");
+
 }
