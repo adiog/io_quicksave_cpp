@@ -2,6 +2,7 @@ FROM quicksave/dev-proxygen
 
 RUN git clone https://github.com/antlr/antlr4 \
     && cd antlr4/runtime/Cpp \
+    && git checkout tags/4.7 \
     && mkdir -p build \
     && cd build \
     && cmake -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=Release .. \
