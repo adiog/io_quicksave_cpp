@@ -6,19 +6,27 @@
 #include <folly/io/IOBuf.h>
 
 #include <qs/useCase/RetrieveUseCase.h>
-#include <qsgen/bean/PerspectiveRetrieveRequestBean.h>
-#include <qsgen/bean/PerspectiveRetrieveResponseBean.h>
-#include <qsgen/orm/sqlppWrappers.h>
+
+#include <qsgen/abi/PerspectiveRetrieveRequestBean.h>
+#include <qsgen/abi/PerspectiveRetrieveResponseBean.h>
+
+#include <qsgen/ORM.h>
+
+
+namespace qs {
 
 class PerspectiveRetrieveRequest : public PerspectiveRetrieveRequestBean
 {
 public:
     using PerspectiveRetrieveRequestBean::PerspectiveRetrieveRequestBean;
 
-    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext &ctx)
     {
         PerspectiveRetrieveResponseBean responseBean;
-        responseBean.perspectives = qsgen::orm::ORM<PerspectiveBean>::getBy(ctx.databaseTransaction, qsgen::orm::Perspective{}.userHash, *ctx.userBean.user_hash);
+        responseBean.perspectives = ORM<PerspectiveBean>::getBy(ctx.databaseTransaction,
+                                                                orm::Perspective{}.userHash,
+                                                                *ctx.userBean.user_hash);
         return responseBean;
     }
 };
+}

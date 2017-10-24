@@ -15,6 +15,8 @@
 #include <qs/util/buffer.h>
 
 
+namespace qs {
+
 class ProxygenHandler : public proxygen::RequestHandler
 {
 public:
@@ -38,11 +40,11 @@ public:
 
     void reply(int statusCode);
 
-    void reply_cookie(int statusCode, const std::string& cookieName, const std::string& cookieValue);
+    void reply_cookie(int statusCode, const std::string &cookieName, const std::string &cookieValue);
 
-    void reply_response(std::unique_ptr<folly::IOBuf>& response);
+    void reply_response(std::unique_ptr<folly::IOBuf> &response);
 
-    std::string formatSetCookie(const std::string& cookieName, const std::string& cookieValue);
+    std::string formatSetCookie(const std::string &cookieName, const std::string &cookieValue);
 
 private:
     MEASURE;
@@ -73,7 +75,7 @@ void ProxygenHandler::onBody(std::unique_ptr<folly::IOBuf> body) noexcept
 
 void ProxygenHandler::onEOM() noexcept
 {
-    const std::string& method = headers_->getMethodString();
+    const std::string &method = headers_->getMethodString();
 
     if (method == "POST")
     {
@@ -112,7 +114,7 @@ void ProxygenHandler::handle_options()
 {
     // TODO: verify domain
     int statusCode = 200;
-    const char* statusText = "OK";
+    const char *statusText = "OK";
 
     LOG(INFO) << folly::format("> {}", statusCode);
 
@@ -125,11 +127,13 @@ void ProxygenHandler::handle_options()
         .sendWithEOM();
 }
 
-std::string ProxygenHandler::formatSetCookie(const std::string& cookieName, const std::string& cookieValue)
+std::string ProxygenHandler::formatSetCookie(const std::string &cookieName, const std::string &cookieValue)
 {
     if (cookieValue == "")
     {
-        return folly::format("{}=; HttpOnly; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT", cookieName.c_str()).str();
+        return folly::format("{}=; HttpOnly; Path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                             cookieName.c_str())
+            .str();
     }
     else
     {
@@ -137,7 +141,7 @@ std::string ProxygenHandler::formatSetCookie(const std::string& cookieName, cons
     }
 }
 
-void ProxygenHandler::reply_cookie(int statusCode, const std::string& cookieName, const std::string& cookieValue)
+void ProxygenHandler::reply_cookie(int statusCode, const std::string &cookieName, const std::string &cookieValue)
 {
     const std::string setCookie = formatSetCookie(cookieName, cookieValue);
 
@@ -183,7 +187,7 @@ void ProxygenHandler::reply(int statusCode)
     }
 }
 
-void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf>& response)
+void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf> &response)
 {
     std::string buffer = qs::util::Buffer::to_string(*response.get());
     LOG(INFO) << folly::format("> 200 [{}B] {}", response->length(), buffer.c_str());
@@ -193,4 +197,5 @@ void ProxygenHandler::reply_response(std::unique_ptr<folly::IOBuf>& response)
         .header("Content-Type", "application/json")
         .body(buffer)
         .sendWithEOM();
+}
 }

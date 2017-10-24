@@ -23,11 +23,11 @@
 #include <qs/storage/StorageFactory.h>
 #include <qs/util/uuid.h>
 
-#include <qsgen/bean/FileBean.h>
-#include <qsgen/bean/MetaBean.h>
-#include <qsgen/bean/SessionBean.h>
-#include <qsgen/bean/TokenBean.h>
-#include <qsgen/bean/TokenRequestBean.h>
+#include <qsgen/abi/FileBean.h>
+#include <qsgen/abi/MetaBean.h>
+#include <qsgen/abi/SessionBean.h>
+#include <qsgen/abi/TokenBean.h>
+#include <qsgen/abi/TokenRequestBean.h>
 
 
 namespace qs {
@@ -51,7 +51,7 @@ public:
             throw HttpStatus{403};
         }
 
-        auto meta = qsgen::orm::ORM<MetaBean>::get(requestContext.databaseTransaction, meta_hash);
+        auto meta = qs::ORM<MetaBean>::get(requestContext.databaseTransaction, meta_hash);
 
         if (!meta) {
             throw HttpStatus{400};
@@ -59,7 +59,7 @@ public:
             throw HttpStatus{401};
         }
 
-        auto file = qsgen::orm::ORM<FileBean>::get(requestContext.databaseTransaction, file_hash);
+        auto file = qs::ORM<FileBean>::get(requestContext.databaseTransaction, file_hash);
 
         if (!file) {
             throw HttpStatus{404};

@@ -5,22 +5,25 @@
 
 #include <folly/io/IOBuf.h>
 
-#include <qsgen/bean/TagDeleteRequestBean.h>
-#include <qsgen/bean/MessageBean.h>
+#include <qsgen/abi/MessageBean.h>
+#include <qsgen/abi/TagDeleteRequestBean.h>
 
+
+namespace qs {
 
 class TagDeleteRequest : public TagDeleteRequestBean
 {
 public:
     using TagDeleteRequestBean::TagDeleteRequestBean;
 
-    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext &ctx)
     {
         MessageBean messageBean;
 
-        qsgen::orm::ORM<TagBean>::remove(ctx.databaseTransaction, tag_hash);
+        ORM<TagBean>::remove(ctx.databaseTransaction, tag_hash);
         messageBean.message = "OK";
 
         return messageBean;
     }
 };
+}

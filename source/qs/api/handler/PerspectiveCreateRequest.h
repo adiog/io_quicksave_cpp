@@ -5,20 +5,22 @@
 
 #include <folly/io/IOBuf.h>
 
-#include <qsgen/bean/PerspectiveCreateRequestBean.h>
-#include <qsgen/bean/MessageWithHashBean.h>
+#include <qsgen/abi/MessageWithHashBean.h>
+#include <qsgen/abi/PerspectiveCreateRequestBean.h>
 
+
+namespace qs {
 
 class PerspectiveCreateRequest : public PerspectiveCreateRequestBean
 {
 public:
     using PerspectiveCreateRequestBean::PerspectiveCreateRequestBean;
 
-    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext &ctx)
     {
         perspective.user_hash = *(ctx.userBean.user_hash);
 
-        std::string perspective_hash = qsgen::orm::ORM<PerspectiveBean>::insert(ctx.databaseTransaction, perspective);
+        std::string perspective_hash = ORM<PerspectiveBean>::insert(ctx.databaseTransaction, perspective);
 
         MessageWithHashBean messageBean;
         messageBean.hash = perspective_hash;
@@ -26,3 +28,4 @@ public:
         return messageBean;
     }
 };
+}

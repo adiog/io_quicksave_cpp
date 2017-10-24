@@ -20,9 +20,9 @@
 #include <qs/server/ProxygenHandler.h>
 #include <qs/util/uuid.h>
 
-#include <qsgen/bean/SessionBean.h>
-#include <qsgen/bean/TokenBean.h>
-#include <qsgen/bean/TokenRequestBean.h>
+#include <qsgen/abi/SessionBean.h>
+#include <qsgen/abi/TokenBean.h>
+#include <qsgen/abi/TokenRequestBean.h>
 
 
 namespace qs {

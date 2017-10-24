@@ -4,16 +4,17 @@
 #pragma once
 
 #include <style>
-#include <qs/storage/Storage.h>
 #include <qs/server/RequestContext.h>
+#include <qs/storage/Storage.h>
 
-
+namespace qs {
 namespace storage {
 
 class StorageProvider
 {
 public:
     virtual bool validate(const std::string& connectionString) const abstract;
-    virtual std::unique_ptr<storage::Storage> accept(RequestContext &ctx, const std::string& connectionString) const abstract;
+    virtual std::unique_ptr<storage::Storage> accept(RequestContext& ctx, const std::string& connectionString) const abstract;
 };
+}
 }

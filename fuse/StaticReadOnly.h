@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <reference_cast>
 #include <iostream>
+#include <reference_cast>
 
 #include <regex>
 
@@ -15,7 +15,8 @@
 #include <qs/storage/Storage.h>
 #include <qs/storage/StorageFactory.h>
 #include <qs/useCase/RetrieveUseCase.h>
-#include <qsgen/bean/RetrieveResponseBean.h>
+#include <qsgen/abi/RetrieveResponseBean.h>
+#include <qsgen/abi/UserBean.h>
 
 
 class StaticReadOnly
@@ -24,24 +25,23 @@ public:
     static void build(FS &fs, const std::string &username, const std::string &password, const std::string &query)
     {
         std::pair<std::string, std::string> credentials{username, password};
-        absl::optional<UserBean> anOptionalUserBean = OAuthMasterDatabase::authenticateWithPassword(credentials);
+        absl::optional<qs::UserBean> anOptionalUserBean = qs::OAuthMasterDatabase::authenticateWithPassword(credentials);
         if (!anOptionalUserBean)
         {
             throw std::runtime_error("");
         }
 
         auto databaseConnectionOwner = qs::database::ProviderFactory::create(anOptionalUserBean->databaseConnectionString);
-        auto& databaseConnection = reference_cast(databaseConnectionOwner);
+        auto &databaseConnection = reference_cast(databaseConnectionOwner);
 
-        RequestContext mockRequestContext {
-                *anOptionalUserBean,
-                "",
-                databaseConnection
-        };
-        std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(mockRequestContext, anOptionalUserBean->storageConnectionString);
+        qs::RequestContext mockRequestContext{
+            *anOptionalUserBean,
+            "",
+            databaseConnection};
+        std::unique_ptr<qs::storage::Storage> storage = qs::storage::StorageFactory::create(mockRequestContext, anOptionalUserBean->storageConnectionString);
 
 
-        RetrieveResponseBean retrieveResponseBean = useCase::Retrieve::getBean(databaseConnection, query, *anOptionalUserBean->user_hash, 1000, 0);
+        qs::RetrieveResponseBean retrieveResponseBean = qs::useCase::Retrieve::getBean(databaseConnection, query, *anOptionalUserBean->user_hash, 1000, 0);
 
         std::cout << ::serialize(retrieveResponseBean) << std::endl;
 

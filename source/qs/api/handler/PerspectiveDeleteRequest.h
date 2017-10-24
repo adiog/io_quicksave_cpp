@@ -3,22 +3,26 @@
 
 #pragma once
 
-#include <qsgen/bean/PerspectiveDeleteRequestBean.h>
-#include <qsgen/bean/MessageBean.h>
 #include <folly/io/IOBuf.h>
+#include <qsgen/abi/MessageBean.h>
+#include <qsgen/abi/PerspectiveDeleteRequestBean.h>
+
+
+namespace qs {
 
 class PerspectiveDeleteRequest : public PerspectiveDeleteRequestBean
 {
 public:
     using PerspectiveDeleteRequestBean::PerspectiveDeleteRequestBean;
 
-    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext &ctx)
     {
         MessageBean messageBean;
 
-        qsgen::orm::ORM<PerspectiveBean>::remove(ctx.databaseTransaction, perspective_hash);
+        ORM<PerspectiveBean>::remove(ctx.databaseTransaction, perspective_hash);
         messageBean.message = "OK";
 
         return messageBean;
     }
 };
+}

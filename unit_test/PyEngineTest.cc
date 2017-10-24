@@ -6,17 +6,18 @@
 #include <timer>
 
 #include <PythonBeanAPI.h>
-#include <qsgen/bean/MetaBean.h>
-#include <qsgen/bean/ItemBean.h>
-#include <qsgen/bean/InternalCreateRequestBean.h>
+
+#include <qsgen/abi/MetaBean.h>
+#include <qsgen/abi/ItemBean.h>
+#include <qsgen/abi/InternalCreateRequestBean.h>
 
 
 TEST(PyEngineTestSuite, PureEmbedding)
 {
     MEASURE;
-    MetaBean metaBean;
+    qs::MetaBean metaBean;
     metaBean.meta_hash = "sha";
-    InternalCreateRequestBean internalCreateRequestBean;
-    ItemBean itemBean = PythonBeanAPI::call<InternalCreateRequestBean, ItemBean>("process", internalCreateRequestBean);
+    qs::InternalCreateRequestBean internalCreateRequestBean;
+    qs::ItemBean itemBean = PythonBeanAPI::call<qs::InternalCreateRequestBean, qs::ItemBean>("process", internalCreateRequestBean);
     std::cout << itemBean.to_string() << std::endl;
 }

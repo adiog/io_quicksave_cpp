@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <qs/storage/Storage.h>
 #include <qs/storage/LocalStorageProvider.h>
 #include <qs/storage/SshfsProvider.h>
+#include <qs/storage/Storage.h>
 
-
+namespace qs {
 namespace storage {
 
 class StorageFactory
@@ -16,16 +16,17 @@ public:
     static std::vector<std::unique_ptr<storage::StorageProvider>> getProviders()
     {
         std::vector<std::unique_ptr<storage::StorageProvider>> providers;
-        providers.emplace_back(dynamic_cast<storage::StorageProvider*>(new storage::LocalStorageProvider()));
-        providers.emplace_back(dynamic_cast<storage::StorageProvider*>(new storage::SshfsProvider()));
+        providers.emplace_back(dynamic_cast<storage::StorageProvider *>(new storage::LocalStorageProvider()));
+        providers.emplace_back(dynamic_cast<storage::StorageProvider *>(new storage::SshfsProvider()));
         return std::move(providers);
     }
 
-    static std::unique_ptr<storage::Storage> create(RequestContext &ctx, const std::string &storageConnectionString)
+    static std::unique_ptr<storage::Storage>
+    create(RequestContext &ctx, const std::string &storageConnectionString)
     {
         static const auto providers = getProviders();
 
-        for (const auto& provider : providers)
+        for (const auto &provider : providers)
         {
             if (provider->validate(storageConnectionString))
             {
@@ -36,4 +37,5 @@ public:
         throw std::runtime_error("");
     }
 };
+}
 }

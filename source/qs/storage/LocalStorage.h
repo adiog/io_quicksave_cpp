@@ -10,6 +10,7 @@
 #include <qs/storage/Storage.h>
 
 
+namespace qs {
 namespace storage {
 
 class LocalStorage : public storage::Storage
@@ -77,4 +78,5 @@ public:
 protected:
     std::string path;
 };
+}
 }

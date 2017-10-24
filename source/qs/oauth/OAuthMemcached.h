@@ -9,6 +9,7 @@
 
 #include <libmemcached/memcached.hpp>
 
+namespace qs {
 
 class OAuthMemcached
 {
@@ -48,3 +49,4 @@ public:
         return mem.touch(key, expireTime);
     }
 };
+}

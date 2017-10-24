@@ -1,25 +1,27 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_UPLOADREQUEST_H
-#define QUICKSAVE_UPLOADREQUEST_H
+#pragma once
 
 #include <folly/io/IOBuf.h>
 
 #include <qs/storage/StorageFactory.h>
 #include <qs/util/base64.h>
-#include <qsgen/bean/MessageBean.h>
-#include <qsgen/bean/UploadRequestBean.h>
+#include <qsgen/abi/MessageBean.h>
+#include <qsgen/abi/UploadRequestBean.h>
 
+
+namespace qs {
 
 class UploadRequest : public UploadRequestBean
 {
 public:
     using UploadRequestBean::UploadRequestBean;
 
-    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext &ctx)
     {
-        std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
+        std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx,
+                                                                                    ctx.userBean.storageConnectionString);
 
         const std::string filebody = qs::util::Base64::decode(filebase);
 
@@ -31,7 +33,7 @@ public:
         file.mimetype = mimetype;
         file.filesize = filebody.size();
 
-        file.file_hash = qsgen::orm::ORM<FileBean>::insert(ctx.databaseTransaction, file);
+        file.file_hash = ORM<FileBean>::insert(ctx.databaseTransaction, file);
 
         MessageWithHashBean messageBean;
 
@@ -40,5 +42,4 @@ public:
         return messageBean;
     }
 };
-
-#endif
+}

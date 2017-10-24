@@ -7,12 +7,14 @@
 
 #include <sqlpp11/sqlite3/connection.h>
 
-#include <qsgen/bean/UserBean.h>
+#include <qsgen/abi/UserBean.h>
 
+namespace qs {
 
 struct RequestContext
 {
     UserBean userBean;
     std::string session_hash;
-    sqlpp::connection& databaseTransaction;
+    sqlpp::connection &databaseTransaction;
 };
+}

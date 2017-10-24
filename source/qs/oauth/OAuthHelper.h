@@ -8,6 +8,7 @@
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <proxygen/lib/utils/Base64.h>
 
+namespace qs {
 
 struct OAuthHelper
 {
@@ -51,3 +52,4 @@ struct OAuthHelper
         return {"", ""};
     }
 };
+}

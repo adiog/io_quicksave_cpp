@@ -8,9 +8,10 @@
 #include <qs/oauth/OAuthHelper.h>
 #include <qs/oauth/OAuthMemcached.h>
 #include <qs/util/uuid.h>
-#include <qsgen/bean/SessionBean.h>
-#include <qsgen/bean/UserBean.h>
+#include <qsgen/abi/SessionBean.h>
+#include <qsgen/abi/UserBean.h>
 
+namespace qs {
 
 class OAuthAPI
 {
@@ -48,3 +49,4 @@ public:
         return OAuthMemcached::remove(token);
     }
 };
+}

@@ -3,29 +3,35 @@
 
 #pragma once
 
-#include <qsgen/bean/MetaUpdateRequestBean.h>
-#include <qsgen/bean/MessageBean.h>
 #include <folly/io/IOBuf.h>
+#include <qsgen/abi/MessageBean.h>
+#include <qsgen/abi/MetaUpdateRequestBean.h>
+
+
+namespace qs {
 
 class MetaUpdateRequest : public MetaUpdateRequestBean
 {
 public:
     using MetaUpdateRequestBean::MetaUpdateRequestBean;
 
-    std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx)
+    std::unique_ptr<folly::IOBuf> handle(RequestContext &ctx)
     {
         MessageBean messageBean;
 
-        auto updated_meta = qsgen::orm::ORM<MetaBean>::get(ctx.databaseTransaction, *meta.meta_hash);
+        auto updated_meta = ORM<MetaBean>::get(ctx.databaseTransaction, *meta.meta_hash);
 
-        if (updated_meta) {
+        if (updated_meta)
+        {
             updated_meta->update(meta);
-            qsgen::orm::ORM<MetaBean>::update(ctx.databaseTransaction, *updated_meta);
+            ORM<MetaBean>::update(ctx.databaseTransaction, *updated_meta);
             messageBean.message = "OK";
-        } else {
+        }
+        else
+        {
             messageBean.message = "Not found";
         }
         return messageBean;
     }
 };
-
+}

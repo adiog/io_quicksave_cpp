@@ -7,17 +7,24 @@
 
 #include <style>
 
-
+namespace qs {
 namespace storage {
 
 class Storage
 {
 public:
     virtual ~Storage() = default;
-    virtual void init(const std::string& metaHash) abstract;
-    virtual void save(const std::string& metaHash, const std::string& filename, const std::string& file) abstract;
-    virtual std::string read(const FileBean& fileBean) const abstract;
-    virtual void remove(const FileBean& fileBean) abstract;
-    virtual void remove(const std::string& metaHash) abstract;
+
+    virtual void init(const std::string &metaHash) abstract;
+
+    virtual void
+    save(const std::string &metaHash, const std::string &filename, const std::string &file) abstract;
+
+    virtual std::string read(const FileBean &fileBean) const abstract;
+
+    virtual void remove(const FileBean &fileBean) abstract;
+
+    virtual void remove(const std::string &metaHash) abstract;
 };
+}
 }

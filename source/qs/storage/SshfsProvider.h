@@ -3,12 +3,14 @@
 
 #pragma once
 
+#include <absl/strings/string_view.h>
 #include <qs/storage/Sshfs.h>
 #include <qs/storage/Storage.h>
 #include <qs/storage/StorageProvider.h>
-#include <absl/strings/string_view.h>
 
+namespace qs {
 namespace storage {
+
 class SshfsProvider : public storage::StorageProvider
 {
 public:
@@ -39,4 +41,5 @@ public:
         return std::unique_ptr<storage::Storage>(new storage::Sshfs(ctx, connectionString));
     }
 };
+}
 }

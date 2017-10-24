@@ -15,12 +15,12 @@
 TEST(QsqlTestSuite, QsqlTestCase) {
     std::stringstream stream("WHERE name ~ 'pattern'");
     antlr4::ANTLRInputStream input(stream);
-    qsqlLexer lexer(&input);
+    qsql::qsqlLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
-    qsqlParser parser(&tokens);
+    qsql::qsqlParser parser(&tokens);
 
     auto tree = parser.start();
-    auto qsqlVisitor = qsqlQuicksaveVisitor();
+    auto qsqlVisitor = qsql::qsqlQuicksaveVisitor();
     auto anyNode = qsqlVisitor.visitStart(tree);
     auto output = FORMAT("SELECT * FROM meta WHERE ((user_hash = '{}') AND ({})) ORDER BY created_at DESC LIMIT {} OFFSET {};", "user_hash", GETSQL(anyNode).first.c_str(), 100, 0);
 

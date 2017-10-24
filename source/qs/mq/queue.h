@@ -12,6 +12,7 @@
 
 #include "rabbitmq-c-utils.h"
 
+namespace qs {
 
 class Queue
 {
@@ -19,7 +20,8 @@ public:
     amqp_socket_t *socket;
     amqp_connection_state_t connectionState;
 
-    Queue() {
+    Queue()
+    {
         char const *hostname = FLAGS_IO_QUICKSAVE_MQ_HOST.c_str();
         int port = FLAGS_IO_QUICKSAVE_MQ_PORT;
         int status;
@@ -49,11 +51,11 @@ public:
         die_on_amqp_error(amqp_get_rpc_reply(connectionState), "Consuming");
     }
 
-    ~Queue() {
+    ~Queue()
+    {
         die_on_amqp_error(amqp_channel_close(connectionState, 1, AMQP_REPLY_SUCCESS), "Closing channel");
         die_on_amqp_error(amqp_connection_close(connectionState, AMQP_REPLY_SUCCESS), "Closing connection");
         die_on_error(amqp_destroy_connection(connectionState), "Ending connection");
-
     }
 
     template <typename Bean>
@@ -111,3 +113,4 @@ public:
         }
     }
 };
+}

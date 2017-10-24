@@ -4,9 +4,10 @@
 #pragma once
 
 #include <PythonBeanAPI.h>
-#include <qsgen/bean/ItemBean.h>
-#include <qsgen/bean/InternalCreateRequestBean.h>
+#include <qsgen/abi/InternalCreateRequestBean.h>
+#include <qsgen/abi/ItemBean.h>
 
+namespace qs {
 
 class PluginEngine
 {
@@ -16,4 +17,4 @@ public:
         return PythonBeanAPI::call<InternalCreateRequestBean, ItemBean>("process", bean);
     }
 };
-
+}

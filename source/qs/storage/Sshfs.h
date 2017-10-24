@@ -8,15 +8,16 @@
 #include <qs/storage/LocalStorage.h>
 #include <qs/storage/StorageProvider.h>
 
-#include <qsgen/orm/sqlppWrappers.h>
+#include <qsgen/ORM.h>
 
 
+namespace qs {
 namespace storage {
 
 class Sshfs : public storage::LocalStorage
 {
 public:
-    Sshfs(RequestContext &ctx, const std::string& connectionString)
+    Sshfs(RequestContext &ctx, const std::string &connectionString)
     {
         auto splitConnectionString = absl::StrSplit(connectionString, ' ');
 
@@ -59,7 +60,7 @@ public:
         std::string keyPath = folly::format("/keys/{}_id_rsa", ctx.userBean.user_hash->c_str()).str();
         std::string sshPath = folly::format("/sshfs/{}", ctx.userBean.user_hash->c_str()).str();
 
-        auto keys = qsgen::orm::ORM<KeyBean>::getBy(ctx.databaseTransaction, qsgen::orm::Key{}.userHash, *ctx.userBean.user_hash);
+        auto keys = qs::ORM<KeyBean>::getBy(ctx.databaseTransaction, qs::orm::Key{}.userHash, *ctx.userBean.user_hash);
         for (auto &key : keys)
         {
             if (key.name == keyName)
@@ -71,7 +72,8 @@ public:
                 std::string chmod = folly::format(std::string("chmod 600 {}"), keyPath.c_str()).str();
                 auto chmodReturnCode = std::system(chmod.c_str());
 
-                if (chmodReturnCode != 0) {
+                if (chmodReturnCode != 0)
+                {
                     throw(std::runtime_error("chmod failed"));
                 }
 
@@ -88,12 +90,13 @@ public:
                 std::string mkdir = folly::format(std::string("mkdir -p {}"), sshPath.c_str()).str();
                 auto mkdirReturnCode = std::system(mkdir.c_str());
 
-                if (mkdirReturnCode != 0) {
+                if (mkdirReturnCode != 0)
+                {
                     throw(std::runtime_error("mkdir failed"));
                 }
             }
         }
-        catch (...) //TODO
+        catch (...)  //TODO
         {
         }
 
@@ -104,11 +107,19 @@ public:
             if (!check)
             {
                 std::string command = folly::format(
-                    std::string("sshfs -o IdentityFile={} -o idmap=user -p {} {}@{}:{} {}"), keyPath.c_str(), port.c_str(), user.c_str(), host.c_str(), path.c_str(), sshPath.c_str()).str();
+                                          std::string("sshfs -o IdentityFile={} -o idmap=user -p {} {}@{}:{} {}"),
+                                          keyPath.c_str(),
+                                          port.c_str(),
+                                          user.c_str(),
+                                          host.c_str(),
+                                          path.c_str(),
+                                          sshPath.c_str())
+                                          .str();
                 std::cout << command << std::endl;
                 auto sshfsReturnCode = std::system(command.c_str());
 
-                if (sshfsReturnCode != 0) {
+                if (sshfsReturnCode != 0)
+                {
                     throw(std::runtime_error("sshfs failed"));
                 }
             }
@@ -120,4 +131,5 @@ public:
         this->path = sshPath;
     }
 };
+}
 }

@@ -13,8 +13,9 @@
 
 #include <qs/database/ProviderFactory.h>
 
-#include <qsgen/orm/sqlppWrappers.h>
+#include <qsgen/ORM.h>
 
+namespace qs {
 
 class OAuthMasterDatabase
 {
@@ -26,11 +27,10 @@ public:
         auto databaseConnectionOwner = qs::database::ProviderFactory::create(masterDatabaseConnectionString);
         auto& databaseConnection = reference_cast(databaseConnectionOwner);
 
-        List<UserBean> userBeanList = qsgen::orm::ORM<UserBean>::getBy(
+        List<UserBean> userBeanList = qs::ORM<UserBean>::getBy(
             databaseConnection,
-            qsgen::orm::User{}.username,
-            credentials.first
-        );
+            qs::orm::User{}.username,
+            credentials.first);
 
         // TODO: SALTY
         if ((userBeanList.size() == 1) && (credentials.second == userBeanList[0].password))
@@ -45,3 +45,4 @@ public:
         }
     }
 };
+}

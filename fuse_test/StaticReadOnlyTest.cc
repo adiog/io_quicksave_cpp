@@ -1,9 +1,9 @@
 #include <StaticReadOnly.h>
 #include <timer>
 #include <gtest/gtest.h>
-#include <qsgen/bean/InternalCreateRequestBean.h>
-#include <qsgen/bean/ItemBean.h>
-#include <qsgen/bean/MetaBean.h>
+#include <qsgen/abi/InternalCreateRequestBean.h>
+#include <qsgen/abi/ItemBean.h>
+#include <qsgen/abi/MetaBean.h>
 
 
 TEST(StaticReadOnlyTestSuite, PureEmbedding)

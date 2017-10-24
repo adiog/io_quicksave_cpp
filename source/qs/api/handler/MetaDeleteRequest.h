@@ -6,10 +6,13 @@
 #include <folly/io/IOBuf.h>
 
 #include <qs/storage/StorageFactory.h>
-#include <qsgen/bean/MessageBean.h>
-#include <qsgen/bean/MetaDeleteRequestBean.h>
+#include <qsgen/abi/MessageBean.h>
+#include <qsgen/abi/MetaDeleteRequestBean.h>
 
-#include <qsgen/orm/sqlppWrappers.h>
+#include <qsgen/ORM.h>
+
+
+namespace qs {
 
 class MetaDeleteRequest : public MetaDeleteRequestBean
 {
@@ -23,13 +26,14 @@ public:
         std::unique_ptr<storage::Storage> storage = storage::StorageFactory::create(ctx, ctx.userBean.storageConnectionString);
         storage->remove(meta_hash);
 
-        qsgen::orm::ORM<TagBean>::removeBy(ctx.databaseTransaction, qsgen::orm::Tag{}.metaHash, meta_hash);
-        qsgen::orm::ORM<ActionBean>::removeBy(ctx.databaseTransaction, qsgen::orm::Action{}.metaHash, meta_hash);
-        qsgen::orm::ORM<FileBean>::removeBy(ctx.databaseTransaction, qsgen::orm::File{}.metaHash, meta_hash);
-        qsgen::orm::ORM<MetaBean>::remove(ctx.databaseTransaction, meta_hash);
+        ORM<TagBean>::removeBy(ctx.databaseTransaction, orm::Tag{}.metaHash, meta_hash);
+        ORM<ActionBean>::removeBy(ctx.databaseTransaction, orm::Action{}.metaHash, meta_hash);
+        ORM<FileBean>::removeBy(ctx.databaseTransaction, orm::File{}.metaHash, meta_hash);
+        ORM<MetaBean>::remove(ctx.databaseTransaction, meta_hash);
 
         messageBean.message = "OK";
 
         return messageBean;
     }
 };
+}

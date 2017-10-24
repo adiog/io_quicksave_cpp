@@ -1,18 +1,22 @@
 // This file is a part of quicksave project.
 // Copyright (c) 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-#ifndef QUICKSAVE_GENERICREQUEST_H
-#define QUICKSAVE_GENERICREQUEST_H
+#pragma once
+
+#include <folly/io/IOBuf.h>
+#include <rapidjson/document.h>
+
+
+namespace qs {
 
 template <typename Request>
 class GenericRequest
 {
 public:
-    static std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx, rapidjson::Document &document)
+    static std::unique_ptr<folly::IOBuf> handle(RequestContext& ctx, rapidjson::Document& document)
     {
         Request request = Request(document);
         return request.handle(ctx);
     }
 };
-
-#endif
+}

@@ -5,9 +5,8 @@
 
 #include <qs/database/SqliteProvider.h>
 #include <reference_cast>
-#include <qsgen/bean/MetaBean.h>
-#include <qsgen/orm/sqlppTables.h>
-#include <qsgen/orm/sqlppWrappers.h>
+#include <qsgen/abi/MetaBean.h>
+#include <qsgen/ORM.h>
 #include <sqlpp11/custom_query.h>
 
 class SqliteProviderTestSuite : public ::testing::Test
@@ -40,28 +39,28 @@ TEST_F(SqliteProviderTestSuite, CRUD)
     auto databaseConnectionOwner = provider.accept("sqlite:///quicksave-storage/adiog.db");
     auto& databaseConnection = reference_cast<sqlpp::sqlite3::connection>(databaseConnectionOwner);
 
-    MetaBean metaBean;
+    qs::MetaBean metaBean;
     metaBean.name = "label";
     metaBean.text = "abc";
     metaBean.user_hash = "adiog_hash";
 
-    auto metaHash = qsgen::orm::ORM<MetaBean>::insert(databaseConnection, metaBean);
+    auto metaHash = qs::ORM<qs::MetaBean>::insert(databaseConnection, metaBean);
     std::cout << metaHash << std::endl;
 
-    auto optMetaBean = qsgen::orm::ORM<MetaBean>::get(databaseConnection, metaHash);
+    auto optMetaBean = qs::ORM<qs::MetaBean>::get(databaseConnection, metaHash);
     std::cout << *optMetaBean << std::endl;
 
     metaBean.text = absl::nullopt;
-    qsgen::orm::ORM<MetaBean>::override(databaseConnection, metaBean);
+    qs::ORM<qs::MetaBean>::override(databaseConnection, metaBean);
 
-    std::cout << *qsgen::orm::ORM<MetaBean>::get(databaseConnection, metaHash) << std::endl;
-    MetaBean metaUp;
+    std::cout << *qs::ORM<qs::MetaBean>::get(databaseConnection, metaHash) << std::endl;
+    qs::MetaBean metaUp;
     metaUp.meta_hash = metaBean.meta_hash;
     metaUp.author = "updateField";
 
-    qsgen::orm::ORM<MetaBean>::update(databaseConnection, metaUp);
+    qs::ORM<qs::MetaBean>::update(databaseConnection, metaUp);
 
-    std::cout << *qsgen::orm::ORM<MetaBean>::get(databaseConnection, metaHash) << std::endl;
+    std::cout << *qs::ORM<qs::MetaBean>::get(databaseConnection, metaHash) << std::endl;
 
 }
 
@@ -70,7 +69,7 @@ TEST_F(SqliteProviderTestSuite, SqlQuery)
     auto databaseConnectionOwner = provider.accept("sqlite:///quicksave-storage/adiog.db");
     auto& databaseConnection = reference_cast<sqlpp::sqlite3::connection>(databaseConnectionOwner);
 
-    for(auto& meta : qsgen::orm::ORM<MetaBean>::query(databaseConnection, "SELECT * FROM meta;"))
+    for(auto& meta : qs::ORM<qs::MetaBean>::query(databaseConnection, "SELECT * FROM meta;"))
     {
         std::cout << meta << std::endl;
     }

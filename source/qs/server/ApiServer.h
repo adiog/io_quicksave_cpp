@@ -33,9 +33,9 @@
 #include <qs/server/ProxygenHandler.h>
 #include <qs/server/RequestContext.h>
 #include <qs/util/uuid.h>
-#include <qsgen/bean/MessageBean.h>
-#include <qsgen/bean/SessionBean.h>
-#include <qsgen/bean/TokenBean.h>
+#include <qsgen/abi/MessageBean.h>
+#include <qsgen/abi/SessionBean.h>
+#include <qsgen/abi/TokenBean.h>
 
 
 namespace qs {

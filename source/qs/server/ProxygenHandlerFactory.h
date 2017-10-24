@@ -5,12 +5,13 @@
 
 #include <proxygen/httpserver/RequestHandlerFactory.h>
 
+namespace qs {
 
-template<typename ProxygenHandle>
+template <typename ProxygenHandle>
 class ProxygenHandlerFactory : public proxygen::RequestHandlerFactory
 {
 public:
-    void onServerStart(folly::EventBase* evb) noexcept override
+    void onServerStart(folly::EventBase *evb) noexcept override
     {
     }
 
@@ -18,10 +19,9 @@ public:
     {
     }
 
-    proxygen::RequestHandler* onRequest(proxygen::RequestHandler*, proxygen::HTTPMessage*) noexcept override
+    proxygen::RequestHandler *onRequest(proxygen::RequestHandler *, proxygen::HTTPMessage *) noexcept override
     {
         return new ProxygenHandle();
     }
 };
-
-
+}
