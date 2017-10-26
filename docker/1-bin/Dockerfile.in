@@ -2,6 +2,8 @@ FROM quicksave/dev-libs
 
 RUN apt-get install -y libsqlite3-dev libpq-dev postgresql-server-dev-all
 
+RUN apt-get install -y libssl1.0-dev
+
 RUN pip install pyparsing
 
 RUN git clone --recursive https://github.com/adiog/io_quicksave_cpp \

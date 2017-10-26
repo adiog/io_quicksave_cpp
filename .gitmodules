@@ -4,9 +4,6 @@
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest
-[submodule "deps/rabbitmq-c"]
-	path = deps/rabbitmq-c
-	url = https://github.com/alanxz/rabbitmq-c
 [submodule "deps/abseil"]
 	path = deps/abseil
 	url = https://github.com/abseil/abseil-cpp
@@ -38,3 +35,6 @@
 [submodule "deps/sqlpp11-connector-sqlite3"]
 	path = deps/sqlpp11-connector-sqlite3
 	url = https://github.com/adiog/sqlpp11-connector-sqlite3
+[submodule "deps/rabbitmq-c"]
+	path = deps/rabbitmq-c
+	url = https://github.com/adiog/rabbitmq-c
