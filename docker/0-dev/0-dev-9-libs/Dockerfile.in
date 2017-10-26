@@ -1,0 +1,6 @@
+FROM quicksave/dev-curl
+
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y sqlite3 libvsqlitepp-dev uuid uuid-dev libmemcached-dev libpqxx-dev libgpgme++ libc6-pic librabbitmq-dev libfuse-dev libgoogle-glog-dev libgflags-dev
+

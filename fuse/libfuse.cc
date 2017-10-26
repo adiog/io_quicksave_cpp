@@ -9,6 +9,8 @@
 #define FUSE_USE_VERSION 30
 
 
+#include <env.h>
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -121,8 +123,10 @@ int cpp_readlink(const char *path, char *buf, size_t size) {
     return 0;
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 5) {
+int main(int argc, char **argv) {
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+    if (argc != 5) {
         std::cout << "Usage: ./qsfuse /path/to/mount username password \"query\"" << std::endl;
         return 1;
     }

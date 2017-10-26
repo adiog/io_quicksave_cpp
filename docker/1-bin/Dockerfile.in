@@ -1,4 +1,4 @@
-FROM quicksave/dev-curl
+FROM quicksave/dev-libs
 
 RUN apt-get install -y libsqlite3-dev libpq-dev postgresql-server-dev-all
 
@@ -7,5 +7,5 @@ RUN pip install pyparsing
 RUN git clone --recursive https://github.com/adiog/io_quicksave_cpp \
     && mkdir build \
     && cd build \
-    && cmake -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=Release ../io_quicksave_cpp \
+    && cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release ../io_quicksave_cpp \
     && make -j 4

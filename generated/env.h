@@ -8,6 +8,7 @@
 
 DEFINE_string(IO_QUICKSAVE, "quicksave.io", "");
 DEFINE_string(IO_QUICKSAVE_AUDIT, "http:/audit.quicksave.io", "");
+DEFINE_string(IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING, "sqlite:///storage/master.db", "");
 DEFINE_string(IO_QUICKSAVE_GIT, "http://gitlab.brainfuck.pl/adiog", "");
 DEFINE_string(IO_QUICKSAVE_CERT_DIR, "/io.quicksave.bootstrap/cert", "");
 DEFINE_string(IO_QUICKSAVE_API, "api.quicksave.io", "");
@@ -54,7 +55,6 @@ DEFINE_string(IO_QUICKSAVE_DB_UNITTEST, "/io.quicksave.db/unittest.sqlite3", "")
 DEFINE_string(IO_QUICKSAVE_UNITTEST_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.db/unittest.sqlite3", "");
 DEFINE_string(MASTER_HOST, "master.quicksave.io", "");
 DEFINE_string(SLAVE_HOST, "slave.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.dev/master.db", "");
 DEFINE_string(IO_QUICKSAVE_SLAVE_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.dev/slave.db", "");
 DEFINE_string(IO_QUICKSAVE_LOCUST_DATABASE, "/io.quicksave.db/locust.sqlite3", "");
 DEFINE_string(IO_QUICKSAVE_LOCUST_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.db/locust.sqlite3", "");

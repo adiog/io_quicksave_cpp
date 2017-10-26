@@ -18,8 +18,8 @@ class LocalStorage : public storage::Storage
 public:
     LocalStorage() = default;
 
-    LocalStorage(RequestContext ctx, const std::string &path)
-            : path(path)
+    LocalStorage(RequestContext& ctx, std::string path)
+            : path(std::move(path))
     {
     }
 

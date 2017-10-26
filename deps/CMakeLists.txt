@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 project(abseil)
 
-#set(CMAKE_CXX_COMPILER /usr/bin/g++-5)
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-ggdb -O0 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
+set(CMAKE_CXX_FLAGS "-ggdb -O2 -fsanitize=address -I/usr/local/include/antlr4-runtime -L/usr/local/lib")
 
 MACRO(COLLECT_PRODUCTION_CC returnVariable rootDirectory)
     FILE(GLOB_RECURSE dirtyList ${rootDirectory}/*.cc)

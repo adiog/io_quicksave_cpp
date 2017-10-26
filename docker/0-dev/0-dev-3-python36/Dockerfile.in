@@ -3,8 +3,8 @@ FROM quicksave/dev-antlr
 RUN git clone https://github.com/python/cpython \
     && cd cpython \
     && git checkout 3.6 \
-    && export CC=gcc-5 \
-    && export CXX=g++-5 \
+    && export CC=gcc \
+    && export CXX=g++ \
     && ./configure \
     && make -j 4 \
     && make install \
