@@ -38,6 +38,11 @@ public:
         return getMetaPath(metaHash) + filename;
     }
 
+    std::string getFilePath(const FileBean& fileBean)
+    {
+        return getFilePath(fileBean.meta_hash, fileBean.filename);
+    }
+
     void init(const std::string &meta) override
     {
         std::string metaPath = getMetaPath(meta);
@@ -73,6 +78,11 @@ public:
     void remove(const FileBean &fileBean) override
     {
         std::filesystem::remove_all(getFilePath(fileBean.meta_hash, fileBean.filename));
+    }
+
+    void move(const FileBean & sourceFileBean, const FileBean& targetFileBean) override
+    {
+        std::filesystem::rename(getFilePath(sourceFileBean), getFilePath(targetFileBean));
     }
 
 protected:

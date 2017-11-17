@@ -5,8 +5,8 @@
 
 #include <reference_cast>
 
-#include <folly/io/IOBuf.h>
 #include <folly/Format.h>
+#include <folly/io/IOBuf.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <rapidjson/document.h>
@@ -16,9 +16,9 @@
 #include <qs/api/handler/MetaDeleteRequest.h>
 #include <qs/api/handler/MetaUpdateRequest.h>
 #include <qs/api/handler/PerspectiveCreateRequest.h>
+#include <qs/api/handler/PerspectiveDeleteRequest.h>
 #include <qs/api/handler/PerspectiveRetrieveRequest.h>
 #include <qs/api/handler/PerspectiveUpdateRequest.h>
-#include <qs/api/handler/PerspectiveDeleteRequest.h>
 #include <qs/api/handler/RetrieveByPerspectiveRequest.h>
 #include <qs/api/handler/RetrieveByQueryRequest.h>
 #include <qs/api/handler/TagCreateRequest.h>
@@ -27,15 +27,18 @@
 #include <qs/api/handler/UploadRequest.h>
 
 #include <qs/database/ProviderFactory.h>
-#include <qs/server/Exception.h>
 #include <qs/oauth/OAuthAPI.h>
 #include <qs/oauth/OAuthHelper.h>
+#include <qs/server/Exception.h>
 #include <qs/server/ProxygenHandler.h>
 #include <qs/server/RequestContext.h>
 #include <qs/util/uuid.h>
 #include <qsgen/abi/MessageBean.h>
 #include <qsgen/abi/SessionBean.h>
 #include <qsgen/abi/TokenBean.h>
+#include <qs/api/handler/FileRetrieveRequest.h>
+#include <qs/api/handler/FileUpdateRequest.h>
+#include <qs/api/handler/FileDeleteRequest.h>
 
 
 namespace qs {
@@ -156,13 +159,12 @@ void ApiServer::handle_post()
     SessionBean sessionBean = OAuthAPI::get_session(token);
 
     auto databaseConnectionOwner = database::ProviderFactory::create(sessionBean.user.databaseConnectionString);
-    auto& databaseConnection = reference_cast(databaseConnectionOwner);
+    auto &databaseConnection = reference_cast(databaseConnectionOwner);
 
     RequestContext requestContext{
-            sessionBean.user,
-            sessionBean.token,
-            databaseConnection
-    };
+        sessionBean.user,
+        sessionBean.token,
+        databaseConnection};
 
     try
     {
@@ -194,6 +196,18 @@ void ApiServer::handle_post()
         {
             response = GenericRequest<PerspectiveDeleteRequest>::handle(requestContext, document);
         }
+        else if (path == "/file/retrieve")
+        {
+            response = GenericRequest<FileRetrieveRequest>::handle(requestContext, document);
+        }
+        else if (path == "/file/update")
+        {
+            response = GenericRequest<FileUpdateRequest>::handle(requestContext, document);
+        }
+        else if (path == "/file/delete")
+        {
+            response = GenericRequest<FileDeleteRequest>::handle(requestContext, document);
+        }
         else if (path == "/tag/create")
         {
             response = GenericRequest<TagCreateRequest>::handle(requestContext, document);
@@ -223,12 +237,16 @@ void ApiServer::handle_post()
             return reply(404);
         }
     }
-    catch (ParseError &parseError)
+    catch (NotAuthorized authorizationError)
+    {
+        return reply(403);
+    }
+    catch (ParseError parseError)
     {
         return reply(400);
     }
 
-//    requestContext.databaseTransaction->commit();
+    //    requestContext.databaseTransaction->commit();
     return reply_response(response);
 }
 }

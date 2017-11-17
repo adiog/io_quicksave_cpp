@@ -21,9 +21,9 @@ public:
     {
         auto splitConnectionString = absl::StrSplit(connectionString, ' ');
 
-        std::string host = FLAGS_STORAGE_DEFAULT_HOST;
-        std::string port = FLAGS_STORAGE_DEFAULT_PORT;
-        std::string keyName = FLAGS_STORAGE_DEFAULT_KEY;
+        std::string host = ""; //FLAGS_STORAGE_DEFAULT_HOST;
+        std::string port = ""; //FLAGS_STORAGE_DEFAULT_PORT;
+        std::string keyName = ""; //FLAGS_STORAGE_DEFAULT_KEY;
         std::string user = "";
         std::string path = "/dev/null";
 

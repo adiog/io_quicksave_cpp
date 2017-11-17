@@ -74,6 +74,7 @@ TARGET_LINK_LIBRARIES(api
         memcached
         sha1
         stdc++fs
+        uuid
         ${CORE_LIBRARIES}
         ${BASE_LIBRARIES}
         ${DBMS_LIBRARIES}
@@ -93,6 +94,7 @@ TARGET_LINK_LIBRARIES(cdn
 ADD_EXECUTABLE(oauth oauth/oauth.cc)
 TARGET_LINK_LIBRARIES(oauth
         memcached
+        uuid
         ${CORE_LIBRARIES}
         ${BASE_LIBRARIES}
         ${DBMS_LIBRARIES}
@@ -115,6 +117,7 @@ ADD_EXECUTABLE(unit_test ${UNIT_TESTS})
 TARGET_LINK_LIBRARIES(unit_test ${PROJECT_LIBRARIES} python3.6m sha1 antlr4-runtime qsql
         gtest gmock
         curl
+        uuid
         ${CORE_LIBRARIES}
         ${BASE_LIBRARIES}
         ${DBMS_LIBRARIES}

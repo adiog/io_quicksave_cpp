@@ -6,92 +6,39 @@
 
 #include <gflags/gflags.h>
 
+
 DEFINE_string(IO_QUICKSAVE, "quicksave.io", "");
+
 DEFINE_string(IO_QUICKSAVE_AUDIT, "http:/audit.quicksave.io", "");
+
 DEFINE_string(IO_QUICKSAVE_MASTER_DATABASE_CONNECTION_STRING, "sqlite:///storage/master.db", "");
-DEFINE_string(IO_QUICKSAVE_GIT, "http://gitlab.brainfuck.pl/adiog", "");
-DEFINE_string(IO_QUICKSAVE_CERT_DIR, "/io.quicksave.bootstrap/cert", "");
-DEFINE_string(IO_QUICKSAVE_API, "api.quicksave.io", "");
+
 DEFINE_string(HTTPS_API_QUICKSAVE_IO, "https://api.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST, "locust.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST_OAUTH, "oauth.locust.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST_API, "api.locust.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST_CDN, "cdn.locust.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_OAUTH, "oauth.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_BOOT, "boot.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_MQ, "mq.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_CDN, "cdn.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_LOG, "log.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_WWW, "www.quicksave.io", "");
-DEFINE_string(HTTPS_OAUTH_QUICKSAVE_IO, "https://oauth.quicksave.io", "");
 DEFINE_string(HTTPS_CDN_QUICKSAVE_IO, "https://cdn.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_API_DIR, "/io.quicksave.api", "");
-DEFINE_string(IO_QUICKSAVE_CLIENT_DIR, "/io.quicksave.client", "");
-DEFINE_string(IO_QUICKSAVE_CDN_DIR, "/io.quicksave.cdn", "");
-DEFINE_string(IO_QUICKSAVE_MEM_DIR, "/io.quicksave.bootstrap/memadmin", "");
-DEFINE_string(IO_QUICKSAVE_SWAGGER_DIR, "/io.quicksave.bootstrap/swagger-editor", "");
-DEFINE_string(IO_QUICKSAVE_LOG_DIR, "/io.quicksave.log", "");
-DEFINE_string(IO_QUICKSAVE_WWW_DIR, "/io.quicksave.www", "");
-DEFINE_string(IO_QUICKSAVE_BOOT_DIR, "/io.quicksave.bootstrap/boot", "");
-DEFINE_string(IO_QUICKSAVE_CPPAPI_DIR, "/io.quicksave.cppapi", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST_HOST, "localhost", "IP/Hostname to bind to");
+DEFINE_string(HTTPS_OAUTH_QUICKSAVE_IO, "https://oauth.quicksave.io", "");
+
+DEFINE_string(IO_QUICKSAVE_MQ, "mq.quicksave.io", "");
+DEFINE_string(IO_QUICKSAVE_MQ_HOST, "mq.quicksave.io", "");
+
 DEFINE_string(IO_QUICKSAVE_API_HOST, "0.0.0.0", "IP/Hostname to bind to");
 DEFINE_string(IO_QUICKSAVE_CDN_HOST, "0.0.0.0", "IP/Hostname to bind to");
 DEFINE_string(IO_QUICKSAVE_OAUTH_HOST, "0.0.0.0", "IP/Hostname to bind to");
-DEFINE_string(IO_QUICKSAVE_SWAGGER, "swagger.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_SWAGGER_HOST, "localhost", "");
-DEFINE_string(IO_QUICKSAVE_MQ_HOST, "mq.quicksave.io", "");
+
 DEFINE_string(IO_QUICKSAVE_MEMCACHED_HOST, "mem.quicksave.io", "");
 DEFINE_string(IO_QUICKSAVE_MEMCACHED_PORT, "11211", "");
 DEFINE_string(IO_QUICKSAVE_MEMCACHED_CONNECTION_STRING, "--SERVER=mem.quicksave.io:11211", "");
-DEFINE_string(IO_QUICKSAVE_LOG_HOST, "localhost", "");
-DEFINE_string(IO_QUICKSAVE_PLUGIN_DIR, "/io.quicksave.bootstrap/plugin-engine", "");
-DEFINE_string(IO_QUICKSAVE_LIBBEANS_DIR, "/io.quicksave.bootstrap/libbeans", "");
-DEFINE_string(IO_QUICKSAVE_QSQL_DIR, "/io.quicksave.bootstrap/qsql", "");
-DEFINE_string(IO_QUICKSAVE_FUSE_DIR, "/io.quicksave.bootstrap/fuse", "");
-DEFINE_string(IO_QUICKSAVE_BEANS_DIR, "/io.quicksave.bootstrap/beans", "");
-DEFINE_string(IO_QUICKSAVE_DB_DIR, "/io.quicksave.db", "");
-DEFINE_string(IO_QUICKSAVE_DB_UNITTEST, "/io.quicksave.db/unittest.sqlite3", "");
-DEFINE_string(IO_QUICKSAVE_UNITTEST_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.db/unittest.sqlite3", "");
-DEFINE_string(MASTER_HOST, "master.quicksave.io", "");
-DEFINE_string(SLAVE_HOST, "slave.quicksave.io", "");
-DEFINE_string(IO_QUICKSAVE_SLAVE_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.dev/slave.db", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST_DATABASE, "/io.quicksave.db/locust.sqlite3", "");
-DEFINE_string(IO_QUICKSAVE_LOCUST_DATABASE_CONNECTION_STRING, "sqlite:///io.quicksave.db/locust.sqlite3", "");
-DEFINE_string(IO_QUICKSAVE_PYTHONPATH, "/io.quicksave.bootstrap/libbeans:/io.quicksave.bootstrap/libbeans/pybeans/:/io.quicksave.bootstrap/plugin-engine:/io.quicksave.bootstrap/plugin-engine/pyengine:/io.quicksave.bootstrap/plugin-engine/pyasync", "");
-DEFINE_string(IO_QUICKSAVE_LOG_PYTHON, "/io.quicksave.log/python.log", "");
-DEFINE_string(IO_QUICKSAVE_LOG_SERVER, "/io.quicksave.log/server.log", "");
-DEFINE_string(STORAGE_DEFAULT_HOST, "localhost", "");
-DEFINE_string(STORAGE_DEFAULT_PORT, "2222", "");
-DEFINE_string(STORAGE_DEFAULT_KEY, "default", "");
-DEFINE_string(IO_QUICKSAVE_PATH, "/io.quicksave.bootstrap/plugin-engine/lib/", "");
-DEFINE_int32(IO_QUICKSAVE_LOCUST_PORT, 8089, "Port to listen on with HTTP protocol");
-DEFINE_int32(IO_QUICKSAVE_LOCUST_OAUTH_PORT, 13009, "");
-DEFINE_int32(IO_QUICKSAVE_LOCUST_API_PORT, 11009, "");
-DEFINE_int32(IO_QUICKSAVE_LOCUST_CDN_PORT, 12009, "");
+
 DEFINE_int32(IO_QUICKSAVE_API_PORT, 11000, "Port to listen on with HTTP protocol");
 DEFINE_int32(api_threads, 0, "Number of threads to listen on. Numbers <= 0 will use the number of cores on this machine.");
-DEFINE_int32(api_spdy_port, 11001, "Port to listen on with SPDY protocol (not used)");
-DEFINE_int32(api_h2_port, 11002, "Port to listen on with HTTP/2 protocol (not used)");
 DEFINE_int32(IO_QUICKSAVE_CDN_PORT, 12000, "Port to listen on with HTTP protocol");
 DEFINE_int32(cdn_threads, 0, "Number of threads to listen on. Numbers <= 0 will use the number of cores on this machine.");
-DEFINE_int32(cdn_spdy_port, 12001, "Port to listen on with SPDY protocol (not used)");
-DEFINE_int32(cdn_h2_port, 12002, "Port to listen on with HTTP/2 protocol (not used)");
 DEFINE_int32(IO_QUICKSAVE_OAUTH_PORT, 13000, "Port to listen on with HTTP protocol");
 DEFINE_int32(oauth_threads, 0, "Number of threads to listen on. Numbers <= 0 will use the number of cores on this machine.");
-DEFINE_int32(oauth_spdy_port, 11001, "Port to listen on with SPDY protocol (not used)");
-DEFINE_int32(oauth_h2_port, 11002, "Port to listen on with HTTP/2 protocol (not used)");
 DEFINE_int32(post_threads, 0, "");
-DEFINE_int32(IO_QUICKSAVE_SWAGGER_PORT, 3001, "");
-DEFINE_int32(IO_QUICKSAVE_OAUTH_TOKEN_EXPIRE_TIME, 3600, "");
+DEFINE_int32(IO_QUICKSAVE_OAUTH_TOKEN_EXPIRE_TIME, 86400, "");
+
 DEFINE_int32(IO_QUICKSAVE_MQ_PORT, 5672, "");
 DEFINE_int32(IO_QUICKSAVE_MQ_MANAGE_PORT, 15672, "");
 DEFINE_int32(IO_QUICKSAVE_MEMADMIN_PORT, 18080, "");
-DEFINE_int32(IO_QUICKSAVE_LOG_PORT, 9009, "");
-DEFINE_int32(MASTER_PORT, 5432, "");
-DEFINE_int32(SLAVE_PORT, 5433, "");
-DEFINE_int32(IO_QUICKSAVE_LOCUST_USER_MIN, 1000, "");
-DEFINE_int32(IO_QUICKSAVE_LOCUST_USER_MAX, 1099, "");
-DEFINE_int32(IO_QUICKSAVE_STORAGE_PORT, 2222, "");
 
 #endif

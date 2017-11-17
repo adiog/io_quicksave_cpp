@@ -4,7 +4,11 @@
 #include <qsgen/abi/CreateRequestBean.h>
 #include <qsgen/abi/CreateResponseBean.h>
 #include <qsgen/abi/DatabaseTaskBean.h>
+#include <qsgen/abi/FileDeleteRequestBean.h>
 #include <qsgen/abi/FileBean.h>
+#include <qsgen/abi/FileRetrieveRequestBean.h>
+#include <qsgen/abi/FileRetrieveResponseBean.h>
+#include <qsgen/abi/FileUpdateRequestBean.h>
 #include <qsgen/abi/InternalCreateRequestBean.h>
 #include <qsgen/abi/ItemBean.h>
 #include <qsgen/abi/KeyBean.h>
