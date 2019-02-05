@@ -2,10 +2,10 @@
 # This file is a part of quicksave project.
 # Copyright 2017 Aleksander Gajewski <adiog@quicksave.io>.
 
-HOSTIP=`ip route get 8.8.8.8 | awk '{print $NF; exit}'`
+HOSTIP=`ip route get 8.8.8.8 | awk '{print $7; exit}'`
 
-sudo docker rm oauth_quicksave_docker
-sudo docker run \
+docker rm oauth_quicksave_docker
+docker run \
     --privileged \
         --name oauth_quicksave_docker \
         --net network_quicksave_docker \
